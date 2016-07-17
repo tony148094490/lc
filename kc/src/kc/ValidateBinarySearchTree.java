@@ -19,7 +19,7 @@ public class ValidateBinarySearchTree {
     	
     	if(root.val == Integer.MAX_VALUE && min == Integer.MAX_VALUE) {
     		if(visitedRightMost == false && root.right == null) {
-    			return helper(root.right, min, max, visitedLeftMost, true);
+    			return helper(root.left, min, max, visitedLeftMost, true);
     		} else {
     			return false;
     		}
