@@ -37,4 +37,9 @@ public class TreeNode {
     	res.add(root.val);
     	helper(root.right, res);
     }
+    
+    public String levelOrderTraversal() {
+    	BinaryTreeLevelOrderTraversal x = new BinaryTreeLevelOrderTraversal();
+    	return x.levelOrder(this).toString();
+    }
 }
