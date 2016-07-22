@@ -13,6 +13,7 @@ public class GasStation {
     		if(abs[i] < 0) continue;
     		int reachTo = reachTo(abs,i);
     		if(reachTo == i) return i;
+    		if(reachTo < i) return -1;
     		i = reachTo;
     	
     	}
