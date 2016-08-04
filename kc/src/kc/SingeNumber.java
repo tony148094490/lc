@@ -26,11 +26,49 @@ public class SingeNumber {
         return one;
     }
     
+    public int[] singleNumber3(int[] nums) {
+        if(nums.length < 2) return null;
+        int[] res = new int[2];
+        int xor = nums[0];
+        for(int i = 1; i < nums.length; i++){
+            xor ^= nums[i];
+        }
+
+        int one = 1;
+        while((xor & one) == 0) {
+            one <<= 1;
+        }
+        
+        Integer a = null;
+        Integer b = null;
+        
+        for(Integer x : nums) {
+            if((x & one) != 0) {
+                if(a == null) {
+                    a = x;
+                } else {
+                    a = a ^ x;
+                }
+            } else {
+                if(b == null) {
+                    b = x;
+                } else {
+                    b = b ^ x;
+                }
+            }
+        }
+        res[0] = a;
+        res[1] = b;
+        return res;
+    }
+    
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		SingeNumber x = new SingeNumber();
-		int[] arr = {1,2,1,2,2,1,3,3,3,4};
-		System.out.println(x.singleNumber2(arr));
+		int[] arr = {1,2,1,3,2,5};
+		int[] res = x.singleNumber3(arr);
+		
+		System.out.println(res[0] + "," + res[1]);
 	}
 
 }
