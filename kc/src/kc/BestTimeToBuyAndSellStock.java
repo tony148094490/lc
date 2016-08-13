@@ -44,6 +44,27 @@ public class BestTimeToBuyAndSellStock {
         return maxProfit;
     }
     
+    //cool down
+    public int maxProfit3(int[] prices) {
+        if(prices.length < 2) return 0;
+        int[] buys = new int[prices.length];
+        int[] sells = new int[prices.length];
+        int[] cools = new int[prices.length];
+
+        buys[0] = (-1) * prices[0];
+        sells[0] = Integer.MIN_VALUE;
+        cools[0] = 0;
+        
+        for(int i = 1; i < prices.length; i++) {
+        	buys[i] = Math.max(cools[i-1] - prices[i], buys[i-1]);
+        	sells[i] = Math.max(buys[i-1] + prices[i], sells[i-1]);
+        	cools[i] = Math.max(buys[i-1],Math.max(sells[i-1], cools[i-1]));
+        }
+        
+        return sells[sells.length-1] < 0 ? 0 : sells[sells.length-1];
+    }
+    
+    
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		int[] arr = {3,8,4,7,9,2,10};
