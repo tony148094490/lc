@@ -37,13 +37,10 @@ public class BestTimeToBuyAndSellStock {
         	} else if (prices[i] > prices[maxSell]) {
         		maxSell = i;
         	}
-        }
-        
+        } 
         if(maxSell != -1) maxProfit += (prices[maxSell] - prices[buy]);
-        
         return maxProfit;
-    }
-    
+    }  
     //cool down
     public int maxProfit3(int[] prices) {
         if(prices.length < 2) return 0;
@@ -64,13 +61,27 @@ public class BestTimeToBuyAndSellStock {
         return sells[sells.length-1] < 0 ? 0 : sells[sells.length-1];
     }
     
+    public int maxProfit4(int[] prices) {
+    	if(prices.length <= 1) return 0;
+    	int k = 2;
+    	int[][] dp = new int[k+1][prices.length];
+    	int highestRemainder = 0;
+    	for(int i = 1; i <= k; i++) {
+    		highestRemainder = 0 - prices[0];
+    		for(int j = 1; j < prices.length; j++) {
+    			dp[i][j] = Math.max(dp[i][j-1], highestRemainder + prices[j]);
+    			highestRemainder = Math.max(highestRemainder, dp[i-1][j] - prices[j]);
+    		}
+    	}
+    	return dp[k][prices.length-1];
+    }
+    
     
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		int[] arr = {3,8,4,7,9,2,10};
-		int[] arr1 = {7,6,4,3,1};
+		int[] arr = {1,2,4,2,5,7,2,4,9,0};
 		BestTimeToBuyAndSellStock x = new BestTimeToBuyAndSellStock();
-		System.out.println(x.maxProfit2(arr));
+		System.out.println(x.maxProfit4(arr));
 	}
 
 }
