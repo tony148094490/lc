@@ -22,7 +22,7 @@ public class FindMinimumInRotatedSortedArray {
     }
 	
 	public static void main(String[] args) {
-		int[] arr = {3,1,2};
+		int[] arr = {3,1,2,2,2,2,2,2};
 		FindMinimumInRotatedSortedArray x = new FindMinimumInRotatedSortedArray();
 		System.out.println(x.findMin(arr));
 	}

@@ -1,7 +1,6 @@
 package kc;
 /**
  * Sort a linked list using insertion sort.
- * @author zhaowz
  */
 public class InsertionSortList {
     public ListNode insertionSortList(ListNode head) {
