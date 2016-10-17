@@ -6,64 +6,55 @@ public class BasicCalculatorII {
     public int calculate(String s) {
         Stack<Integer> operands = new Stack<Integer>();
         Stack<Character> operators = new Stack<Character>();
-        for(int i = 0 ; i < s.length(); i++){
-            char c = s.charAt(i);
-
-            if(c == ' ') continue;
-
-            if(c < '0' || c > '9') {
-                operators.push(c);
+        for(int i = 0 ; i < s.length(); i++) {
+            if(s.charAt(i) == ' ') continue;
+            if(s.charAt(i) == '+' || s.charAt(i) == '-' || s.charAt(i) == '*' || s.charAt(i) == '/') {
+                operators.push(s.charAt(i));
             } else {
-                
-                int b = 0;
-                while(i< s.length() && ((s.charAt(i) <= '9' && s.charAt(i) >='0') || s.charAt(i) == ' ')){
-                    if(s.charAt(i) != ' ') {
-                        b = b * 10 + (int) (s.charAt(i) - '0');
-                    }
+                StringBuilder sb = new StringBuilder();
+                sb.append(s.charAt(i));
+                i++;
+                while(i<s.length() && (s.charAt(i)>='0' && s.charAt(i)<='9')) {
+                    sb.append(s.charAt(i));
                     i++;
                 }
                 i--;
-                
                 if(!operators.isEmpty() && (operators.peek() == '*' || operators.peek() == '/')) {
-                    int a = operands.pop();
-                    char o = operators.pop();
-                    if(o == '*') {
-                        operands.push(a * b);
-                    } else {
-                        operands.push(a/b);
-                    }
+                int second = Integer.parseInt(sb.toString());
+                int first = operands.pop();
+                char operator = operators.pop();
+                if(operator == '*') {
+                    operands.push(first * second);
                 } else {
-                    operands.push(b);
+                    operands.push(first / second);
                 }
-            }
-        }
-        
-        Stack<Integer> operandsQ = new Stack<Integer>();
-        while(!operands.isEmpty()) {
-        	operandsQ.push(operands.pop());
-        }
-        
-        Stack<Character> operatorsQ = new Stack<Character>();
-        while(!operators.isEmpty()) {
-        	operatorsQ.push(operators.pop());
-        }
-        
-        int res = operandsQ.pop();
-        while(!operatorsQ.isEmpty()) {
-            char operator = operatorsQ.pop();
-            int b = operandsQ.pop();
-            if(operator == '+') {
-                res = res + b;
             } else {
-                res = res - b;
+                operands.push(Integer.parseInt(sb.toString()));
             }
-            
+            }
         }
-        return res;
+        
+        Stack<Integer> tempOperands = new Stack<Integer>();
+        while(!operands.isEmpty()) tempOperands.push(operands.pop());
+        
+        Stack<Character> tempOperators = new Stack<Character>();
+        while(!operators.isEmpty()) tempOperators.push(operators.pop());
+        
+        while(!tempOperators.isEmpty()) {
+            int first = tempOperands.pop();
+            int second = tempOperands.pop();
+            char op = tempOperators.pop();
+            if(op=='+') {
+                tempOperands.push(first + second);
+            } else {
+                tempOperands.push(first - second);
+            }
+        }
+        return tempOperands.pop();
     }
     
     public static void main(String[] args) {
     	BasicCalculatorII x = new BasicCalculatorII();
-    	System.out.println(x.calculate("2 + 3 - 4" ));
+    	System.out.println(x.calculate("42" ));
 	}
 }
