@@ -21,7 +21,7 @@ public class CountOfSmallerNumbersAfterSelf {
        Integer[] res = new Integer[nums.length];
        
        BT root = null;
-       for(int i = nums.length-1; i >= 0 ; i++) {
+       for(int i = nums.length-1; i >= 0 ; i--) {
     	   root = insert(res,i, 0, nums[i], root);
        }
        return Arrays.asList(res);
