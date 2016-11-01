@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ * trick is the linked hash set
+ */
 public class RandomizedCollection {
 	 final Random rand = new Random();
 	 List<Integer> list;
@@ -48,6 +51,8 @@ public class RandomizedCollection {
        
        // this is tricky
        if(index != list.size()-1) {
+    	   // do an index-replace if they are different.
+    	   // if it's the same, it means the last position was already removed (updated)
            lasts.remove(list.size()-1);
            lasts.add(index);        	
        }
