@@ -6,8 +6,8 @@ import java.util.List;
 
 public class StrobogrammaticNumberII {
 	
-    List<String> one = Arrays.asList(new String[]{"1", "0", "8"});
-    List<String> two = Arrays.asList(new String[]{"11", "00", "88", "69", "96"});
+    List<String> one = Arrays.asList(new String[]{"0", "1", "8"});
+    List<String> two = Arrays.asList(new String[]{"00", "11", "69", "88", "96"});
     
 	public List<String> findStrobogrammatic(int n) {
         if(n == 1) {
