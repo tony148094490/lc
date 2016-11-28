@@ -41,7 +41,7 @@ public class NestedInteger {
 	       // @return the nested list that this NestedInteger holds, if it holds a nested list
 	       // Return null if this NestedInteger holds a single integer
 	      public List<NestedInteger> getList(){
-	    	  return new ArrayList<NestedInteger>();
+	    	  return this.isInteger() ? null : list;
 	      }
 	      
 	      public String toString() {
