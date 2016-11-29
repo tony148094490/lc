@@ -31,6 +31,7 @@ public class PhoneDirectory {
     
     /** Recycle or release a number. */
     public void release(int number) {
+    	if(!set.contains(number)) return;
         set.remove(number);
         list.add(number);
     }
