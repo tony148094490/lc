@@ -11,30 +11,23 @@ public class ReadNCharactersGivenRead4 {
 	
     public int read(char[] buf, int n) {
         char[] buffer = new char[4];
-        int res = 0;
-        int cur = 0;
-        int thisRun = 4;
-        while(n >= 4 && thisRun == 4) {
-            thisRun = this.read4(buffer);
-            for(int i = 0; i < thisRun; i++) {
-                buf[cur] = buffer[i];
-                cur++;
-            }
+        int step = read4(buffer);
+        int index = 0;
+        while(n > 4 && step == 4) {
             n -= 4;
-            res += thisRun;
+            for(int i = 0 ; i < 4; i++) {
+                buf[index] = buffer[i];
+                index++;
+            }
+            step = read4(buffer);
         }
         
-        if(thisRun != 4) {
-            return res;
-        } else {
-            int needed = Math.min(n, this.read4(buffer));
-            for(int i = 0; i < needed; i++) {
-                buf[cur] = buffer[i];
-                cur++;
-            }
-            res += needed;
-            return res;
+        for(int i = 0 ; i < Math.min(n,step); i++) {
+            buf[index] = buffer[i];
+            index++;
         }
+        
+        return index;
     }
     
     public static void main(String[] args) {

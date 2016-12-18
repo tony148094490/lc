@@ -1,7 +1,9 @@
 package kc;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class BinaryTreeRightSideView {
 
@@ -40,6 +42,34 @@ public class BinaryTreeRightSideView {
     	
     	return maxReached;
     }
+    
+    public List<Integer> rightSideView2(TreeNode root) {
+        List<Integer> res = new ArrayList<Integer>();
+        Queue<TreeNode> parents = new LinkedList<TreeNode>();
+        if(root == null) return res;
+        parents.add(root);
+        res.add(root.val);
+        while(!parents.isEmpty()) {
+            Queue<TreeNode> children = new LinkedList<TreeNode>();
+            while(!parents.isEmpty()) {
+                TreeNode p = parents.poll();
+                if(p.right != null) {
+                    children.add(p.right);
+                }
+                
+                if(p.left != null) {
+                    children.add(p.left);
+                }
+            }
+            if(!children.isEmpty()) {
+                res.add(children.peek().val);
+            }
+            parents = children;
+        }
+        return res;
+    }
+    
+    
     public static void main(String[] args) {
     	BinaryTreeRightSideView x = new BinaryTreeRightSideView();
     	TreeNode a = new TreeNode(1);
@@ -53,9 +83,10 @@ public class BinaryTreeRightSideView {
     	b.right = e;
     	e.right = d;
     	//c.right = d;
-    	System.out.println(a.levelOrderTraversal());
-    	System.out.println(x.rightSideView(a));
-    	
+//    	System.out.println(a.levelOrderTraversal());
+//    	System.out.println(x.rightSideView(a));
+//    
+    	System.out.println(0xFFFFFFFF & 3);
 	}
     
 }

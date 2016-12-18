@@ -5,42 +5,47 @@ import java.util.List;
 
 public class UniqueBinarySearchTreeII {
     public List<TreeNode> generateTrees(int n) 	{
-    	if(n==0) return new ArrayList<TreeNode>();
-    	return generate(1,n);
+        if(n == 0) return new ArrayList<TreeNode>();
+        return helper(1, n);
     }
     
-    
-    private List<TreeNode> generate(int l, int r) {
-    	
-    	if(l > r) {
-    		List<TreeNode> res = new ArrayList<TreeNode>();
-    		res.add(null);
-    		return res;
-    	}
-    	
-    	if(l == r) {
-    		TreeNode res = new TreeNode(l);
-    		List<TreeNode> list = new ArrayList<TreeNode>();
-    		list.add(res);
-    		return list;
-    	}
-        
-		List<TreeNode> res = new ArrayList<TreeNode>();
-        for(int i = l ; i<= r; i++){
-        	List<TreeNode> left = generate(l,i-1);
-        	List<TreeNode> right = generate(i+1,r);
-        	
-	        for(TreeNode ll : left) {
-	        	for(TreeNode rr : right) {
-	        		TreeNode mid = new TreeNode(i);
-	        		mid.left = ll;
-	        		mid.right = rr;
-	        		res.add(mid);
-	        	}
-	        }
+    private List<TreeNode> helper(int left, int right) {
+
+        if(left == right) {
+            List<TreeNode> trees = new ArrayList<TreeNode>();
+            TreeNode node = new TreeNode(left);
+            trees.add(node);
+            return trees;
         }
-    	
-        return res;
+        
+        List<TreeNode> trees = new ArrayList<TreeNode>();
+        for(int i = left; i <= right; i++) {
+            List<TreeNode> leftChildren = new ArrayList<TreeNode>();
+            List<TreeNode> rightChildren = new ArrayList<TreeNode>();
+            
+            if(i == left) {
+                leftChildren.add(null);
+            } else {
+                leftChildren = helper(left, i-1);
+            }
+            
+            if( i == right) {
+                rightChildren.add(null);
+            } else {
+                rightChildren = helper(i+1, right);
+            }
+            
+
+            for(TreeNode leftChild : leftChildren) {
+                for(TreeNode rightChild : rightChildren) {
+                    TreeNode root = new TreeNode(i);
+                    root.left = leftChild;
+                    root.right = rightChild;
+                    trees.add(root);
+                }
+            }
+        }
+        return trees;
     }
     
     public static void main(String[] args) {

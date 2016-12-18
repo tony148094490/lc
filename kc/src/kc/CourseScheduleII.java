@@ -1,8 +1,8 @@
 package kc;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,81 +11,64 @@ import java.util.Stack;
 
 public class CourseScheduleII {
     public int[] findOrder(int numCourses, int[][] prerequisites) {
-        Map<Integer, List<Integer>> map = new HashMap<Integer, List<Integer>>();
-        for(int i = 0 ; i < prerequisites.length; i++) {
-        	if(map.containsKey(prerequisites[i][1])) {
-        		List<Integer> list = map.get(prerequisites[i][1]);
-        		list.add(prerequisites[i][0]);
-        	} else {
-        		List<Integer> list = new LinkedList<Integer>();
-        		list.add(prerequisites[i][0]);
-        		map.put(prerequisites[i][1],list);
-        	}
-        }
-
-        Set<Integer> visited = new HashSet<Integer>();
-        Stack<Integer> stack = new Stack<Integer>();
-        
-        for(Entry<Integer, List<Integer>> entry : map.entrySet()) {
- 	
-        	List<Integer> res = entry.getValue();
-        	for(Integer x : res) {
-        		if(visited.contains(x)) {
-        			continue;
-        		}
-        		if(!dfs(map,x,new HashSet<Integer>(), visited, stack)) return new int[0];
-
-        	}
-        	
-        	int x = entry.getKey();
-    		if(!visited.contains(x)){
-    			visited.add(x);
-    			stack.push(x);
-    		}
-        }
-                    
         int[] res = new int[numCourses];
-        int i = 0;
-        
-        while(!stack.isEmpty()) {
-        	res[i] = stack.pop();
-        	i++;
+        if(numCourses == 0) return res;
+        Stack<Integer> stack = new Stack<Integer>();
+        Set<Integer> overall = new HashSet<Integer>();
+        Map<Integer, List<Integer>> adj = new HashMap<Integer, List<Integer>>();
+        for(int[] preq : prerequisites) {
+            if(adj.containsKey(preq[1])) {
+                adj.get(preq[1]).add(preq[0]);
+            } else {
+                List<Integer> list = new ArrayList<Integer>();
+                list.add(preq[0]);
+                adj.put(preq[1], list);
+            }
         }
         
-        for(int j = 0 ; j < numCourses ;j++) {
-        	if(!visited.contains(j)) {
-        		res[i] = j;
-        		i++;
-        	}
-        }  
-        return res;
+        for(Entry<Integer, List<Integer>> entry : adj.entrySet()) {
+            if(overall.contains(entry.getKey())) continue;
+            if(!dfs(adj, entry.getKey(), new HashSet<Integer>(), overall, stack)) return new int[0];
+        }
+        
+        int i = 0;
+        while(!stack.isEmpty()) {
+            res[i] = stack.pop();
+            i++;
+        }
+        for(int j = 0 ; j < numCourses ; j++) {
+            if(!overall.contains(j)) {
+                res[i] = j;
+                i++;
+            }
+        }
+       return res;
     }
     
-    private boolean dfs(Map<Integer, List<Integer>> map, int start, Set<Integer> visited, Set<Integer> overallVisited, Stack<Integer> stack) {
-    	if(!map.containsKey(start)) {
-    	    if(!overallVisited.contains(start)){
-    	    	overallVisited.add(start);
-    	    	stack.push(start);
-    	    }
-    		return true;
-    	}
-    	if(visited.contains(start)) 
-    	{   
-    	    return false;
-    	}
-    	    
-    	visited.add(start);
-    	
-    	for(Integer x : map.get(start)) {
-    		if(!dfs(map,x,visited, overallVisited, stack)) return false;
-    	}
-    	
-    	if(!overallVisited.contains(start)){
-    		overallVisited.add(start);
-    		stack.push(start);
-    	}
-    	visited.remove(start);
-    	return true;
+    private boolean dfs(Map<Integer, List<Integer>> map, int cur, Set<Integer> visited, Set<Integer> overall, Stack<Integer> res) {
+        if(!map.containsKey(cur)) {
+            if(!overall.contains(cur)) {
+                overall.add(cur);
+                res.push(cur);
+            }
+            return true;
+        }
+        
+        if(visited.contains(cur)) return false;
+        
+        List<Integer> nexts = map.get(cur);
+        
+        visited.add(cur);
+        for(Integer x : nexts) {
+            if(!dfs(map, x, visited, overall, res)) return false;
+        }
+        
+        if(!overall.contains(cur)) {
+            overall.add(cur);
+            res.push(cur);
+        }
+        visited.remove(cur);
+        return true;
     }
     
     

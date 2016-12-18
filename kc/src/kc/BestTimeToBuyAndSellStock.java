@@ -20,27 +20,34 @@ public class BestTimeToBuyAndSellStock {
     
     public int maxProfit2(int[] prices) {
         if(prices.length < 2) return 0;
-    	int maxProfit = 0;
-        int buy = 0;
-        int maxSell = -1;
-        for(int i = 1; i < prices.length; i++) {
-        	if(maxSell != -1 && prices[i] < prices[maxSell]) {
-        		maxProfit += (prices[maxSell] - prices[buy]);
-        		buy = i;
-        		maxSell = -1;
-        	} else if(maxSell == -1) {
-        		if(prices[i] > prices[buy]) {
-        			maxSell = i;
-        		} else {
-        			buy = i;
-        		}
-        	} else if (prices[i] > prices[maxSell]) {
-        		maxSell = i;
-        	}
-        } 
-        if(maxSell != -1) maxProfit += (prices[maxSell] - prices[buy]);
-        return maxProfit;
-    }  
+	    int p = 0;
+	    for(int i = 1 ; i < prices.length; i++) {
+	        if(prices[i] >= prices[i-1]) p+= prices[i] - prices[i-1];
+	    }
+	    return p;
+//    	int maxProfit = 0;
+//        int buy = 0;
+//        int maxSell = -1;
+//        for(int i = 1; i < prices.length; i++) {
+//        	if(maxSell != -1 && prices[i] < prices[maxSell]) {
+//        		maxProfit += (prices[maxSell] - prices[buy]);
+//        		buy = i;
+//        		maxSell = -1;
+//        	} else if(maxSell == -1) {
+//        		if(prices[i] > prices[buy]) {
+//        			maxSell = i;
+//        		} else {
+//        			buy = i;
+//        		}
+//        	} else if (prices[i] > prices[maxSell]) {
+//        		maxSell = i;
+//        	}
+//        } 
+//        if(maxSell != -1) maxProfit += (prices[maxSell] - prices[buy]);
+//        return maxProfit;
+    }
+    
+    
     //cool down
     public int maxProfit3(int[] prices) {
         if(prices.length < 2) return 0;
@@ -71,12 +78,11 @@ public class BestTimeToBuyAndSellStock {
         	    return p;
         	}
         	int[][] dp = new int[k+1][prices.length];
-        	int highestRemainder = 0;
         	for(int i = 1; i <= k; i++) {
-        		highestRemainder = 0 - prices[0];
+        		int firstBuy = 0 - prices[0];
         		for(int j = 1; j < prices.length; j++) {
-        			dp[i][j] = Math.max(dp[i][j-1], highestRemainder + prices[j]); //sell ?
-        			highestRemainder = Math.max(highestRemainder, dp[i-1][j-1] - prices[j]); //buy ?
+        			dp[i][j] = Math.max(dp[i][j-1], firstBuy + prices[j]); //sell ?
+        			firstBuy = Math.max(firstBuy, dp[i-1][j-1] - prices[j]); //buy ?
         		}
         	}
         	return dp[k][prices.length-1];

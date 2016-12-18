@@ -9,81 +9,73 @@ import java.util.Set;
 
 public class WordLadderII {
     public List<List<String>> findLadders(String beginWord, String endWord, Set<String> wordList) {
-    	List<List<String>> res = new ArrayList<List<String>>();
+        List<List<String>> res = new ArrayList<List<String>>();
         if(beginWord.equals(endWord)) return res;
-        wordList.add(endWord);
         wordList.remove(beginWord);
-        Set<String> neighbours = new HashSet<String>();
-        Map<String, List<String>> map = new HashMap<String, List<String>>();
-        neighbours.add(beginWord);
-        
-        while(!neighbours.isEmpty()) {
-        	Set<String> overall = new HashSet<String>();
-        	for(String str  : neighbours) {
-        		Set<String> newNei = getNext(str, wordList);
-        		overall.addAll(newNei);
-        		for(String s : newNei) {
-        			
-        			if(map.containsKey(s)) {
-        				map.get(s).add(str);
-        			} else {
-        				List<String> newList = new ArrayList<String>();
-        				newList.add(str);
-        				map.put(s, newList);
-        			}
-        			
-        			if(s.equals(endWord)) {
-        				List<String> cur = new ArrayList<String>();
-        				cur.add(endWord);
-        				cur.add(0, str);
-            			getList(str, map, res, cur);
+        wordList.add(endWord);
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+        Set<String> parents = new HashSet<String>();
+        parents.add(beginWord);
+        while(!parents.isEmpty()) {
+            Set<String> currentChildren = new HashSet<String>();
+            for(String p : parents) {
+                Set<String> children = getNb(p, wordList);
+                currentChildren.addAll(children);
+                for(String child : children) {
+                    if(!map.containsKey(child)) {
+                        Set<String> set = new HashSet<String>();
+                        set.add(p);
+                        map.put(child, set);
+                    } else {
+                        map.get(child).add(p);
+                    }
+                    if(child.equals(endWord)) {
+                        List<String> path = new ArrayList<String>();
+                        path.add(0, endWord);
+                        path.add(0, p);
+                        getPath(p, map, path, res);   
+                    }
+                }
 
-        			}
-        		}
-        	}
-        	wordList.removeAll(overall);
-        	if(!res.isEmpty()) break;
-        	neighbours = overall;
+            }
+            if(!res.isEmpty()) {
+                return res;
+            }
+            wordList.removeAll(currentChildren);
+            parents = currentChildren;
         }
-        
         return res;
     }
     
-    private Set<String> getNext(String str, Set<String> set) {
-    	Set<String> res = new HashSet<String>();
-    	char[] chars = str.toCharArray();
-    	for(int j = 0 ; j < chars.length; j++) {
-	    		char c = chars[j];
-    		for(char i = 'a' ; i <= 'z'; i++) {
-	    		if(c == i) continue;
-	    		chars[j] = i;
-	    		String newStr = new String(chars);
-	    		if(set.contains(newStr)) {
-	    			res.add(newStr);
-	    		}
-	    	}
-    		chars[j] = c;
-    	}
-    	return res;
+    private Set<String> getNb(String parent, Set<String> dict) {
+        Set<String> res = new HashSet<String>();
+        char[] arr = parent.toCharArray();
+        for(int i = 0 ; i < parent.length(); i++) {
+            char temp = arr[i];
+            for(char c = 'a' ; c <= 'z'; c++) {
+                if(parent.charAt(i) == c) continue;
+                arr[i] = c;
+                String str = new String(arr);
+                if(dict.contains(str)) res.add(str);
+            }
+            arr[i] = temp;
+        }
+        return res;
     }
     
-    // getr result
-    private void getList(String str, Map<String, List<String>> map, List<List<String>> res, List<String> cur) {
-    	if(!map.containsKey(str)) {
-    		res.add(new ArrayList<String>(cur));
-    	} else {
-    		List<String> list = map.get(str);
-    		for(String s : list) {
-    			cur.add(0,s);
-    			getList(s, map, res,cur);
-    			cur.remove(0);
-    		}
-    	}
+    private void getPath(String parent, Map<String, Set<String>> existing, List<String> path,
+                List<List<String>> res) {
+            if(existing.containsKey(parent)) {
+                for(String str : existing.get(parent)) {
+                    path.add(0, str);
+                    getPath(str, existing, path, res);
+                    path.remove(0);
+                }
+            } else {
+                res.add(new ArrayList<String>(path));
+            }
     }
     
-    
-    
-
     public static void main(String[] args) {
     	Set<String> wordList = new HashSet<String>();
     	wordList.add("red");

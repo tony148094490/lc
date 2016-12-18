@@ -20,4 +20,10 @@ public class HorseRobber {
         }
         return res;
     }
+    
+    public static void main(String[] args) {
+		int[] arr = {2,1,5,9};
+		HorseRobber x = new HorseRobber();
+		System.out.println(x.rob(arr));
+	}
 }

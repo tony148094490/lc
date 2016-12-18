@@ -17,6 +17,7 @@ public class SingeNumber {
         	two = two ^ (one & x); 
         	one = one ^ x; 
         	
+        	//adjust the one and two if needed
         	mask = ~(one & two);
         	
         	one = mask & one;

@@ -26,33 +26,24 @@ public class BInaryTreeInOrderTraversal {
     
     //Iteratively
     public List<Integer> inorderTraversalIteratively(TreeNode root) {
+        if(root == null) return new ArrayList<Integer>();
+        Stack<TreeNode> stack = new Stack<TreeNode>();
         List<Integer> res = new ArrayList<Integer>();
-        Stack<TreeNode> stack = new Stack<TreeNode>();        
-        if(root == null) return res;
-        
-        TreeNode cur = root;
-        stack.add(cur);
-        
-        while(!stack.isEmpty()) {
-        	while(cur != null) {
-        		cur = cur.left;
-        		
-        		if(cur != null)
-        		stack.add(cur);
-        	}
-        	
-        	cur = stack.pop();
-        	
-        	res.add(cur.val);
-        	
-        	cur = cur.right;
-        	
-        	if(cur != null) 
-        	stack.add(cur);
-        	
-        	
+        while(root != null) {
+            stack.push(root);
+            root = root.left;
         }
-        
+        while(!stack.isEmpty()) {
+            TreeNode cur = stack.pop();
+            res.add(cur.val);
+            if(cur.right != null) {
+                cur = cur.right;
+                while(cur != null) {
+                    stack.push(cur);
+                    cur = cur.left;
+                }
+            }
+        }
         return res;
     }
     

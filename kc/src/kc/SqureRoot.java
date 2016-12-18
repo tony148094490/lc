@@ -4,24 +4,23 @@ public class SqureRoot {
 	
 	private static final double t = 0.000001;
     public int mySqrt(int x) {
-    	if(x == 0 || x == 1) return x;
-    	
-    	int l = 1;
-    	int r = x;
-    	int ans = 0;
-    	
-    	while(l <= r){
-    		int m = (l + r) / 2;
-    		if(m * m == x) return m;
-    		if(m * m > x) {
-    			r = m - 1;
-    		} else {
-    			l = m + 1;
-    			ans = m;
-    		}
+        if(x == 0) return 0;
+        if(x == 1) return x;
+        int l = 1;
+        int r = x;
+        int ans = 0;
+        while(l <= r) {
+            int m = l + (r-l)/2;
+            if(m * m == x) return m;
+            if(m > x / m) {
+                r = m - 1;
+            } else {
+                l = m + 1;
+                ans = m;
 
-    	}
-    	return ans;
+            }
+        }
+        return ans;
     }
     
     

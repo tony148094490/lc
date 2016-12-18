@@ -20,17 +20,15 @@ public class BSTIterator {
 
     /** @return the next smallest number */
     public int next() {
-        TreeNode node = stack.pop();
-        int res = node.val;
-        if (node.right != null) {
-        	node = node.right;
-        	while(node != null) {
-        		stack.push(node);
-        		node = node.left;
-        	}
+        TreeNode res = stack.pop();
+        TreeNode right = res.right;
+        while(right != null) {
+            stack.push(right);
+            right = right.left;
         }
-        return res;
+        return res.val;
     }
+    
     public static void main(String[] args) {
 		TreeNode a = new TreeNode(1);
 		TreeNode b = new TreeNode(2);

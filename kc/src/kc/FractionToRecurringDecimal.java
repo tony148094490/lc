@@ -6,49 +6,41 @@ import java.util.Map;
 public class FractionToRecurringDecimal {
 	
     public String fractionToDecimal(int numerator, int denominator) {
-    	long n = numerator;
-    	long d = denominator;
-    	String minus = "";
-    	if( (n < 0 && d > 0) || (n > 0 && d < 0)) {
-    		minus = "-";
-    	}
-    	n = Math.abs(n);
-    	d = Math.abs(d);
-    	
-    	String preDeci = String.valueOf(n/d);
-    	
-        StringBuilder sb = new StringBuilder();
+        String minus = "";
+        if((numerator > 0 && denominator < 0) || (numerator < 0 && denominator > 0)) minus = "-";
+        StringBuffer sb = new StringBuffer();
         sb.append(minus);
-        sb.append(preDeci);
-        
-        long remainder = n % d;
-        if(remainder == 0) return sb.toString();
-        
+        long num = Math.abs((long) numerator);
+        long den = Math.abs((long) denominator);
+        sb.append(num/den);
+        if(num % den == 0) return sb.toString();
+        long remainder = num % den;
         sb.append(".");
         Map<Long, Integer> remainderToPosition = new HashMap<Long, Integer>();
+        // repetition starts after dot. This map denotes the beginning of the repetition.
         remainderToPosition.put(remainder, sb.length());
-        
         while(remainder != 0) {
-        	n = remainder * 10;
-        	sb.append(n/d); System.out.println(d);
-        	remainder = n % d;
-        	if(remainderToPosition.containsKey(remainder)) {
-        		sb.insert(remainderToPosition.get(remainder), "(");
-        		sb.append(")");
-        		break;
-        	} else {
-        		remainderToPosition.put(remainder, sb.length());
-        	}
+            num = remainder * 10;
+            sb.append(num/den);
+            remainder = num % den;
+            if(remainderToPosition.containsKey(remainder)) {
+                sb.insert(remainderToPosition.get(remainder), "(");
+                sb.append(")");
+                return sb.toString();
+            } else {
+                remainderToPosition.put(remainder, sb.length());
+            }
         }
-
+        
         return sb.toString();
     }
     
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		FractionToRecurringDecimal x = new FractionToRecurringDecimal();
-		
-		System.out.println(x.fractionToDecimal(-1,-2147483648));
+        char c = 'A' + 6;
+
+		System.out.println(c);
 		
 	}
 

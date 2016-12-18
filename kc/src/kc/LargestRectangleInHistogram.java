@@ -4,39 +4,35 @@ import java.util.Stack;
 
 public class LargestRectangleInHistogram {
     public int largestRectangleArea(int[] heights) {
-    	if(heights.length == 0) return 0;
-    	if(heights.length == 1) return heights[0];
-
-    	Stack<Integer> stack = new Stack<Integer>();
-    	int max = 0;
-    	for(int i = 0 ; i < heights.length; i++) {
-    		if(stack.isEmpty() || heights[stack.peek()] <= heights[i]) {
-    			stack.push(i);
-    		} else {
-    			int top = stack.pop();
-    			while(heights[top] > heights[i]) {
-    				//calculate the max for that particular bar
-    				int right = i;
-    				int left = stack.isEmpty() == true ? -1 : stack.peek();
-    				max = Math.max(max, (right - left - 1) * heights[top]);
-    				if(stack.isEmpty()) {
-    					break;
-    				}else {
-    					top = stack.pop();
-    				}
-    			}
-    			if(heights[top] <= heights[i]) stack.push(top);
-    			stack.push(i);
-    		}
-    	}
-    	
-    	while(!stack.isEmpty()) {
-    		int curBar = stack.pop();
-    		int left = stack.isEmpty() == true ? -1 : stack.peek();
-    		max = Math.max(max, heights[curBar] * (heights.length -1 - left));
-    	}
-    	
-    	return max;
+        if(heights.length <= 0) return 0;
+        int max = 0;
+        Stack<Integer> stack = new Stack<Integer>();
+        for(int i = 0 ; i < heights.length; i++) {
+            if(stack.isEmpty() || heights[stack.peek()] <= heights[i]) {
+                stack.push(i);
+            } else {
+                int cur = stack.pop();
+                int rightEdge = i;
+                while(heights[cur] > heights[i]) {
+                    int left = stack.isEmpty() == true ? 0 : (stack.peek() + 1);
+                    max = Math.max(max, heights[cur] * (rightEdge - left));
+                    if(stack.isEmpty()) {
+                        break;
+                    } else {
+                        cur = stack.pop();
+                    }
+                }
+                if(heights[cur] <= heights[i]) stack.push(cur);
+                stack.push(i);
+            }
+        }
+        
+        while(!stack.isEmpty()) {
+            int cur = stack.pop();
+            int left = stack.isEmpty() == true ? 0 : (stack.peek() + 1);
+            max = Math.max(max, heights[cur] * (heights.length - left));
+        }
+        return max;
     }
     
     public static void main(String[] args) {

@@ -2,7 +2,7 @@ package kc;
 
 public class NumberOfOneBits {
     public int hammingWeight(int n) {
-        int a = 1;
+        int a = 0;
         int res = 0;
         
         while(a < 32 ) {
@@ -11,7 +11,6 @@ public class NumberOfOneBits {
             n = n >> 1;
         }
         
-        if(n != 0) res++;
         return res;
     }
     

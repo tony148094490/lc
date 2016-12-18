@@ -9,30 +9,36 @@ import java.util.Set;
 
 public class WordBreakII {
     public List<String> wordBreak(String s, Set<String> wordDict) {
-        return helper(s,wordDict, new HashMap<String, List<String>>());
+        List<String> res = helper(s, wordDict, new HashMap<String, List<String>>());
+        return res != null ? res : new ArrayList<String>();
     }
     
-    private List<String> helper(String s, Set<String> dict, Map<String, List<String>> map) {
-    	if(map.containsKey(s)) return map.get(s);
-    	
-    	List<String> newRes = new ArrayList<String>();
-    	if(s.length() == 0) {
-    		// tricky here, need to add an empty string for distinguishing base case and negative case
-    		newRes.add("");
-    		return newRes;
-    	}
-    	
-    	for(String word : dict) {
-    		if(s.startsWith(word)) {
-    			List<String> list = helper(s.substring(word.length()), dict, map);
-    			for(String str : list) {
-    				newRes.add(word + (str == "" ? "": " ") + str);
-    			}
-    		}
-    	}
-    	map.put(s, newRes);
-    	return newRes;
-    }   
+    private List<String> helper(String s, Set<String> dict, Map<String, List<String>> dp) {
+        if(dp.containsKey(s)) return dp.get(s);
+        if(s.length() == 0) {
+            List<String> res = new ArrayList<String>();
+            return res;
+        }
+
+        List<String> res = null;
+        for(String str : dict) {
+            if(s.startsWith(str)) {
+                List<String> next = helper(s.substring(str.length()), dict, dp);
+                if(next == null) continue;
+                if(res == null)
+                res = new ArrayList<String>();
+                if(next.isEmpty()) {
+                    res.add(str);
+                } else {
+                    for(String ss : next) {
+                        res.add(str + (ss.length() == 0 ? "" : " ") + ss);
+                    }
+                }
+            }
+        }
+        dp.put(s, res);
+        return res;
+    }
     
     
     public static void main(String[] args) {

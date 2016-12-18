@@ -4,85 +4,79 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LRUCache {
-    DLNode head;
-    DLNode tail;
-    
-    Map<Integer, DLNode> cache;
+    Node head;
+    Node tail;
     int cap;
+    Map<Integer, Node> cache;
     
     public LRUCache(int capacity) {
-        head = new DLNode(-1, -1);
-        tail = new DLNode(-1, -2);
-        head.next = tail;
-        tail.pre = head;
-        cache = new HashMap<Integer, DLNode>();
         cap = capacity;
+        head = new Node(-1,-1);
+        tail = new Node(-1,-1);
+        head.next = tail;
+        tail.prev = head;
+        cache = new HashMap<Integer, Node>();
     }
     
     public int get(int key) {
-        DLNode node = cache.get(key);
+        Node node = cache.get(key);
         if(node == null) return -1;
-        
-        moveToHead(node, head);
-        return node.value;
+        moveToHead(head, node);
+        return node.val;
     }
     
     public void set(int key, int value) {
-        DLNode node = cache.get(key);
-        if(node == null) {
-    		node = new DLNode(key, value);
-        	if(cache.size() == cap) {
-        		DLNode tailToRemove = removeTail(tail);
-        		addNode(node, head);
-        		cache.remove(tailToRemove.key);
-        		cache.put(key, node);
-        	} else {
-        		addNode(node, head);
-        		cache.put(key, node);
-        	}
+        if(cache.containsKey(key)) {
+            Node n = cache.get(key);
+            moveToHead(head, n);
+            n.val = value;
         } else {
-        	node.value = value;
-        	moveToHead(node, head);
+            if(cache.size() == cap) {
+                Node tailPrev = tail.prev;
+                cache.remove(tailPrev.key);
+                removeNode(tailPrev);
+                Node newNode = new Node(key, value);
+                cache.put(key, newNode);
+                addToHead(newNode);
+            } else {
+                Node newNode = new Node(key, value);
+                cache.put(key,newNode);
+                addToHead(newNode);
+            }
         }
     }
     
-	public void addNode(DLNode n, DLNode head) {
-		DLNode prevHead = head.next;
-		prevHead.pre = n;
-		n.pre = head;
-		head.next = n;
-		n.next = prevHead;
-	}
-	
-	public void removeNode(DLNode n) {
-		n.pre.next = n.next;
-		n.next.pre = n.pre;
-	}
-	
-	public DLNode removeTail(DLNode tail) {
-		DLNode pre = tail.pre;
-		pre.pre.next = tail;
-		tail.pre = pre.pre;
-		return pre;
-	}
-	
-	public void moveToHead(DLNode n, DLNode head) {
-		removeNode(n);
-		addNode(n, head);
-	}
-    
-    private class DLNode {
-    	int key;
-    	int value;
-    	DLNode pre = null;
-    	DLNode next = null;
-    	
-    	public DLNode(int k, int v) {
-    		key = k;
-    		value = v;
-    	}
+    private void moveToHead(Node head, Node cur) {
+        cur.prev.next = cur.next;
+        cur.next.prev = cur.prev;
+        cur.next = head.next;
+        head.next.prev = cur;
+        head.next = cur;
+        cur.prev = head;
     }
     
+    private void removeNode(Node n) {
+        n.prev.next = n.next;
+        n.next.prev = n.prev;
+    }
+    
+    private void addToHead(Node node) {
+        node.next = head.next;
+        head.next.prev = node;
+        head.next = node;
+        node.prev = head;
+    }
+    
+    public class Node {
+        Node prev;
+        Node next;
+        int val;
+        int key;
+        public Node(int k,int v) {
+            val = v;
+            key = k;
+        }
+    }
     public static void main(String[] args) {
     	LRUCache x = new LRUCache(1);
     	x.set(2, 1);

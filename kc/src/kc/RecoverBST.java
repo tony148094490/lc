@@ -43,6 +43,7 @@ public class RecoverBST {
         	
         }
         
+        // last two nodes swapped 
         if(second == null) {
         	second = prev;
         }

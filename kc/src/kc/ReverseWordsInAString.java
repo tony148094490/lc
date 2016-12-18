@@ -30,7 +30,7 @@ public class ReverseWordsInAString {
     			i = j;
     		}
     	}
-    	if(sb.length() < 2) return sb.toString();
+    	if(sb.length() == 0) return sb.toString();
     	return sb.deleteCharAt(sb.length()-1).toString();
     }
     

@@ -2,50 +2,17 @@ package kc;
 
 public class MaximalSqure {
     public int maximalSquare(char[][] matrix) {
-    	if(matrix.length == 0 || matrix[0].length == 0) return 0;
-    	
-int max = 0;
-
-for(int i = 0 ; i < matrix.length; i++) {
-	for(int j = 0 ;j < matrix[0].length; j++) {
-		if(matrix[i][j] == '0') continue;
-		
-		int layer = 1;
-		boolean isVertical = true;
-		boolean isHorizontal = true;
-		while(isVertical && isHorizontal && (i+layer<matrix.length) && (j+layer<matrix[0].length)) { 
-			isVertical = false;
-			isHorizontal = false;
-			//vertical
-			for(int k = i; k <= i + layer - 1; k++) {	
-				if(matrix[k][j+layer] == '0') {
-					isVertical = false;
-					break;
-				} else {
-					isVertical = true;
-				}
-			}
-			if(isVertical == false) break;	
-			//horizontal	
-			for(int k = j; k <= j + layer; k++) {
-				if(matrix[i+layer][k] == '0') {
-					isHorizontal = false;
-					break;
-				} else {
-					isHorizontal = true;
-				}
-			}
-			
-			if(isHorizontal){
-				layer++;
-			}
-		}
-		
-		max = Math.max(max, layer * layer);
-		
-	}
-}
-return max;
+        if(matrix.length == 0 || matrix[0].length == 0) return 0;
+        int[][] dp = new int[matrix.length+1][matrix[0].length+1];
+        int res = 0;
+        for(int i = 0 ; i < matrix.length;i++) {
+            for(int j = 0 ; j < matrix[0].length; j++) {
+                if(matrix[i][j] == '0') continue;
+                dp[i+1][j+1] = Math.min(dp[i][j], Math.min(dp[i+1][j], dp[i][j+1])) + 1;
+                res = Math.max(res, dp[i+1][j+1]);
+            }
+        }
+        return res * res;
     }
     
     public static void main(String[] args) {

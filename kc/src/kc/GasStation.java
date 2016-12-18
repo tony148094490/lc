@@ -23,9 +23,10 @@ public class GasStation {
     public int reachTo(int[] abs, int start) {
     	int counter = 0;
     	int runningSum = abs[start];
+    	int end = start;
     	while (counter <= abs.length && runningSum >= 0) {
     		counter++;
-    		if(counter == abs.length) return (start+1) % abs.length;
+    		if(counter == abs.length) return end;
     		start = (start + 1) % (abs.length);
     		runningSum += abs[start];
     	} 

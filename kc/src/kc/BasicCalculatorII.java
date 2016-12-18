@@ -20,17 +20,17 @@ public class BasicCalculatorII {
                 }
                 i--;
                 if(!operators.isEmpty() && (operators.peek() == '*' || operators.peek() == '/')) {
-                int second = Integer.parseInt(sb.toString());
-                int first = operands.pop();
-                char operator = operators.pop();
-                if(operator == '*') {
-                    operands.push(first * second);
+	                int second = Integer.parseInt(sb.toString());
+	                int first = operands.pop();
+	                char operator = operators.pop();
+	                if(operator == '*') {
+	                    operands.push(first * second);
+	                } else {
+	                    operands.push(first / second);
+	                }
                 } else {
-                    operands.push(first / second);
+                	operands.push(Integer.parseInt(sb.toString()));
                 }
-            } else {
-                operands.push(Integer.parseInt(sb.toString()));
-            }
             }
         }
         
@@ -55,6 +55,7 @@ public class BasicCalculatorII {
     
     public static void main(String[] args) {
     	BasicCalculatorII x = new BasicCalculatorII();
-    	System.out.println(x.calculate("42" ));
+    	System.out.println(x.calculate("42 + 9" ));
+    	System.out.println("   ".split(" ").length);
 	}
 }

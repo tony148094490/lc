@@ -8,11 +8,16 @@ public class MajorityElementII {
         List<Integer> res = new ArrayList<Integer>();
         if(nums.length == 0) return res;
 
+        
+        // this is to find the count of two elements together must be 
+        // greater than 50% (1/3 + 1/3) (reduce to Majority Element 1)
         int counterOne = 0;
         int counterTwo = 0;
         int resOne = 0;
         int resTwo = 0;
         for(int i = 0; i < nums.length; i++) {
+        	
+        	// the below order is to make sure one != two, so check for value first before count
         	if(nums[i] == resOne) {
         		counterOne++;
         	} else if(nums[i] == resTwo) {
