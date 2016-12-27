@@ -41,6 +41,26 @@ public class HIndex {
         }
     }
     
+    // method 2
+    public int hIndex3(int[] citations) {
+        return helper(citations, 0, citations.length);
+    }
+    
+    private int helper(int[] arr, int low, int high) {
+        if(low == high || arr[low] >= (arr.length - low)) return (arr.length - low);
+        int mid = (high + low)/2;
+        if(arr[mid] >= arr.length - mid) {
+            if(arr[mid - 1] >= arr.length - (mid-1)) {
+                return helper(arr, low, mid-1);
+            } else {
+                return (arr.length - mid);
+            }
+        } else {
+            return helper(arr, mid + 1, high);
+        }
+    }
+    
+    
     public static void main(String[] args) {
     	HIndex x = new HIndex();
     	int[] arr = {1,2,3,4,5,6,7,8,9,10,11,11,11,11,11,11,11,11,13};

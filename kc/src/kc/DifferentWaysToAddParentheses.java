@@ -34,7 +34,7 @@ public class DifferentWaysToAddParentheses {
     	
     }
     public static void main(String[] args) {
-		String a = "2*3-4*5";
+		String a = "1-5-4*3";
 		DifferentWaysToAddParentheses x = new DifferentWaysToAddParentheses();
 		System.out.println(x.diffWaysToCompute(a));
 	}

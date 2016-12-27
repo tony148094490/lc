@@ -2,7 +2,10 @@ package kc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class StrobogrammaticNumberII {
 	
@@ -45,6 +48,45 @@ public class StrobogrammaticNumberII {
     	}
     	return res;
     }
+    
+    
+    static Map<String, String> map = new HashMap<String, String>();
+    static {map.put("1","1");
+    map.put("0","0");
+    map.put("6","9");
+    map.put("9","6");
+    map.put("8","8");
+    }
+    public List<String> findStrobogrammatic2(int n) {
+        return helper(n,n);
+    }
+    
+    private List<String> helper(int n, int m) {
+        if(n == 0) {
+            List<String> res = new ArrayList<String>();
+            res.add("");
+            return res;
+        }
+        
+        if(n == 1) {
+            List<String> res = new ArrayList<String>();
+            res.add("1");
+            res.add("0");
+            res.add("8");
+            return res;
+        }
+        
+        List<String> last = helper(n-2,m);
+        List<String> res = new ArrayList<String>();
+        for(String str : last) {
+            for(Entry<String, String> entry : map.entrySet()) {
+                if((entry.getKey().equals("0") && m != n) || !entry.getKey().equals("0")) {
+                    res.add(entry.getKey() + str + entry.getValue());
+                }
+            }            
+        }
+        return res;
+    }   
     
     public static void main(String[] args) {
     	StrobogrammaticNumberII x = new StrobogrammaticNumberII();

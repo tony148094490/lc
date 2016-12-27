@@ -3,20 +3,19 @@ package kc;
 public class LinkedListCycleII {
     public ListNode detectCycle(ListNode head) {
         if(head == null || head.next == null) return null;
-        ListNode first = head;
-        ListNode second = head;
-        
-        while(first != null && first.next != null && second != null && second.next != null && second.next.next != null) {
-        	first = first.next;
-        	second = second.next.next;
-        	if(first == second) {
-        		first = head;
-        		while(first != null && first.next != null && second != null && second.next != null) {
-        			if(first == second) return first;
-        			first = first.next;
-        			second = second.next;
-        		}
-        	}
+        ListNode slow = head;
+        ListNode fast = head;
+        while(fast!=null&&fast.next!=null&&fast.next.next!=null){
+            slow = slow.next;
+            fast = fast.next.next;
+            if(slow == fast) {
+                fast = head;
+                while(slow!=fast) {
+                    fast = fast.next;
+                    slow = slow.next;
+                }
+                return slow;
+            }
         }
         return null;
     }

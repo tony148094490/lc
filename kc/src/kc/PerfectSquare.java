@@ -2,19 +2,15 @@ package kc;
 
 public class PerfectSquare {
     public int numSquares(int n) {
-    	if(n <= 0) return n;
-    	
-    	int[] arr = new int[n+1];
-    	for(int i = 0 ; i <= n ;i++) {
-    		arr[i]  = i;
-    	}
-    	
-    	for(int i = 1; i <= n ;i++ ) {
-    		for(int j = 1 ; j * j <= i ; j++ ) {
-    			arr[i] = Math.min(arr[i - j * j] + 1 , arr[i]);
-    		}
-    	}
-    	return arr[n];
+        int[] dp = new int[n+1];
+        dp[1] = 1;
+        for(int i = 2; i <= n ;i++) {
+            dp[i] = i;
+            for(int j = 1; j * j <= i; j++) {
+                dp[i] = Math.min(dp[i - j*j] + 1, dp[i]);
+            }
+        }
+        return dp[n];
     }
     public static void main(String[] args) {
     	PerfectSquare x = new PerfectSquare();

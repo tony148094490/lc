@@ -1,93 +1,94 @@
 package kc;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Stack;
 
 public class BasicCalculator {
     public int calculate(String s) {
-        Stack<String> operands = new Stack<String>();
         Stack<String> operators = new Stack<String>();
-        Set<String> operatorSet = new HashSet<String>();
-        operatorSet.add("+");
-        operatorSet.add("-");
-        
-    	for(int i = 0 ; i < s.length(); i++) {
-        	if(s.charAt(i) == ' ') continue;
-        	StringBuilder sb = new StringBuilder();
-        	if(s.charAt(i) == '+' || s.charAt(i) == '-' || s.charAt(i) == '(' || s.charAt(i) ==')') {
-        		sb.append(s.charAt(i));
-        	} else {
-        		sb.append(s.charAt(i));
-        		i++;
-        		while(i < s.length() && s.charAt(i) >= '0' && s.charAt(i) <= '9') {
-        			sb.append(s.charAt(i));
-        			i++;
-        		}
-        		i--;
-        	}
-        	
-        	if(operatorSet.contains(sb.toString())) {
-        		operators.push(sb.toString());
-        	} else if(sb.toString().equals(")")){
-        		String temp = operands.pop();
-        		if(operands.peek().equals("(")) {
-        			operands.pop();
-        			operands.push(temp);
-        			continue;
-        		}
-        		operands.push(temp);
-        		Stack<String> tempOperands = new Stack<String>();
-        		Stack<String> tempOperators = new Stack<String>();
-        		while(!operands.peek().equals("(")) {
-        			tempOperands.push(operands.pop());
-        			if(operands.peek().equals("(")) break;
-        			tempOperators.push(operators.pop());
-        		}
-        		operands.pop();
-        		while(!tempOperators.isEmpty()) {
-        			Integer a = Integer.parseInt(tempOperands.pop());
-        			Integer b = Integer.parseInt(tempOperands.pop());
-        			String opr = tempOperators.pop();
-        			if(opr.equals("+")) {
-        				Integer res = a + b;
-        				tempOperands.push(res.toString());
-        			} else {
-        				Integer res = a - b;
-        				tempOperands.push(res.toString());
-        			}
-        		}
-        		operands.push(tempOperands.pop());
-        	} else {
-        		operands.push(sb.toString());
-        	}        	
+        Stack<Integer> operands = new Stack<Integer>();
+        for(int i = 0 ; i < s.length(); i++) {
+            if(s.charAt(i) == ' ') continue;
+            if(s.charAt(i) == '+') {
+                operators.push("+");
+            } else if (s.charAt(i) == '-') {
+                operators.push("-");
+//            } else if (s.charAt(i) == '*') {
+//                i++;
+//                while(i < s.length() && s.charAt(i) == ' ') {
+//                    i++;
+//                }
+//                String n = getNext(s, i);
+//                int next = Integer.parseInt(n);
+//                operands.push(operands.pop() * next);
+//                i += (n.length() - 1);
+//            } else if (s.charAt(i) == '/') {
+//                i++;
+//                while(i < s.length() && s.charAt(i) == ' ') {
+//                    i++;
+//                }
+//                String n = getNext(s, i);
+//                int next = Integer.parseInt(n);
+//                operands.push(operands.pop() / next);
+//                i += (n.length() - 1);
+            } else if (s.charAt(i) == '(') {
+                operators.push("(");
+            } else if (s.charAt(i) == ')') {
+                if(operators.peek().equals("(")) {
+                    operators.pop();
+                    continue;
+                }
+                Stack<Integer> tempOperands = new Stack<Integer>();
+                tempOperands.push(operands.pop());
+                Stack<String> tempOperators = new Stack<String>();
+                while(!operators.peek().equals("(")) {
+                    tempOperands.push(operands.pop());
+                    tempOperators.push(operators.pop());
+                }
+                while(!tempOperators.isEmpty()) {
+                    int first = tempOperands.pop();
+                    int second = tempOperands.pop();
+                    if(tempOperators.pop().equals("+")) {
+                        tempOperands.push(first + second);
+                    } else {
+                        tempOperands.push(first - second);
+                    }
+                }
+                operands.push(tempOperands.pop());
+                operators.pop();
+            } else {
+                String nr = getNext(s,i);
+                operands.push(Integer.parseInt(nr));
+                i += (nr.length() - 1);
+            }
         }
-    	
-    	if(operators.isEmpty()) return Integer.parseInt(operands.pop());
-    	
-    	Stack<String> tempOperands = new Stack<String>();
-		Stack<String> tempOperators = new Stack<String>();
-		while(!operators.isEmpty()) {
-			tempOperators.push(operators.pop());
-			if(!operands.isEmpty() && !operands.peek().equals("("))
-			tempOperands.push(operands.pop());
-			if(!operands.isEmpty() && !operands.peek().equals("("))
-			tempOperands.push(operands.pop());
-		}
-		
-		while(!tempOperators.isEmpty()) {
-			Integer a = Integer.parseInt(tempOperands.pop());
-			Integer b = Integer.parseInt(tempOperands.pop());
-			String opr = tempOperators.pop();
-			if(opr.equals("+")) {
-				Integer res = a + b;
-				tempOperands.push(res.toString());
-			} else {
-				Integer res = a - b;
-				tempOperands.push(res.toString());
-			}
-		}
-		return Integer.parseInt(tempOperands.pop());
+        
+        if(operators.isEmpty()) return operands.pop();
+        
+        Stack<Integer> tempOperands = new Stack<Integer>();
+        tempOperands.push(operands.pop());
+        Stack<String> tempOperators = new Stack<String>();
+        while(!operators.isEmpty()) {
+            tempOperands.push(operands.pop());
+            tempOperators.push(operators.pop());
+        }
+        while(!tempOperators.isEmpty()) {
+            int first = tempOperands.pop();
+            int second = tempOperands.pop();
+            if(tempOperators.pop().equals("+")) {
+                tempOperands.push(first + second);
+            } else {
+                tempOperands.push(first - second);
+            }
+        }
+        return tempOperands.pop();
+    }
+    
+    private String getNext(String s, int i) {
+        int j = i;
+        while(j < s.length() && s.charAt(j) >= '0' && s.charAt(j) <= '9') {
+            j++;
+        }
+        return s.substring(i,j);
     }
     
     public static void main(String[] args) {

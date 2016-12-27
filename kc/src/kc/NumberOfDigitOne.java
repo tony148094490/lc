@@ -1,6 +1,7 @@
 package kc;
 
 public class NumberOfDigitOne {
+	// idea is to fix one digit and see the upper and lower counts
     public int countDigitOne(int n) {
     	int ans = 0;
     	long starting = 1;

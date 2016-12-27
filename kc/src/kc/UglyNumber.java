@@ -12,46 +12,33 @@ public class UglyNumber {
     }
     
     public int nthUglyNumber(int n) {
-        if(n < 6) return n;
+        if(n <= 6) return n;
         int two = 1;
         int three = 1;
         int five = 1;
-
-        int counter = 5;
-        int[] uglies = new int[n + 1];
         
-        for(int i = 1; i < 6; i++){
-        	uglies[i] = i;
+        int[] uglies = new int[n+1];
+        for(int i = 1; i <= 6; i++) {
+            uglies[i] = i;
         }
-        int twoCur = 2 * uglies[two];
-        int threeCur = 3 * uglies[three];
-        int fiveCur = 5 * uglies[five];
-        
-        while (counter < n) {
-        	while(twoCur <= uglies[counter]) {
-        		two++;
-        		twoCur = uglies[two] * 2;
-        	}  	
-        	while(threeCur <= uglies[counter]) {
-        		three++;
-        		threeCur = uglies[three] * 3;
-        	}
-        	while(fiveCur <= uglies[counter]) {
-        		five++;
-        		fiveCur = uglies[five] * 5;
-        	}
-
-        	counter++;
-        	if(twoCur <= threeCur && twoCur <= fiveCur) {
-        		uglies[counter] = twoCur;
-        	} else if(threeCur <= twoCur && threeCur <= fiveCur) {
-        		uglies[counter] = threeCur;
-        	} else {
-        		uglies[counter] = fiveCur;
-        	}
+        int twoCur = 1;
+        int threeCur = 1;
+        int fiveCur = 1;
+        int counter = 6;
+        while(counter < n) {
+            while(twoCur <= uglies[counter]) {two++; twoCur = uglies[two] * 2;}
+            while(threeCur <= uglies[counter]) {three++; threeCur = uglies[three] * 3;}
+            while(fiveCur <= uglies[counter]) {five++; fiveCur = uglies[five] * 5;}
+            counter++;
+            if(twoCur <= threeCur && twoCur <= fiveCur) {
+                uglies[counter] = twoCur;
+            } else if(threeCur <= fiveCur && threeCur <= twoCur) {
+                uglies[counter] = threeCur;
+            } else {
+                uglies[counter] = fiveCur;
+            }
         }
-        
-        return uglies[n];
+        return uglies[n];jn  u  
     }
     
     public static void main(String[] args) {

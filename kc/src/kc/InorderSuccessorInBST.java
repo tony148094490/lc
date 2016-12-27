@@ -4,38 +4,30 @@ import java.util.Stack;
 
 public class InorderSuccessorInBST {
     public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        if(root == null || p == null) return null;
         Stack<TreeNode> stack = new Stack<TreeNode>();
-        while(true) {
+        while(root != p) {
             stack.push(root);
-            if(root == p) break;
-            if(root.val >= p.val) {
-                root = root.left;
-            } else {
+            if(root.val <= p.val) {
                 root = root.right;
+            } else {
+                root = root.left;
             }
         }
-        
-        TreeNode cur = stack.pop();
-        if(cur.right != null || stack.isEmpty()) {
-            return getSmallest(cur.right);
+        if(root.right != null) {
+            return getSmallest(root.right);
         }
-        
         while(!stack.isEmpty()) {
             TreeNode parent = stack.pop();
-            if(parent.right != cur) {
-                return parent;
-            } else {
-                cur = parent;
-            }
+            if(parent.left == root) return parent;
+            root = parent;
         }
-        
         return null;
     }
     
-    private TreeNode getSmallest(TreeNode node) {
-        if(node == null) return null;
-        if(node.left == null) return node;
-        return getSmallest(node.left);
+    private TreeNode getSmallest(TreeNode root) {
+        while(root.left != null) root = root.left;
+        return root;
     }
     
     public static void main(String[] args) {
