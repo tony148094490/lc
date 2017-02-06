@@ -1,41 +1,41 @@
 package kc;
 
 /**
-Given n balloons, indexed from 0 to n-1. Each balloon is painted with a number on it represented by array nums. 
-You are asked to burst all the balloons. If the you burst balloon i you will get nums[left] * nums[i] * nums[right] coins. 
-Here left and right are adjacent indices of i. After the burst, the left and right then becomes adjacent.
+The idea is to get the balloon bursted last and apply dp.
+While doing dp, we do from the smallest range, which consists three numbers. 
+While progressing, we increase the range and then we fix the boudnary and examine each
+number inside the range and see what's the points of using dp[start][i] + dp[i][end] + start*i*end
+iterate through all the elements inside will give us the number who should burst last within that range
 
-Find the maximum coins you can collect by bursting the balloons wisely.
-
-Note:
-(1) You may imagine nums[-1] = nums[n] = 1. They are not real therefore you can not burst them.
-(2) 0 ≤ n ≤ 500, 0 ≤ nums[i] ≤ 100
-
-Example:
-
-Given [3, 1, 5, 8]
-
-Return 167 
-
-    nums = [3,1,5,8] --> [3,5,8] -->   [3,8]   -->  [8]  --> []
-   coins =  3*1*5      +  3*5*8    +  1*3*8      + 1*8*1   = 167
  */
 public class BurstBallons {
     public int maxCoins(int[] nums) {
-        int[] actualNums = new int[nums.length + 2];
-        for(int i = 0; i < nums.length; i++) {
-        	actualNums[i+1] = nums[i];
+        if(nums.length == 0) return 0;
+        if(nums.length == 1) return nums[0];
+        
+        int[] arr = new int[nums.length+2];
+        arr[0] = arr[nums.length+1] = 1;
+        for(int i = 1; i < arr.length-1;i++) {
+            arr[i] = nums[i-1];
         }
-        actualNums[0] = actualNums[nums.length+1] = 1;
-        int[][] dp = new int[actualNums.length][actualNums.length];
-        for(int gap = 2; gap < actualNums.length; gap++) {
-        	for(int left = 0; left + gap < actualNums.length;left++) {
-        		for(int i = left + 1; i < left + gap; i++) {
-        			dp[left][left+gap] = Math.max(dp[left][left+gap],
-        					actualNums[left] * actualNums[i] * actualNums[left+gap] + dp[left][i] + dp[i][left+gap]);
-        		}
-        	}
+        
+        int[][] coins = new int[nums.length+2][nums.length+2];
+        for(int range = 2; range < arr.length; range++) {
+            for(int start = 0, end = start + range; end < arr.length; start++) {
+                for(int index = start + 1 ; index < end; index++) {
+                    coins[start][end] = Math.max(coins[start][end],
+                        arr[start] * arr[index] * arr[end] + coins[start][index] + 
+                        coins[index][end]);
+                }
+            }
         }
-        return dp[0][actualNums.length-1];
+        return coins[0][arr.length-1];
+    }
+        
+    public static void main(String[] args) {
+    	BurstBallons x = new BurstBallons();
+    	int[] arr = {3,1,5,8};
+    	System.out.println(x.maxCoins(arr));
+    	
     }
 }

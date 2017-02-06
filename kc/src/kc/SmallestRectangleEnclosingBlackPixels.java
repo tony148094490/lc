@@ -19,63 +19,76 @@ Return 6.
 public class SmallestRectangleEnclosingBlackPixels {
     public int minArea(char[][] image, int x, int y) {
         int up = getLocation(image, 0, x, true, true);
-        int down = getLocation(image, x, image.length -1, true, false);
-        int left = getLocation(image,0, y, false, true);
-        int right = getLocation(image, y, image[x].length-1, false, false);
+        int down = getLocation(image, x, image.length-1, true, false);
+        int left = getLocation(image, 0, y, false, true);
+        int right = getLocation(image, y, image[0].length-1, false, false);
         return (down - up + 1) * (right - left + 1);
     }
     
-    private int getLocation(char[][] image, int start, int end, boolean isRow, boolean getSmallerBoundary) {
-    	if(start == end) return start;
-    	int m = (start + end) / 2;
-    	if(isRow) {
-    		if(getSmallerBoundary) {
-    			for(int i = 0 ; i < image[m].length; i++) {
-    				if(image[m][i] == '1') {
-    					return getLocation(image, start, m, isRow, getSmallerBoundary);
-    				}
-    			}
-				return getLocation(image, m+1, end, isRow, getSmallerBoundary);
-    		} else {
-    			for(int i = 0 ; i < image[m].length; i++) {
-    				if(image[m][i] == '1') {
-    					if(start == end - 1) {
-    						//edge case when searching for the boundary.
-    						for(int j = 0 ; j < image[m].length;j++) {
-    							if(image[end][j] == '1') return end;
-    						}
-    						// start == m;
-    						return start;
-    					}
-    					return getLocation(image, m, end, isRow, getSmallerBoundary);
-    				}
-    			}
-				return getLocation(image, start, m-1, isRow, getSmallerBoundary);
-    		}
-    	} else {
-    		if(getSmallerBoundary) {
-    			for(int i = 0 ; i < image.length; i++) {
-    				if(image[i][m] == '1') {
-    					return getLocation(image, start, m, isRow, getSmallerBoundary);
-    				}
-    			}
-				return getLocation(image, m+1, end, isRow, getSmallerBoundary);
-    		} else {
-    			for(int i = 0 ; i < image.length; i++) {
-    				if(image[i][m] == '1') {
-    					if(start == end - 1) {
-    						//edge case when searching for the boundary.
-    						for(int j = 0 ; j < image.length;j++) {
-    							if(image[j][end] == '1') return end;
-    						}
-    						return start;
-    					}
-    					return getLocation(image, m, end, isRow, getSmallerBoundary);
-    				}
-    			}
-				return getLocation(image, start, m-1,isRow, getSmallerBoundary);
-    		}
-    	}
+    
+    private int getLocation(char[][] image, int low, int high, boolean isRow, boolean getLowerBound) {
+        if(low == high) return low;
+        if(low + 1 == high) {
+            if(isRow) {
+                if(getLowerBound) {
+                    if(contains(image,low,0,isRow)) return low;
+                    return high;
+                }
+                if(contains(image, high, 0, isRow)) return high;
+                return low;
+            } else {
+                if(getLowerBound) {
+                    if(contains(image,0, low, isRow)) return low;
+                    return high;
+                }
+                if(contains(image, 0, high, isRow)) return high;
+                return low;
+            }
+        }
+        int mid = (low + high) / 2;
+        if(isRow) {
+            if(getLowerBound) {
+                boolean contain = contains(image, mid, 0, isRow);
+                if(contain) {
+                    return getLocation(image, low, mid, isRow, getLowerBound);
+                } else {
+                    return getLocation(image, mid + 1, high, isRow, getLowerBound);
+                }
+            } else {
+                boolean contain = contains(image, mid, 0, isRow);
+                if(contain) {
+                    return getLocation(image, mid, high, isRow, getLowerBound);
+                } else {
+                    return getLocation(image, low, mid - 1, isRow, getLowerBound);
+                }
+            }
+        } else {
+            if(getLowerBound) {
+                if(contains(image, 0, mid, isRow)) {
+                    return getLocation(image, low, mid, isRow, getLowerBound);
+                }
+                return getLocation(image, mid+1,high, isRow, getLowerBound);
+            } else {
+                if(contains(image, 0, mid, isRow)) {
+                    return getLocation(image, mid, high, isRow, getLowerBound);
+                }
+                return getLocation(image, low, mid-1, isRow, getLowerBound);
+            }
+        }
+    }
+    
+    private boolean contains(char[][] image, int row, int col, boolean isRow) {
+        if(isRow) {
+            for(int i = 0 ; i < image[row].length; i++) {
+                if(image[row][i] == '1') return true;
+            }
+            return false;
+        } else {
+            for(int i = 0 ; i < image.length; i++) {
+                if(image[i][col] == '1') return true;
+            }
+            return false;
+        }
     }
     
     public static void main(String[] args) {

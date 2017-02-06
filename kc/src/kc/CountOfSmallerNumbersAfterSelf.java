@@ -1,5 +1,6 @@
 package kc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,40 +19,48 @@ Return the array [2, 1, 1, 0].
  */
 public class CountOfSmallerNumbersAfterSelf {
     public List<Integer> countSmaller(int[] nums) {
-       Integer[] res = new Integer[nums.length];
-       
-       BT root = null;
-       for(int i = nums.length-1; i >= 0 ; i--) {
-    	   root = insert(res,i, 0, nums[i], root);
-       }
-       return Arrays.asList(res);
+        if(nums.length == 0) return new ArrayList<Integer>();
+        Integer[] arr = new Integer[nums.length];
+        Node root = null;
+        for(int i = nums.length-1 ; i >= 0 ; i--) {
+            root = insert(arr, i, nums[i], 0, root);
+        } 
+        return Arrays.asList(arr);
     }
     
-    private BT insert(Integer[] res, int index, int curLeftSum, int target, BT curNode) {
-    	if(curNode == null) {
-    		curNode = new BT(target, 0);
-    		res[index] = curLeftSum;
-    	} else if(curNode.value == target) {
-    		curNode.dup++;
-    		res[index] = curLeftSum + curNode.leftSum;
-    	} else if(curNode.value > target) {
-    		curNode.leftSum++;
-    		curNode.left = insert(res, index, curLeftSum, target, curNode.left);
-    	} else {
-    		curNode.right = insert(res, index, curLeftSum + curNode.leftSum + curNode.dup, target, curNode.right);
-    	}
-    	return curNode;
+    private Node insert(Integer[] res, int index, int val, int leftSum, Node root) {
+        if(root == null) {
+            root = new Node(val, 0);
+            res[index] = leftSum;
+        } else if(root.val == val) {
+            root.dup++;
+            res[index] = root.leftSum + leftSum;
+        } else if(root.val > val) {
+            root.leftSum++;
+            root.left = insert(res, index, val, leftSum, root.left);
+        } else {
+            root.right = insert(res, index, val, root.leftSum + leftSum + root.dup, root.right);
+        }
+        
+        return root;
     }
     
-    private class BT {
-    	BT left;
-    	BT right;
-    	int value;
-    	int leftSum;
-    	int dup = 1;
-    	BT(int i, int leftSum) {
-    		value = i;
-    		this.leftSum = leftSum;
-    	}
+    class Node {
+        Node left;
+        Node right;
+        int val;
+        int dup;
+        int leftSum;
+        Node(int val, int leftSum) {
+            this.val = val;
+            this.leftSum = leftSum;
+            dup = 1;
+        }
+    }
+    
+    public static void main(String[] args) {
+    	CountOfSmallerNumbersAfterSelf x = new CountOfSmallerNumbersAfterSelf();
+    	int[] arr = {5,2,6,6,1};
+    	System.out.println(x.countSmaller(arr));
     }
 }

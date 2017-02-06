@@ -27,16 +27,20 @@ public class GeneralizedAbbreviation {
         construct(word, 0, "", 0, res);
         return res;
     }
-    private void construct(String word, int position, String cur, int counter, List<String> res) {
+    
+    private void construct(String word, int position, String cur, int nrOfAbbreviated, List<String> res) {
     	if(position == word.length()) {
-    		if(counter > 0) cur+=String.valueOf(counter);
+    		if(nrOfAbbreviated > 0) cur+=String.valueOf(nrOfAbbreviated);
     		res.add(cur);
     	} else {
-    		construct(word, position+1, cur, counter+1, res);
-    		if(counter == 0) {
-    			construct(word,position+1, cur+word.charAt(position), counter, res);
+    		// Keep abbreviating current char
+    		construct(word, position+1, cur, nrOfAbbreviated+1, res);
+    		
+    		// Use current char
+    		if(nrOfAbbreviated == 0) {
+    			construct(word,position+1, cur+word.charAt(position), nrOfAbbreviated, res);
     		} else {
-    			construct(word,position+1, cur+String.valueOf(counter)+word.charAt(position), 0, res);
+    			construct(word,position+1, cur+String.valueOf(nrOfAbbreviated)+word.charAt(position), 0, res);
     		}
     	}
     }

@@ -1,79 +1,74 @@
 package kc;
 
+/**
+ * The algo goes like this:
+ * get x nr of digits from left and (k - x) nr of digits from right
+ * merge them together and compare it with the local maximum
+ * then get the result
+ * when comparing, always use lexicographical order
+ */
 public class CreateMaximumNumber {
+
     public int[] maxNumber(int[] nums1, int[] nums2, int k) {
-        int m = nums1.length;
-        int n = nums2.length;
         int[] res = new int[k];
-        
-        for(int i = Math.max(0, k - n); i <= m && i <= k ; i++) {
-        	int[] localMax = merge(getMax(nums1, i), getMax(nums2, k-i), k);
-        	if(greaterOrEqualTo(localMax, 0, res, 0)) {
-        		res = localMax;
-        	}
+        for(int i = Math.max(0, k - nums2.length); i <= Math.min(k, nums1.length); i++) {
+            int[] left = getMax(nums1, i);
+            int[] right = getMax(nums2, k - i);
+            int[] merged = merge(left, right);
+            if(greaterOrEqual(merged, 0, res, 0)) {
+                res = merged;
+            }
         }
         return res;
     }
     
-    private int[] merge(int[] arr1, int[] arr2, int k) {
-    	int[] res = new int[k];
-    	int i = 0;
-    	int j = 0;
-    	int m = 0;
-    	while(m < k) {
-    		if(greaterOrEqualTo(arr1, i, arr2, j)) {
-    			res[m] = arr1[i];
-    			i++;
-    		} else {
-    			res[m] = arr2[j];
-    			j++;
-    		}
-    		m++;
-    	}
-    	
-    	return res;
+    private int[] merge(int[] A, int[] B) {
+        int[] res = new int[A.length + B.length];
+        int m = 0;
+        int n = 0;
+        for(int i = 0 ; i < res.length; i++) {
+            if(greaterOrEqual(A, m, B, n)) {
+                res[i] = A[m];
+                m++;
+            } else {
+                res[i] = B[n];
+                n++;
+            }
+        }
+        return res;
     }
     
-    private boolean greaterOrEqualTo(int[] arr1, int i, int[] arr2, int j) {
-    	while(i < arr1.length && j < arr2.length && arr1[i] == arr2[j]) {
-    		i++;
-    		j++;
-    	}
-    	if(i == arr1.length && j == arr2.length) {
-    		return true;
-    	} else if(j == arr2.length) {
-    		return true;
-    	} else if(i == arr1.length) {
-    		return false;
-    	} else if(arr1[i] >= arr2[j]) {
-    		return true;
-    	} else {
-    		return false;
-    	}
+    private boolean greaterOrEqual(int[] A, int i, int[] B, int j) {
+        while(i < A.length && j < B.length && A[i] == B[j]) {
+            i++;
+            j++;
+        }
+        if(i == A.length && j == B.length) return true;
+        if(i == A.length) return false;
+        if(j == B.length) return true;
+        if(A[i] > B[j]) return true;
+        return false;
     }
     
     private int[] getMax(int[] arr, int k) {
-    	int n = arr.length;
-    	int[] res = new int[k];
-    
-    	int last = -1;
-    	for(int i = 0; i < k ; i++) {
-    		for(int j = last + 1; j + (k - i - 1) < n; j++) {
-    			if(res[i] < arr[j]) {
-    				res[i] = arr[j];
-    				last = j;
-    			}
-    		}
-    	}
-    	
-    	return res;
+        int[] res = new int[k];
+        int lastIndex = -1;
+        for(int i = 0 ; i < res.length; i++) {
+            for(int j = lastIndex + 1; j <= arr.length - (k - i); j++) {
+                if(arr[j] > res[i]) {
+                    res[i] = arr[j];
+                    lastIndex = j;
+                }
+            }
+        }
+        return res;
     }
       
     public static void main(String[] args) {
     	CreateMaximumNumber x = new CreateMaximumNumber();
-    	int[] arr = {3, 4, 6, 5};
-    	int[] arr2 = {9, 1, 2, 5, 8, 3};
-    	for(Integer a : x.maxNumber(arr, arr2, 10)) {
+    	int[] arr = {6,7};
+    	int[] arr2 = {6,0,4};
+    	for(Integer a : x.maxNumber(arr, arr2, 5)) {
     		System.out.print(a + ",");
     	}
  

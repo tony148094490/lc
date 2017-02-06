@@ -74,6 +74,42 @@ public class NumberOfConnectedComponentsInAnUndirectedGraph {
     	}
     }
     
+    // Union Find
+    public int count2Components(int n, int[][] edges) {
+        int count = n;
+        int[] parent = new int[n];
+        for(int i = 0 ; i < n; i++) parent[i] = i;
+        
+        for(int i = 0; i < edges.length; i++) {
+            int firstParent = find(parent, edges[i][0]);
+            int secondParent = find(parent,edges[i][1]);
+            if(firstParent != secondParent) {
+                union(parent, edges[i][0], edges[i][1]);
+                count--;
+            }
+        }
+        
+        return count;
+    }
+    
+    private int find(int[] parents, int i) {
+        if(parents[i] != i) {
+            int parent = find(parents, parents[i]);
+            parents[i] = parent;
+            return parent;
+        } else {
+            return i;
+        }
+    }
+    
+    private void union(int[] parent, int i, int j) {
+        int parentI = find(parent, i);
+        int parentJ = find(parent, j);
+        if(parentI != parentJ) {
+            parent[parentI] = parentJ;
+        }
+    }
+    
     public static void main(String[] args) {
     	NumberOfConnectedComponentsInAnUndirectedGraph x = new NumberOfConnectedComponentsInAnUndirectedGraph();
     	int[][] arr = new int[4][2];

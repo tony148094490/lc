@@ -12,6 +12,8 @@ public class FlipGameII {
     			s[i] = '-';
     			s[i+1] = '-';
     			boolean opponentCanWin = canWin(s);
+    			
+    			// add these back before returning result to keep the order intact
     			s[i] = '+';
     			s[i+1] = '+';
     			

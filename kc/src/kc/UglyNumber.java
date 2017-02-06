@@ -38,7 +38,7 @@ public class UglyNumber {
                 uglies[counter] = fiveCur;
             }
         }
-        return uglies[n];jn  u  
+        return uglies[n];
     }
     
     public static void main(String[] args) {

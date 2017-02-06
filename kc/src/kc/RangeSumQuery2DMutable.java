@@ -22,32 +22,30 @@ Note:
     You may assume that row1 ≤ row2 and col1 ≤ col2.
  */
 public class RangeSumQuery2DMutable {
-	int[][] matrix;
-	int[][] rows;
-	public RangeSumQuery2DMutable(int[][] matrix) {
-	    if(matrix.length == 0 || matrix[0].length == 0) return;
-		this.matrix = matrix;
-        rows = new int[matrix.length][matrix[0].length];
-        for(int i = 0 ; i < matrix.length; i++) {
-        	for(int j = 0 ; j < matrix[0].length; j++) {
-        		for(int k = j ; k < matrix[0].length; k++) {
-        			rows[i][k] += matrix[i][j];
-        		}
-        	}
+    int[][] matrix;
+    int[][] rows;
+    public RangeSumQuery2DMutable(int[][] matrix) {
+        if(matrix.length == 0 || matrix[0].length == 0) return;
+        this.matrix = matrix;
+        rows = new int[matrix.length][matrix[0].length+1];
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0 ; j < matrix[0].length; j++) {
+                rows[i][j+1] = rows[i][j] + matrix[i][j];
+            }
         }
     }
-
+    
     public void update(int row, int col, int val) {
-        for(int i = col ; i < matrix[0].length; i++) {
-        	rows[row][i] = rows[row][i] - matrix[row][col] + val;
+        for(int i = col; i < matrix[0].length; i++) {
+            rows[row][i+1] = rows[row][i+1] - matrix[row][col] + val;
         }
         matrix[row][col] = val;
     }
-
+    
     public int sumRegion(int row1, int col1, int row2, int col2) {
         int res = 0;
         for(int i = row1; i <= row2; i++) {
-        	res += (rows[i][col2] - rows[i][col1] + matrix[i][col1]);
+            res += (rows[i][col2+1] - rows[i][col1]);
         }
         return res;
     }

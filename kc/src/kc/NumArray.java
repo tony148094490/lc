@@ -1,92 +1,83 @@
 package kc;
 
 public class NumArray {
-	
-	SegmentTreeNode root = null;
-	
+    TreeNode root = null;
+
     public NumArray(int[] nums) {
-    	
-    	root = buildTree(nums, 0, nums.length-1);
+        root = init(nums, 0, nums.length-1);
     }
     
-    private SegmentTreeNode buildTree(int[] nums, int l, int r) {
-    	if(l > r) return null;
-		SegmentTreeNode res = new SegmentTreeNode();
-    	if(l == r) {
-    		res.start = l;
-    		res.end = r;
-    		res.val = nums[l];
-    		return res;
-    	}
-    	
-    	int m = l + (r - l) / 2;
-    	SegmentTreeNode leftSum = buildTree(nums,l,m);
-    	SegmentTreeNode rightSum = buildTree(nums, m+1,r);
-    	res.val = leftSum.val + rightSum.val;
-    	res.start = l;
-    	res.end = r;
-    	res.left = leftSum;
-    	res.right = rightSum;
-    	return res;
-    }
-
-    void update(int i, int val) {
-    	updateHelper(i, val, root);
+    public void update(int i, int val) {
+        updateHelper(i, val, root);
     }
     
-    private int updateHelper(int i, int val, SegmentTreeNode root) {
-    	if(root == null) return 0;
-    	if(root.start == i && root.end == i) {
-    		root.val = val;
-    		return val;
-    	}
-    	if(root.start > i || root.end < i) return root.val;
-    	int left = updateHelper(i, val, root.left);
-    	int right = updateHelper(i, val, root.right);
-    	root.val = left + right;
-    	return root.val;
-    }
-
     public int sumRange(int i, int j) {
-    	return helper(i,j,this.root);
+        return sumRangeHelper(i,j,root);
     }
-    private int helper(int i, int j, SegmentTreeNode root) {
-    	if(root == null) return 0;
-    	if(root.start == i && root.end == j) {
-    		return root.val;
-    	}
-    	
-    	if(j < root.start || i > root.end) return 0;
-    	int left = 0;
-    	if(root.left != null && i >= root.start && j <= root.left.end) {
-    		left = helper(i, j, root.left);
-    	} else if(root.left != null && i >= root.start) {
-    		left = helper(i, root.left.end, root.left);
-    	}
-    	
-    	int right = 0;
-    	if(root.right != null && i >= root.right.start && j <= root.end) {
-    		right = helper(i, j, root.right);
-    	} else if(root.right != null && j <= root.end) {
-    		right = helper(root.right.start, j, root.right);
-    	}
-    	
-    	return left + right;
+    
+    private TreeNode init(int[] arr, int start, int end) {
+        if(start > end) return null;
+        TreeNode node = new TreeNode();
+        if(start == end) {
+            node.start = start;
+            node.end = end;
+            node.val = arr[start];
+            return node;
+        }
+        int mid = start + (end - start) / 2;
+        TreeNode leftChild = init(arr, start, mid);
+        TreeNode rightChild = init(arr, mid+1, end);
+        TreeNode res = new TreeNode();
+        res.start = start;
+        res.end = end;
+        res.val = leftChild.val + rightChild.val;
+        res.left = leftChild;
+        res.right = rightChild;
+        return res;
     }
-
-    public class SegmentTreeNode {
-    	int start;
-    	int end;
-    	int val;
-    	SegmentTreeNode left = null;
-    	SegmentTreeNode right = null;
+    
+    private int updateHelper(int i, int val, TreeNode root) {
+        if(root == null) return 0;
+        if(root.start == i && root.end == i) {
+            root.val = val;
+            return val;
+        }
+        if(root.start > i || root.end < i) return root.val;
+        int left = updateHelper(i, val, root.left);
+        int right = updateHelper(i, val, root.right);
+        root.val = left + right;
+        return root.val;
+    }
+    
+    private int sumRangeHelper(int i, int j, TreeNode node) {
+        int res = 0;
+        if(node == null) return 0;
+        if(node.start == i && node.end == j) return node.val;
+        if(i > j) return 0;
+        if(node.start > j || node.end < i) return 0;
+        if(node.left != null) res += sumRangeHelper(i, Math.min(j,node.left.end), node.left);
+        if(node.right !=null) res += sumRangeHelper(Math.max(node.right.start,i), j, node.right);
+        return res;
+    }
+    
+    
+    class TreeNode {
+        int start, end, val;
+        TreeNode left = null;
+        TreeNode right = null;
+        
+        @Override
+        public String toString() {
+        	return "Start:" + start + ", End:" + end + ", Val:" + val;
+        }
     }
     
     
     public static void main(String[] args) {
     	  int[] nums = {0,9,5,7,3};
     	  NumArray numArray = new NumArray(nums);
-    	  System.out.println( numArray.sumRange(0, 4));
+    	  System.out.println(numArray.root.left);
+    	  System.out.println( numArray.sumRange(3, 3));
 	}
 
 }

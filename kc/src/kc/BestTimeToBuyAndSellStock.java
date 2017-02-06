@@ -65,7 +65,7 @@ public class BestTimeToBuyAndSellStock {
         	cools[i] = Math.max(buys[i-1],Math.max(sells[i-1], cools[i-1]));
         }
         
-        return sells[sells.length-1] < 0 ? 0 : sells[sells.length-1];
+        return Math.max(cools[prices.length-1], sells[prices.length-1]);
     }
     
     public int maxProfit4(int[] prices, int k) {

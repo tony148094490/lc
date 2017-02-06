@@ -1,73 +1,61 @@
 package kc;
 
 import java.util.LinkedList;
-import java.util.Queue;
 
 public class SerializeAndDeserializeBinaryTree {
     // Encodes a tree to a single string.
+    // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
-        if(root == null) return "#";
-    	StringBuilder sb = new StringBuilder();
-        Queue<TreeNode> parents = new LinkedList<TreeNode>();
-        Queue<TreeNode> children = new LinkedList<TreeNode>();
-        sb.append(root.val);
-        sb.append(",");
-        parents.add(root);
-        while(!parents.isEmpty()) {
-        	while(!parents.isEmpty()) {
-        		TreeNode parent = parents.poll();
-        		if(parent.left == null) {
-        			sb.append("#");
-        			sb.append(",");
-        		} else {
-        			sb.append(parent.left.val);
-        			sb.append(",");
-        			children.add(parent.left);
-        		}
-        	
-        		if(parent.right == null) {
-        			sb.append("#");
-        			sb.append(",");
-        		} else {
-        			sb.append(parent.right.val);
-        			sb.append(",");
-        			children.add(parent.right);
-        		}
-        	}
-        	parents = children;
-        	children = new LinkedList<TreeNode>();
+        StringBuilder sb = new StringBuilder();
+        LinkedList<TreeNode> parent = new LinkedList<TreeNode>();
+        parent.add(root);
+        while(!parent.isEmpty()) {
+            LinkedList<TreeNode> children = new LinkedList<TreeNode>();
+            while(!parent.isEmpty()) {
+                TreeNode p = parent.poll();
+                if(p == null) {
+                    sb.append("#,");
+                } else {
+                    sb.append(p.val + ",");
+                    children.add(p.left);
+                    children.add(p.right);
+                }
+            }
+            parent = children;
         }
-        return sb.substring(0, sb.length()-1);
+        return sb.toString();
     }
 
     // Decodes your encoded data to tree.
     public TreeNode deserialize(String data) {
-        if(data.length() <= 0) return null;
-        if(data.length() == 1 && data.charAt(0) == '#') return null;
         String[] nodes = data.split(",");
-        Queue<TreeNode> parents = new LinkedList<TreeNode>();
-        Queue<TreeNode> children = new LinkedList<TreeNode>();
+        int counter = 1;
+        if(nodes.length < 2) return null;
         TreeNode root = new TreeNode(Integer.parseInt(nodes[0]));
+        LinkedList<TreeNode> parents = new LinkedList<TreeNode>();
         parents.add(root);
-        for(int i = 1; i < nodes.length; i++) {
-        	if(!parents.isEmpty()) {
-        		TreeNode parent = parents.poll();
-        		if(!nodes[i].equals("#")) {
-        			TreeNode left = new TreeNode(Integer.parseInt(nodes[i]));
-        			parent.left = left;
-        			children.add(left);
-        		}
-        		i++;
-        		if(!nodes[i].equals("#")) {
-        			TreeNode right = new TreeNode(Integer.parseInt(nodes[i]));
-        			parent.right = right;
-        			children.add(right);
-        		}
-        	} else if(!children.isEmpty()){
-        		parents = children;
-        		children = new LinkedList<TreeNode>();
-        		i--;
-        	}
+        while(!parents.isEmpty()) {
+            LinkedList<TreeNode> children = new LinkedList<TreeNode>();
+            while(!parents.isEmpty()) {
+                TreeNode parent = parents.poll();
+                String str = nodes[counter];
+                // get left
+                if(!str.equals("#")) {
+                    TreeNode left = new TreeNode(Integer.parseInt(str));
+                    parent.left = left;
+                    children.add(left);
+                }
+                counter++;
+                // get right
+                str = nodes[counter];
+                if(!str.equals("#")) {
+                    TreeNode right = new TreeNode(Integer.parseInt(str));
+                    parent.right = right;
+                    children.add(right);
+                }
+                counter++;
+            }
+            parents = children;
         }
         return root;
     }

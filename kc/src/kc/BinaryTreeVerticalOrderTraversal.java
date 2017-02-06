@@ -76,45 +76,45 @@ Examples:
       [8,2],
       [7]
     ]
-
+This can only be done by top down breath first search 
 
  */
 public class BinaryTreeVerticalOrderTraversal {
-	Map<Integer, List<Integer>> map = new HashMap<Integer, List<Integer>>();
-	int max = Integer.MIN_VALUE;
-	int min = Integer.MAX_VALUE;
+    Map<Integer, List<Integer>> levels = new HashMap<Integer, List<Integer>>();
+    int min = Integer.MAX_VALUE;
+    int max = Integer.MIN_VALUE;
     public List<List<Integer>> verticalOrder(TreeNode root) {
-    	List<List<Integer>> res = new ArrayList<>();
-    	if(root == null) return res;
-    	Queue<TreeNode> nodes = new LinkedList<TreeNode>();
-    	Queue<Integer> vert = new LinkedList<Integer>();
-    	nodes.add(root);
-    	vert.add(0);
-    	while(!nodes.isEmpty()) {
-    		TreeNode parent = nodes.poll();
-    		int v = vert.poll();
-    		if(map.containsKey(v)) {
-    			map.get(v).add(parent.val);
-    		} else {
-    			List<Integer> list = new ArrayList<Integer>();
-    			list.add(parent.val);
-    			map.put(v, list);
-    		}
-    		max = Math.max(max, v);
-    		min = Math.min(min, v);
-    		if(parent.left != null) {
-    			nodes.add(parent.left);
-    			vert.add(v - 1);
-    		}
-    		if(parent.right != null) {
-    			nodes.add(parent.right);
-    			vert.add(v + 1);
-    		}
-    	}
-    	for(int i = min; i <= max; i++) {
-    		res.add(map.get(i));
-    	}
-    	return res;
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        if(root == null) return res;
+        Queue<TreeNode> parents = new LinkedList<TreeNode>();
+        Queue<Integer> parentsLevels = new LinkedList<Integer>();
+        parents.add(root);
+        parentsLevels.add(0);
+        while(!parents.isEmpty()) {
+            TreeNode parent = parents.poll();
+            int level = parentsLevels.poll();
+            if(levels.containsKey(level)) {
+                levels.get(level).add(parent.val);
+            } else {
+                List<Integer> list = new ArrayList<Integer>();
+                list.add(parent.val);
+                levels.put(level, list);
+            }
+            min = Math.min(min, level);
+            max = Math.max(max, level);
+            if(parent.left != null) {
+                parents.add(parent.left);
+                parentsLevels.add(level-1);
+            }
+            if(parent.right != null) {
+                parents.add(parent.right);
+                parentsLevels.add(level+1);
+            }
+        }
+        for(int i = min ; i <= max; i++) {
+            res.add(levels.get(i));
+        }
+        return res;
     }
     
     

@@ -44,6 +44,7 @@ public class RemoveDuplicateLetters {
     	for(Entry<Character, List<Integer>> entry : map.entrySet()) {
     		if(entry.getKey() == c) continue;
     		List<Integer> list = entry.getValue();
+    		// some other 'larger' element has to appear first
     		if(min > list.get(list.size()-1)) return false;
     	}
     	

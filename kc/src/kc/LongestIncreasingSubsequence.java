@@ -19,32 +19,35 @@ public class LongestIncreasingSubsequence {
     }
     
     public int lengthOfLIS2(int[] nums) {
-    	if(nums.length == 0) return 0;
-    	int[] arr = new int[nums.length];
-    	int curIndex = 0;
-    	arr[0] = nums[0];
-    	for(int i = 1; i < nums.length; i++) {
-    		if(nums[i] > arr[curIndex]) {
-    			curIndex++;
-    			arr[curIndex] = nums[i];
-    		} else {
-    			int next = getNext(arr, nums[i], 0, curIndex);
-    			arr[next] = nums[i];
-    		}
-    	}
-    	return curIndex + 1;
+        if(nums.length == 0) return 0;
+        int[] tails = new int[nums.length];
+        tails[0] = nums[0];
+        int cur = 0;
+        for(int i = 1; i < nums.length; i++) {
+            if(nums[i] > tails[cur]) {
+                cur++;
+                tails[cur] = nums[i];
+            } else {
+                int len = getLen(tails, 0, cur, nums[i]);
+                tails[len] = nums[i];
+            }
+        }
+        return cur+1;
     }
     
-    private int getNext(int[] nums, int target, int l, int r) {
-    	if(l == r) return l;
-    	int m = (l + r) / 2;
-    	if(nums[m] == target) return m;
-    	if(nums[m] > target) {
-    		if(m == 0 || nums[m-1] <= target) return m;
-    		return getNext(nums, target, l , m - 1);
-    	} else {
-    		return getNext(nums, target, m+1, r);
-    	}
+    private int getLen(int[] tails, int l, int r, int target) {
+        if(l == r) return l;
+        if(l + 1 == r) {
+            if(tails[l] >= target) return l;
+            return r;
+        }
+        int m = (l + r) / 2;
+        if(tails[m] == target) return m;
+        if(tails[m] > target) {
+            return getLen(tails, l, m, target);
+        } else {
+            return getLen(tails, m, r, target);
+        }
     }
     
     

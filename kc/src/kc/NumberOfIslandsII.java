@@ -1,7 +1,6 @@
 package kc;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,36 +50,74 @@ Can you do it in time complexity O(k log mn), where k is the length of the posit
  *
  */
 public class NumberOfIslandsII {
+    int counter;
+    int[][] map;
+    int[][] sizes;
+    
     public List<Integer> numIslands2(int m, int n, int[][] positions) {
-        List<Integer> res = new ArrayList<>();
-        if(m<=0 || n<=0) return res;
-        int[][] directions = {{0,1}, {1,0}, {-1,0}, {0,-1}};
-        int[] roots = new int[m * n];
-        int count = 0;
-        Arrays.fill(roots, -1);
-        for(int[] position : positions) {
-        	int rootId = position[0] * n + position[1];
-        	roots[rootId] = rootId;
-        	count++;
-        	for(int[] direction : directions) {
-        		int newX = position[0] + direction[0];
-        		int newY = position[1] + direction[1];
-        		int neighbourLeaf = newX * n + newY;
-        		if(newX < 0 || newX >=m || newY <0 || newY >=n || roots[neighbourLeaf] == -1) continue;
-        		int newRootId = findIsland(roots, neighbourLeaf);
-        		if(newRootId != rootId) { 
-        			roots[rootId] = newRootId;
-        			rootId = newRootId;
-        			count--;
-        		}
-        	}
-        	res.add(count);
+        map = new int[m][n];
+        
+        for(int i = 0 ; i < map.length; i++) {
+            for(int j = 0 ; j < map[0].length; j++) {
+                map[i][j] = -1;
+            }
+        }
+        
+        sizes = new int[m][n];
+        counter = 0;
+        List<Integer> res = new ArrayList<Integer>();
+        for(int i = 0 ; i < positions.length; i++) {
+            int r = positions[i][0];
+            int c = positions[i][1];
+            sizes[r][c] = 1;
+            int hashed = n * r + c;
+            map[r][c] = hashed;
+            counter++;
+            
+            if(r > 0 && map[r-1][c] != -1) {
+                union(r-1, c, r, c);
+            }
+            
+            if(r < map.length-1 && map[r+1][c] != -1) {
+                union(r+1, c, r, c);
+            }
+            if(c > 0 && map[r][c-1] != -1) {
+                union(r,c-1, r, c);
+            }
+            if(c < map[0].length-1 && map[r][c+1] != -1) {
+                union(r,c+1, r, c);
+            }
+            
+            res.add(counter);
         }
         return res;
     }
     
-    private int findIsland(int[] roots, int id) {
-    	while(id != roots[id]) id = roots[id];
-    	return id;
+    private void union(int firstRow, int firstCol, int secondRow, int secondCol) {
+        int firstParent = find(firstRow, firstCol);
+        int secondParent = find(secondRow, secondCol);
+        if(firstParent == secondParent) return;
+        int firstParentRow = firstParent/map[0].length;
+        int firstParentCol = firstParent - firstParentRow * map[0].length;
+        int secondParentRow = secondParent/map[0].length;
+        int secondParentCol = secondParent - secondParentRow * map[0].length;
+        if(sizes[firstParentRow][firstParentCol] < sizes[secondParentRow][secondParentCol]) {
+            map[firstParentRow][firstParentCol] = secondParent;
+            sizes[secondParentRow][secondParentCol] += sizes[firstParentRow][firstParentCol];
+        } else {
+            map[secondParentRow][secondParentCol] = firstParent;
+            sizes[firstParentRow][firstParentCol] += sizes[secondParentRow][secondParentCol];
+        }
+        counter--;
+    }
+    
+    private int find(int r, int c) {
+        while(map[r][c] != map[r].length * r + c) {
+            int row = map[r][c] / map[r].length;
+            int col = map[r][c] - row * map[r].length;
+            r = row;
+            c = col;
+        }
+        return r * map[r].length + c;
     }
 }
