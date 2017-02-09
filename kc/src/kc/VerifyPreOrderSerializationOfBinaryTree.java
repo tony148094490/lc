@@ -1,32 +1,48 @@
 package kc;
 
+import java.util.Stack;
+
 
 public class VerifyPreOrderSerializationOfBinaryTree {
     public boolean isValidSerialization(String preorder) {
-    	String[] arr  = preorder.split(",");
-    	
-    	if(pre(arr, 0) != arr.length) return false;
-    	
-    	return true;
-        
+        if(preorder.length() == 0) return false;
+        String[] strs = preorder.split(",");
+        if(helper(strs, 0) != strs.length) return false;
+        return true;
     }
- 
-    private int pre(String[] arr, int cur) {
-    	
-    	if(cur >= arr.length) return -1;
-    	
-    	if(arr[cur].equals("#")) return 1;
-
-    	int sizeOfLeftChild = pre(arr, cur + 1);
-    	    	
-    	if(sizeOfLeftChild == -1 ) return -1;
-    	
-    	int sizeOfRightChild = pre(arr, cur + sizeOfLeftChild + 1);
-    	
-    	if(sizeOfRightChild == -1) return -1;
-
-    	return sizeOfLeftChild + sizeOfRightChild + 1;
-
+    // idea is to get the size of tree
+    private int helper(String[] arr, int index) {
+        if(index >= arr.length) return -1;
+        if(arr[index].equals("#")) return 1;
+        int leftSize = helper(arr, index + 1);
+        if(leftSize == -1) return -1;
+        int rightSize = helper(arr, index + leftSize + 1);
+        if(rightSize == -1) return -1;
+        return leftSize + rightSize + 1;
+    }
+    
+    
+    // idea is to pop nulls and numbers and add one back for later pop
+    public boolean isValidSerialization2(String preorder) {
+        if(preorder.length() == 0) return false;
+        String[] strs = preorder.split(",");
+        Stack<String> stack = new Stack<String>();
+        for(int i = 0 ; i < strs.length; i++) {
+            if(strs[i].equals("#")) {
+                if(!stack.isEmpty() && stack.peek().equals("#")) {
+                    while(!stack.isEmpty() && stack.peek().equals("#")) {
+                        stack.pop();
+                        if(stack.isEmpty()) return false;
+                        stack.pop();
+                    }
+                }
+                stack.push("#");
+            } else {
+                stack.push(strs[i]);
+            }
+        }
+        
+        return stack.size() == 1 && stack.peek().equals("#");
     }
     
     public static void main(String[] args) {

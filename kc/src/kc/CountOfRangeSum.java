@@ -1,83 +1,143 @@
 package kc;
 /**
- This question is very hard and it took me a long time to fully think through the answer.
- First, the easy solution is to create a prefix array and do a two-sum like thing to enumerate all the combinations.
- Each combination is a count. It's n(n-1)/2 complexity.
- 
- Then a better solution is to do this sort of enumeration during a merge sort to save time because we can get nlogn.
- The idea is actually quite simple albeit it's the first time i've seen a different kind of merging method.
- While we are merging from second sorted array to first sorted array, we also see if there is are cases
- in the second sorted array where some values minus the current visiting first sorted array's value are within our range
- if there are, we note them down. Otherwise, we continue merging. 
- 
- Essentially, when we have two sorted arrays, first and second. We do two things, first is the actual (novel) merging algorithm:
- fix one index in the first array, iterate through the second array and output the number which is smaller than the one in first array,
- then do the next index in the first array until we visit all the elements in first array, then copy the rest from second array to result.
- The second thing we do is that we also fix one index in the first array, we look for candidates in second array where 
- the number in second array minus this number in first array is within our range. If it is, it's a hit and we record it.
- Because two things all start with fixing one element from the first sorted array and iterate through the second array, we can combine
- them together and save time while leverage the property that we don't have to visit any elements in the first array while fixing an
- element in the first array because we have already done that in the previous round of merging.
+ok, i'm gonna try explaining this while my memory is fresh, first of all, you write this, not people online.
+so the general idea is that we do a merge sort against the range sums, fix the sums on the left hand side,
+and iterate through right hand side. since the question is asking for count of range sums, the numbers on 
+right hand side will always appear after left hand side. while iterating, we do a subtraction of left hand side
+from right hand sid, what it means is that we want to examine if the result, a range from end of left hand side to
+the end of right hand side is within the boundary. since left hand side and right hand side are both sorted, we keep
+two pointers, lo and hi, so when sums[lo] - sums[current] >= min and sums[hi] - sums[current], we will know the diff
+between hi and lo is the number of ranges we have when we don't use sums[current] (some portion of the array)
+we then do this for the rest of the sums on the left hand side while iterating the right hand side.
+
+we allocated a helper array for reducing the time when we do the actual merging, this array should be optional and 
+won't affect the overall time complexity.
+
+a tricky part is the additional 0 placed at the initial point, this is true for most of the range sums processing problems
   
  */
 public class CountOfRangeSum {
-    int count = 0;
-    int lower;
-    int upper;
+    int min;
+    int max;
+    int count;
     public int countRangeSum(int[] nums, int lower, int upper) {
-        long[] sum = new long[nums.length + 1];
+        if(nums.length == 0) return 0;
+        min = lower;
+        max = upper;
+        count = 0;
         long[] temp = new long[nums.length + 1];
-        sum[0] = 0;
-        this.lower = lower;
-        this.upper = upper;
-        for (int i = 1; i <= nums.length; i++) {
-            sum[i] = sum[i - 1] + (long) nums[i - 1];
+        long[] sums = new long[nums.length + 1];
+        for(int i = 0; i < nums.length; i++) {
+            sums[i+1] = sums[i] + (long) nums[i];
         }
         
-        mergesort(sum, 0, sum.length - 1, temp);
+        mergeSort(sums, temp, 0, sums.length-1);
         return count;
     }
     
-    private void mergesort(long[] sum, int start, int end, long[] temp) {
-        if (start >= end) {
-            return;
-        }
+    private void mergeSort(long[] arr, long[] temp, int start, int end) {
+        if(start >= end) return;
         int mid = start + (end - start) / 2;
-        mergesort(sum, start, mid, temp);
-        mergesort(sum, mid + 1, end, temp);
-        merge(sum, start, mid, end, temp);
+        mergeSort(arr, temp, start, mid);
+        mergeSort(arr, temp, mid + 1, end);
+        merge(arr, temp, start, mid, end);
     }
     
-    private void merge(long[] sum, int start, int mid, int end, long[] temp) {
-        int right = mid + 1;
+    private void merge(long[] arr, long[] temp, int start, int mid, int end) {
+
+        // for merging
         int index = start;
-        int low = mid + 1, high = mid + 1;
-        for (int left = start; left <= mid; left++) {
-            // actually merging, part one
-            while (right <= end && sum[right] < sum[left]) {
-                temp[index++] = sum[right++];
-            }
-            temp[index++] = sum[left];
+        int hiStart = mid+1;
+        
+        // high low bounds for evaluating candidates, it's very important to set them the scope as is
+    	int lo = mid + 1;
+        int hi = mid + 1;
+        
+        for(int i = start; i <= mid; i++) {
+	
+        	// examine candidates
+            while(lo <= end && arr[lo] - arr[i] < min) lo++;
+            while(hi <= end && arr[hi] - arr[i] <= max) hi++;
+            count += (hi - lo);
             
-            // for the purpose of counting, we need to have another 'ordered' array to be able to count indices 
-            while (low <= end && sum[low] - sum[left] < lower) {
-                low++;
+            // merging
+            while(hiStart <= end && arr[hiStart] < arr[i]) {
+                temp[index] = arr[hiStart];
+                hiStart++;
+                index++;
             }
-            while (high <= end && sum[high] - sum[left] <= upper) {
-                high++;
-            }
-            count += high - low;
-            // counting part ends
+            temp[index] = arr[i];
+            index++;
         }
         
-        // another part for merging
-        while (right <= end) {
-            temp[index++] = sum[right++];
+        for(int i = start ; i < index; i++) {
+            arr[i] = temp[i];
         }
         
-        // overwrite the original array
-        for (int i = start; i <= end; i++) {
-            sum[i] = temp[i];
-        }
+    }
+    
+//    int min;
+//    int max;
+//    int count;
+//    public int countRangeSum(int[] nums, int lower, int upper) {
+//        if(nums.length == 0) return 0;
+//        min = lower;
+//        max = upper;
+//        count = 0;
+//        long[] sums = new long[nums.length + 1];
+//        for(int i = 0; i < nums.length; i++) {
+//            sums[i+1] = sums[i] + (long) nums[i];
+//        }
+//        
+//        mergeSort(sums, 0, sums.length-1);
+//        return count;
+//    }
+//    
+//    private void mergeSort(long[] arr, int start, int end) {
+//        if(start >= end) return;
+//        int mid = start + (end - start) / 2;
+//        mergeSort(arr, start, mid);
+//        mergeSort(arr, mid + 1, end);
+//        merge(arr, start, mid, end);
+//    }
+//    
+//    private void merge(long[] arr, int start, int mid, int end) {
+//        int lo = mid + 1;
+//        int hi = mid + 1;
+//        
+//        // no merging
+//        for(int i = start; i <= mid; i++) {
+//            while(lo <= end && arr[lo] - arr[i] < min) lo++;
+//            while(hi <= end && arr[hi] - arr[i] <= max) hi++;
+//            count += (hi - lo);
+//        }
+//        
+//        // actual merging (again)
+//        long[] temp = new long[end - start + 1];
+//        int i = start;
+//        int j = mid + 1;
+//        int k = 0;
+//        while(k < temp.length) {
+//            if(j > end || (i <= mid && arr[i] < arr[j])) {
+//                temp[k] = arr[i];
+//                i++;
+//            } else {
+//                temp[k] = arr[j];
+//                j++;
+//            }
+//            k++;
+//        }
+//        for(k = 0 ; k < temp.length; k++) {
+//            arr[start] = temp[k];
+//            start++;
+//        }
+//        
+//    }
+    
+    
+    public static void main(String[] args) {
+     int[] arr = {-2, 1};
+     CountOfRangeSum x = new CountOfRangeSum();
+     System.out.println(x.countRangeSum(arr, -2, 2));
     }
 }

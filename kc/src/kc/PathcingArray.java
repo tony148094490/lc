@@ -15,28 +15,35 @@ public class PathcingArray {
 	 * and all numbers smaller than nums[i] can be represented with some numbers as well.
 	 * */
     public int minPatches(int[] nums, int n) {
-    	long currentMaxReachable = 1;
-    	int index = 0;
-    	int patches = 0;
-    	
-    	while(currentMaxReachable <= n) {
-    		if(index < nums.length && nums[index] <= currentMaxReachable) {
-    			currentMaxReachable += nums[index];
-    			index++;
-    		} else {
-    			currentMaxReachable *= 2;
-    			patches++;
-    		}
-    	}
-    	
-    	return patches;
+        long nextTarget = 1;
+        int index = 0;
+        int patchNeeded = 0;
+        while(nextTarget <= n) {
+        	// we either need a patch to get n covered or advance our target with what we have
+        	// assumption is that any value smaller than nextTarget is already covered
+        	// question is can we cover nextTarget or not?
+        	
+            if(index < nums.length && nums[index] <= nextTarget) { 
+            	nextTarget += nums[index]; // so we can cover nextTarget and expand it to nextTarget + nums[index]
+                index++;
+            } else {
+                patchNeeded++;// so we can cover nextTarget safely and expand it to nextTarget + nextTarget
+                // by adding a particular number, it could be anything like 2^N, we can reach to nextTarget * 2 - 1
+                
+                nextTarget *= 2; // it's because we can already cover from 1 to nextTarget 
+                				//+ (nextTarget -1), which means our next target is nextTarget + nextTarget.
+                // it's actually nextTarget - 1(the one we already covered)
+                // + nextTarget(the number we are patching in) + 1(the target)
+            }
+        }
+        return patchNeeded;
     }
     
     public static void main(String[] args) {
-    	int[] arr = {1, 5, 10};
+    	int[] arr = {1, 2, 4,5};
     	PathcingArray x = new PathcingArray();
     	
-    	System.out.println(x.minPatches(arr, 20));
+    	System.out.println(x.minPatches(arr, 25));
     	
     }
 }
