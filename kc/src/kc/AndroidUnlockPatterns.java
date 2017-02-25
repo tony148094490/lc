@@ -45,4 +45,77 @@ public class AndroidUnlockPatterns {
 		visited[i] = false;
 		return res;
 	}
+	
+	
+	// method 2
+    public int numberOfPatterns2(int m, int n) {
+        Integer res = 0;
+        for(int i = m ; i <= n; i++) {
+        	int[] a = new int[2];
+        	boolean[][] bb = new boolean[3][3];
+        	bb[0][0] = true;
+        	helper(i, bb, 0, 0, a, 1);
+        	
+        	int[] b = new int[2];
+        	bb = new boolean[3][3];
+        	bb[0][1] = true;
+        	helper(i, bb, 0, 1, b, 1);
+        	
+        	int[] c = new int[2];
+            bb = new boolean[3][3];
+        	bb[1][1] = true;
+        	helper(i, bb, 1,1,c,1);
+        	res += (a[0] * 4 + b[0] * 4 + c[0]);
+        }
+        return res;
+    }
+
+    private void helper(int n, boolean[][] set, int curI, int curJ, int[] res, int cur) {
+    	if(cur == n) {
+    		res[0]++;
+    		
+    		return;
+    	}
+    	
+    	if( cur > n) return;
+    	
+    	for(int i = 0; i < 3 ; i++) {
+    		for(int j = 0 ; j < 3; j++) {
+    			if(set[i][j] || (i == curI && j == curJ)) continue;
+    			if(curI == i && (curJ == j - 1 || curJ == j + 1)) {
+    				set[i][j] = true;
+    				helper(n, set, i, j, res, cur+1);
+    				set[i][j] = false;
+    			} else if (curJ == j && (i == curI-1 || i == curI + 1)) {
+    				set[i][j] = true;
+    				helper(n, set, i, j, res, cur+1);
+    				set[i][j] = false;
+    			} else if (curI == i && ((j == curJ + 2 && set[i][curJ+1] )||( j == curJ - 2 && set[i][curJ-1]) )) {
+    			    set[i][j] = true;
+    				helper(n, set, i, j, res, cur+1);
+    				set[i][j] = false;
+    			} else if(curJ == j && (( i == curI + 2 && set[curI+1][j])||(i == curI - 2) &&  set[curI-1][j] )) {
+    			    set[i][j] = true;
+    				helper(n, set, i, j, res, cur+1);
+    				set[i][j] = false;
+    			} else if((j == curJ + 1 && i == curI + 1) || (j == curJ - 1 && i == curI - 1) || (i == curI - 1 && j == curJ + 1) || (j == curJ - 1 && i == curI + 1)) {
+    			    set[i][j] = true;
+    				helper(n, set, i, j, res, cur+1);
+    				set[i][j] = false;
+    			} else if((j == curJ + 2 && i == curI + 2 && set[curI+1][curJ+1]) || (j == curJ - 2 && i == curI - 2 && set[curI-1][curJ-1]) || (i == curI - 2 && j == curJ + 2 && set[curI-1][curJ+1]) || (j == curJ - 2 && i == curI + 2 && set[curI+1][curJ-1])) {
+    			    set[i][j] = true;
+    				helper(n, set, i, j, res, cur+1);
+    				set[i][j] = false;
+    			} else if ((j == curJ + 2 && i == curI + 1) || (j == curJ - 2 && i == curI - 1) || (i == curI - 2 && j == curJ + 1) || (j == curJ - 2 && i == curI + 1)) {
+    			    set[i][j] = true;
+    				helper(n, set, i, j, res, cur+1);
+    				set[i][j] = false;
+    			} else if((j == curJ + 1 && i == curI + 2) || (j == curJ - 1 && i == curI - 2) || (i == curI - 1 && j == curJ + 2) || (j == curJ - 1 && i == curI + 2)) {
+    			    set[i][j] = true;
+    				helper(n, set, i, j, res, cur+1);
+    				set[i][j] = false;
+    			}
+    		}
+    	}
+    }
 }

@@ -1,80 +1,62 @@
 package kc;
 
-import java.util.LinkedList;
-
 public class SortTransformedArray {
+    int aa;
+    int bb;
+    int cc;
     public int[] sortTransformedArray(int[] nums, int a, int b, int c) {
+        this.aa = a;this.bb=b;this.cc=c;
         int[] res = new int[nums.length];
-        if(a == 0) {
-        	if(b >=0) {
-        		for(int i = 0 ; i < nums.length; i++) {
-        			res[i] = nums[i] * b + c;
-        		}
-        	} else {
-        		for(int i = nums.length -1 ; i >= 0; i--) {
-        			res[nums.length - 1 - i] = nums[i] * b + c;
-        		}
-        	}
-        	return res;
+        if(a==0) {
+            if(b >= 0) {
+                for(int i = 0 ; i < nums.length; i++) {
+                    res[i] = nums[i] * b + c;
+                }
+            } else {
+                for(int i = nums.length - 1 ; i >= 0; i--) {
+                    res[i] = nums[nums.length - 1 - i] * b + c;
+                }
+            }
+            return res;
         }
         
-    	//get maximum or minimum of the function
-    	double x = (-1 * (double) b) / ((double) a * 2);
-    	System.out.println(x);
-    	//split to two halves 
-    	LinkedList<Integer> left = new LinkedList<Integer>();
-    	LinkedList<Integer> right = new LinkedList<Integer>();
-    	if(a > 0) {
-    		int i = 0;
-    		while(i < nums.length && nums[i] < x) {
-    			left.addFirst(nums[i] * nums[i] * a + nums[i] * b + c);
-    			i++;
-    		}
-    		while(i < nums.length && nums[i] >= x) {
-    			right.add(nums[i] * nums[i] * a + nums[i] * b + c);
-    			i++;
-    		}
-    	} else {
-    		int i = 0;
-    		while(i < nums.length && nums[i] < x) {
-    			left.add(nums[i] * nums[i] * a + nums[i] * b + c);
-    			i++;
-    		}
-    		while(i < nums.length && nums[i] >= x) {
-    			right.addFirst(nums[i] * nums[i] * a + nums[i] * b + c);
-    			i++;
-    		}
-    	}
-    	System.out.println(left);
-    	System.out.println(right);
-    	//merge
-    	int index = 0;
-    	int leftIndex = 0;
-    	int rightIndex = 0;
-    	while(leftIndex < left.size() && rightIndex < right.size()) {
-    		if(left.get(leftIndex) < right.get(rightIndex)) {
-    			res[index] = left.get(leftIndex);
-    			leftIndex++;
-    		} else {
-    			res[index] = right.get(rightIndex);
-    			rightIndex++;
-    		}
-    		index++;
-    	}
-    	if(leftIndex == left.size()) {
-    		while(rightIndex < right.size()) {
-    			res[index] = right.get(rightIndex);
-    			rightIndex++;
-    			index++;
-    		}
-    	} else {
-    		while(leftIndex < left.size()) {
-    			res[index] = left.get(leftIndex);
-    			leftIndex++;
-    			index++;
-    		}
-    	}
-    	return res;
+        double peakx = (-1 * (double) b) / ((double) a * 2);
+        int first = 0;
+        int second = 0;
+        while(first < nums.length && nums[first] < peakx) first++;
+        second = first;
+        first = first - 1;
+        
+        if(a > 0) {
+            int counter = 0;
+            while(counter < nums.length) {
+                if(second == nums.length ||(first >= 0 && Math.abs((double) nums[second] - peakx) > Math.abs((double) nums[first] - peakx))) {
+                    res[counter] = getNr(nums[first]);
+                    first--;
+                } else {
+                    res[counter] = getNr(nums[second]);
+                    second++;
+                }
+                counter++;
+            }
+        } else {
+            int counter = nums.length-1;
+            while(counter >=0 ) {
+                if(second == nums.length ||(first >= 0 && Math.abs((double) nums[second] - peakx) > Math.abs((double) nums[first] - peakx))) {
+                    res[counter] = getNr(nums[first]);
+                    first--;
+                } else {
+                    res[counter] = getNr(nums[second]);
+                    second++;
+                }
+                counter--;
+            }
+        }
+        return res;
+    }
+    
+    private int getNr(int x) {
+        return aa * x * x + bb* x + cc;
     }
     
     public static void main(String[] args) {

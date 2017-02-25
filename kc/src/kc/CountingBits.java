@@ -2,23 +2,19 @@ package kc;
 
 public class CountingBits {
     public int[] countBits(int num) {
-    	if(num < 0) return null;
-    	int[] arr = new int[num+1];
-    	int twos = 1;
-    	arr[0] = 0;
-    	int i = 1;
-    	
-    	while(i <= num) {
-    			arr[i] = 1;
-    			twos = twos * 2;
-    			i++;
-    			int j = i;
-    			while(i <= num && i < twos) {
-    				arr[i] = arr[i - j + 1] + 1;
-    				i++;
-    			}
-    	}
-    	return arr;
+        int[] res = new int[num+1];
+        if(num == 0) return res;
+        int two = 1;
+        res[two] = 1;
+        for(int i = 1; i <= num; i++) {
+            if(two * 2 <= i) {
+                two = two * 2;
+                res[two] = 1;
+            }
+            res[i] = res[two] + res[i-two];
+
+        }
+        return res;
     }
     
     public static void main(String[] args) {

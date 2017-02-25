@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TopKFrequentElements {
+	//bucket sort, k is always valid
     public List<Integer> topKFrequent(int[] nums, int k) {
         Map<Integer, Integer> map = new HashMap<>();
         for(Integer s : nums) {
@@ -27,5 +28,11 @@ public class TopKFrequentElements {
         }
         return res;
         
+    }
+    
+    public static void main(String[] args) {
+    	TopKFrequentElements  x = new TopKFrequentElements();
+    	int[] arr = {1,1,1,2,2,3};
+    	System.out.println(x.topKFrequent(arr, 2));
     }
 }

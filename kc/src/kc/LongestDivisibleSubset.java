@@ -5,34 +5,36 @@ import java.util.Arrays;
 import java.util.List;
 
 public class LongestDivisibleSubset {
-
+// the map is not really needed if it asks for count and it then reduces to a max cut problem, we 
+// the map as a linkedlist for traversal
     public List<Integer> largestDivisibleSubset(int[] nums) {
         Arrays.sort(nums);
-    	List<Integer> res =  new ArrayList<Integer>();
-    	int[] map = new int[nums.length];
-    	int[] counts = new int[nums.length];
-    	int max = 0;
-    	int c = -1;
-    	for(int i = 0 ; i < nums.length; i++) {
-    		counts[i] = 1;
-    		map[i] = -1;
-    		for(int j = i - 1; j >=0 ;j--) {
-    			if(nums[i] % nums[j] == 0 && counts[j] + 1 > counts[i]) {
-    				counts[i] = counts[j] + 1;
-    				map[i] = j;
-    			}
-    		}
-    		if(counts[i] > max) {
-    			max = counts[i];
-    			c = i;
-    		}
-    	}
-    	while(c != -1) {
-    		res.add(nums[c]);
-    		c = map[c];
-    	}
-    	return res;
-    	
+        List<Integer> res = new ArrayList<Integer>();
+        int[] map = new int[nums.length];
+        int[] counts = new int[nums.length];
+        int max = 0;
+        int maxPointer = -1;
+        for(int i = 0 ; i < nums.length; i++) {
+            counts[i] = 1;
+            map[i] = -1;
+            for(int j = i - 1 ; j >= 0 ; j--) {
+                if(nums[i] % nums[j] == 0 && counts[i] < counts[j] + 1) {
+                    counts[i] = counts[j] + 1;
+                    map[i] = j;
+                }
+            }
+            if (counts[i] > max) {
+               max = counts[i];
+               maxPointer = i;
+            }
+        }
+        
+        while(maxPointer != -1) {
+            res.add(nums[maxPointer]);
+            maxPointer = map[maxPointer];
+        }
+        
+        return res;
     }
    
     

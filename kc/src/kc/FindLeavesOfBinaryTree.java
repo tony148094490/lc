@@ -1,48 +1,40 @@
 package kc;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class FindLeavesOfBinaryTree {
+    
+    Map<Integer, List<Integer>> map = new HashMap<>();;
     public List<List<Integer>> findLeaves(TreeNode root) {
-        Set<TreeNode> visited = new HashSet<TreeNode>();
-        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        List<List<Integer>> res = new ArrayList<>();
         if(root == null) return res;
-        while(!visited.contains(root)) {
-        	List<Integer> cur = new ArrayList<Integer>();
-        	dfs(root, cur, visited);
-        	res.add(cur);
+        int max = iteration(root);
+        for(int i = 1; i <= max; i++) {
+            res.add(map.get(i));
         }
         return res;
     }
     
-    private void dfs(TreeNode root, List<Integer> current, Set<TreeNode> visited) {
-    	if(root.left == null && root.right == null) {
-    		current.add(root.val);
-    		visited.add(root);
-    		return;
-    	}
-    	
-    	if(root.left != null && root.right != null && visited.contains(root.left) &&
-    			visited.contains(root.right)) {
-    		current.add(root.val);
-    		visited.add(root);
-    		return;
-    	} else if(root.left != null && root.right == null && visited.contains(root.left)){
-    		current.add(root.val);
-    		visited.add(root);
-    		return;
-    	}  else if(root.right != null && root.left == null && visited.contains(root.right)) {
-    		current.add(root.val);
-    		visited.add(root);
-    		return;
-    	}
-    	
-    	if(root.left != null && !visited.contains(root.left)) dfs(root.left, current, visited);
-    	if(root.right != null && !visited.contains(root.right)) dfs(root.right, current, visited);
-    	
+    private int iteration(TreeNode root) {
+        if(root.left == null && root.right == null) {
+            List<Integer> list = map.get(1);
+            if(list == null) list = new ArrayList<Integer>();
+            list.add(root.val);
+            map.put(1, list);
+            return 1;
+        } else {
+            int left = root.left == null ? 0 : iteration(root.left);
+            int right = root.right == null ? 0 : iteration(root.right);
+            int res = Math.max(left, right) + 1;
+            List<Integer> list = map.get(res);
+            if(list == null) list = new ArrayList<Integer>();
+            list.add(root.val);
+            map.put(res, list);
+            return res;
+        }
     }
     
     public static void main(String[] args) {

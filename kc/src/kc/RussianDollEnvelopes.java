@@ -2,6 +2,7 @@ package kc;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedList;
 
 /**
  * You have a number of envelopes with widths and heights given as a pair of integers (w, h). 
@@ -67,35 +68,43 @@ public class RussianDollEnvelopes {
     
     // key is to descend on height so that lower height can replace higher height when we have a width tie
     // otherwise lower height will be calculated within higher height with same width.
+    // it's a bit like insertion sort on heights, very not intuitive
     // 18ms  nlogn
     public int maxEnvelopes3(int[][] envelopes) {
-    	if(envelopes.length < 1) return 0;
+        int r = envelopes.length; 
+        if(r == 0) return 0;
+        int c = envelopes[0].length;
+        if(c == 0) return 0;
         Comparator<int[]> comp = new Comparator<int[]>(){
-        		@Override
-        		public int compare(int[] a, int[] b) {
-        			if(a[0] == b[0]) return b[1] - a[1];
-        			return a[0] - b[0];
-        		}
+          @Override
+          public int compare(int[] a, int[] b) {
+               if(a[0] == b[0]) return b[1] - a[1];
+               return a[0] - b[0];
+          }
         };
         Arrays.sort(envelopes, comp);
-    	int len = 0;
-        int[] heights = new int[envelopes.length];
-        for(int[] e : envelopes) {
-        	int left = 0;
-        	int right = len - 1;
-        	int mid = 0;
-        	while (left <= right) {
-        		mid = (left + right) / 2;
-        		if(heights[mid] < e[1]) {
-        			left = mid + 1;
-        		} else {
-        			right = mid - 1;
-        		}
-        	}
-        	heights[left] = e[1];
-            if(left == len) len++;
+        LinkedList<Integer> heights = new LinkedList<Integer>();
+        //insertion sort(updates) on heights 
+        for(int[] env : envelopes) {
+            int left = 0;
+            int right = heights.size()-1;
+            while(left <= right) {
+                int mid = left + (right - left) / 2;
+                if(heights.get(mid) < env[1]) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+            
+            if(left == heights.size()) {
+                heights.add(env[1]);
+            } else {
+                heights.set(left, env[1]);
+            }
+        
         }
-    	return len;
+        return heights.size();
     }
     
     public static void main(String[] args) {
@@ -114,6 +123,6 @@ public class RussianDollEnvelopes {
     	arr[3][0] = 2;
     	arr[3][1] = 3;
     	
-    	System.out.println(x.maxEnvelopes2(arr));
+    	System.out.println(x.maxEnvelopes3(arr));
     }
 }

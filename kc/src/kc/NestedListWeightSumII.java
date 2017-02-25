@@ -42,6 +42,35 @@ public class NestedListWeightSumII {
 		}
 	}
 	
+    public int depthSumInverse2(List<NestedInteger> nestedList) {
+        int max = getMax(nestedList);
+        return getNr(max, nestedList);
+    }
+    
+    private int getMax(List<NestedInteger> list) {
+        int res = 1;
+        for(NestedInteger x : list) {
+            if(x.isInteger()) continue;
+            res = Math.max(res, getMax(x.getList()) + 1);
+        }
+        return res;
+    }
+    
+    private int getNr(int max, List<NestedInteger> list) {
+        int res = 0;
+        int next = 0;
+        for(NestedInteger x : list) {
+            if(x.isInteger()) {
+                res += x.getInteger();
+            } else {
+                next += getNr(max - 1, x.getList());
+            }
+        }
+        res = res * max;
+        return res + next;
+    }
+	
+	
 	public static void main(String[] args) {
 		NestedInteger a = new NestedInteger();
 		a.setInteger(0);

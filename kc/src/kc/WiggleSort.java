@@ -1,6 +1,7 @@
 package kc;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class WiggleSort {
     public void wiggleSort(int[] nums) {
@@ -34,6 +35,7 @@ public class WiggleSort {
         }
     }
     
+    // quick sort
     private int getK(int[] arr, int k, int l, int r) {
         if(l == r) return l;
         int sorted = partition(arr, l, l + 1, r);
@@ -66,5 +68,64 @@ public class WiggleSort {
         int temp = arr[l];
         arr[l] = arr[r];
         arr[r] = temp;
+    }
+    
+    
+    public void wiggleSort2(int[] nums) {
+        int median = getK2(nums, nums.length % 2 == 0 ? nums.length / 2 - 1: nums.length/2, 0, nums.length-1);
+
+        // there could be a better way
+        int[] copy = Arrays.copyOf(nums, nums.length);
+        
+        int i = 0;
+        for(int sm = median,bg = nums.length-1; i <= copy.length-2 && sm>=0 && bg>=0; i+=2, sm--, bg--) {
+            nums[i] = copy[sm];
+            nums[i+1] = copy[bg];
+        }
+        
+        if(nums.length % 2 != 0) {
+            nums[nums.length-1] = copy[0];
+        }
+    }
+    
+    private int getK2(int[] arr, int k, int l, int r) {
+        if(l == r) return l;
+        int[]  sorted = threeWayPartitionForGetK(arr, l, r);
+    
+    	
+        if(k >= sorted[0] && k <= sorted[1]) {
+
+        	return k;
+        }
+        if(sorted[0] > k) {
+            return getK2(arr, k, l, sorted[0] - 1);
+        } else {
+            return getK2(arr, k, sorted[1] + 1 , r);
+        }
+    }
+    
+    private int[] threeWayPartitionForGetK(int[] arr, int lo, int hi) {
+    	
+    	if(lo >= hi) return new int[] {hi, lo};
+    	
+    	int lt = lo, i = lo + 1, gt = hi;
+    	int pivot = arr[lo];
+    	
+    	while(i <= gt) {
+    		int comp = arr[i] - pivot;
+    		if(comp < 0) swap(arr, lt++, i++);
+    		else if(comp > 0) swap(arr, i, gt--);
+    		else i++;
+    	}
+    	
+    	return new int[] {lt, gt};
+    }
+    
+    public static void main(String[] args) {
+//    	WiggleSort x = new WiggleSort();
+//    	int[] arr = {2,2,2,1,1,3,2,5,4};
+//    	x.wiggleSort(arr);
+    	List<String> cc = Arrays.asList(new String[]{""});
+    	System.out.println(cc);
     }
 }

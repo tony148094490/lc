@@ -2,34 +2,29 @@ package kc;
 
 import java.util.ArrayList;
 import java.util.List;
-
+// idea is k way merge
 public class FindKPairsWithSmallestSums {
     public List<int[]> kSmallestPairs(int[] nums1, int[] nums2, int k) {
-    List<int[]> res = new ArrayList<int[]>();
-    int counter = 0;
-//    if(nums1.length < nums2.length) {
-    	int[] rows = new int[nums1.length];
-    	while(counter < k) {
-    		int minimum = Integer.MAX_VALUE;
-    		int curR = -1, curC = -1;
-    		for(int i = 0 ; i < rows.length; i++) {
-    			if(rows[i] >= nums2.length) continue;
-    			if(nums1[i] + nums2[rows[i]] < minimum) {
-    				minimum = nums1[i] + nums2[rows[i]];
-    				curR = i;
-    				curC = rows[i];
-    			}
-    		}
-    		if(curR == -1) break;
-    		int[] curMin = {nums1[curR], nums2[curC]};
-    		res.add(curMin);
-    		rows[curR]++;
-    		counter++;
-    	}
-    	return res;
- 
-//    } else {
-//    }
+        List<int[]> res = new ArrayList<int[]>();
+        int[] colProgress = new int[nums1.length];
+        while(k > 0) {
+            int minC = -1;
+            int minR = -1;
+            int min = Integer.MAX_VALUE;
+            for(int i = 0 ; i < nums1.length; i++) {
+                if(colProgress[i] >= nums2.length) continue;
+                if(nums1[i] + nums2[colProgress[i]] < min) {
+                    minR = i;
+                    minC = colProgress[i];
+                    min = nums1[i] + nums2[colProgress[i]];
+                }
+            }
+            if(minR == -1) return res;
+            res.add(new int[]{nums1[minR], nums2[minC]});
+            colProgress[minR]++;
+            k--;
+        }
+        return res;
     }
     
     public static void main(String[] args) {

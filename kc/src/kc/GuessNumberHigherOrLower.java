@@ -1,5 +1,8 @@
 package kc;
 
+// idea is to reduce the problem that 1 - n minmax is get min of Math.max((1-k), (k-n)) for each k.
+// because when you come to k, you need to choose the higher half to guarantee a win
+// while when iterating from 1 to n, we need to find the mininum such k + choise combo
 public class GuessNumberHigherOrLower {
     public int getMoneyAmount(int n) {
         int[][] dp = new int[n + 1][n+1];

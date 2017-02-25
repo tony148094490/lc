@@ -3,18 +3,20 @@ package kc;
 public class WaterAndJugProblem {
     public boolean canMeasureWater(int x, int y, int z) {
         if(x + y < z) return false;
-        if(z == 0) return true;
-
-        if(x == 0) return y == z;
-        if(y == 0) return x == z;
-        
-        int gcd = GCD(x, y);
-        
-        return z % gcd == 0;
+        if(x == z || y == z || x + y == z) return true;
+        return z % gcd(x, y) == 0;
     }
     
-    private int GCD(int x, int y) {
-        if(y == 0) return x;
-        return GCD(y, x%y);
+    private int gcd(int x, int y) {
+        if( x > y) return gcd(y, x);
+        if( x == 1 || y == 1) return 1;
+        while(x != 0) {
+            int temp = x;
+            y = y % x;
+            x = y;
+            y = temp;
+        }
+        
+        return y;
     }
 }

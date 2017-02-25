@@ -7,7 +7,7 @@ public class CountNumbersWithUniqueDigits {
         int res = 10;
         int nine = 9;
         int nine2 = 9;
-        for(int i = 2 ; i < n && nine2>0; i++ ) {
+        for(int i = 2 ; i <= n && nine2>0; i++ ) {
         	nine = nine * nine2;
         	res = res + nine;
         	nine2--;
