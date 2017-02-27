@@ -27,4 +27,31 @@ public class KthSmallestInSortedMatrix {
         }
         return 0;
     }
+    
+    public int kthSmallest2(int[][] matrix, int k) {
+        if(matrix.length == 0) return 0;
+        int n = matrix.length;
+        int low = matrix[0][0];
+        int high = matrix[n-1][n-1];
+        while(low < high) {
+            int mid = low + (high - low) / 2;
+            int nr = getEqualOrSmallerThan(matrix, mid);
+            if(nr >= k) {
+                high = mid;
+            } else {
+                low = mid + 1;
+            }
+        }
+        return low;
+    }
+    
+    private int getEqualOrSmallerThan(int[][] matrix, int target) {
+        int res = 0;
+        for(int i = 0 ; i < matrix[0].length; i++) {
+            int cur = matrix.length - 1;
+            while(cur >= 0 && matrix[cur][i] > target) cur--;
+            res += cur + 1;
+        }
+        return res;
+    }
 }

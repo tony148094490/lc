@@ -1,4 +1,7 @@
 package kc;
+
+import java.util.Stack;
+
 /**
  * public interface NestedInteger {
  *     // Constructor initializes an empty nested list.
@@ -27,61 +30,32 @@ package kc;
  */
 public class MiniParser {
     public NestedInteger deserialize(String s) {
-        NestedInteger root = new NestedInteger();
+        if(s.length() == 0) return null;
+        if(s.charAt(0) != '[') return new NestedInteger(Integer.parseInt(s));
+        
+        Stack<NestedInteger> stack = new Stack<>();
+        int l = 0;
+        NestedInteger x = null;
         for(int i = 0 ; i < s.length(); i++) {
             if(s.charAt(i) == '[') {
-            	if(s.charAt(i+1) == ']') return root;
-            	NestedInteger next = deserialize(s.substring(i+1));
-            	i = moveToNext(s, i+1);
-            	root.add(next);
+                if(x != null) {
+                    stack.push(x);//push in parent
+                }
+                x = new NestedInteger();// tracking the new child
+                l = i + 1;
             } else if(s.charAt(i) == ']') {
-            	return root;
+                if(l < i) x.add(new NestedInteger(Integer.parseInt(s.substring(l, i)))); //avoid [] or ]]
+                if(!stack.isEmpty()) {
+                    stack.peek().add(x);
+                    x = stack.pop();
+                }
+                l = i + 1;
             } else if(s.charAt(i) == ',') {
-            	NestedInteger next = deserialize(s.substring(i+1));
-            	i++;
-            	i = moveToNext(s, i);
-            	root.add(next);
-            } else {
-            	Integer n = getInteger(s, i);
-            	root.setInteger(n);
-            	return root;
+                if(l < i) x.add(new NestedInteger(Integer.parseInt(s.substring(l,i)))); // avoid ],
+                l = i + 1;
             }
         }
-        return root;
-    }
-    
-    private Integer getInteger(String s, int c) {
-    	int sign = 1;
-    	if(s.charAt(0) == '-') {
-    		sign = -1;
-    		c++;
-    	}
-    	int i = c;
-    	for(i = c; i < s.length(); i++) {
-    		if(s.charAt(i) > '9' || s.charAt(i) < '0') break;
-    	}
-    	int number = Integer.parseInt(s.substring(c, i));
-    	return number * sign;
-    }
-    
-    private int moveToNext(String s, int c) {
-    	if(s.charAt(c) != '[') {
-    		while(s.charAt(c) != '[' && s.charAt(c) != ']' && s.charAt(c) != ',') {
-    			c++;
-    		}
-    		return c - 1;
-    	}
-    	
-    	int left = 0;
-    	for(int i = c; i < s.length() ;i++) {
-    		if(s.charAt(i) == '[') {
-    			left++;
-    		}else if(s.charAt(i) == ']') {
-    			left--;
-    		}
-    		if(left == 0) return i;
-    	}
-    	return -1;
+        return x;
     }
     
     public static void main(String[] args) {

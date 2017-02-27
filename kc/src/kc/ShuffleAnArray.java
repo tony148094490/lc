@@ -19,6 +19,7 @@ public class ShuffleAnArray {
         System.arraycopy(arr, 0, newArr, 0, arr.length );
         for(int i = 0 ; i < newArr.length; i++){
         	int toSwap = ThreadLocalRandom.current().nextInt(0, i+1);
+          //int toSwap = rand.nextInt(newArray.length - i) + i;
         	swap(newArr, i, toSwap);
         }
         return newArr;
