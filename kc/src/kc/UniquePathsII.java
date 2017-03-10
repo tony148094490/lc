@@ -2,21 +2,21 @@ package kc;
 
 public class UniquePathsII {
     public int uniquePathsWithObstacles(int[][] obstacleGrid) {
-    	int row = obstacleGrid.length;
-    	int col = obstacleGrid[0].length;
-    	
-    	int[][] dp = new int[row+1][col+1];
-    	dp[0][1] = 1;
-    	for(int i = 1 ; i < dp.length; i++){
-    		for(int j = 1 ; j <dp[0].length; j++) {
-    			if(obstacleGrid[i-1][j-1] == 1) {
-    				dp[i][j] = 0;
-    			} else {
-    				dp[i][j] = dp[i-1][j] + dp[i][j-1];
-    			}
-    		}
-    	}
-        return dp[row][col];
+        if(obstacleGrid.length == 0 || obstacleGrid[0].length == 0) return 0;
+        int n = obstacleGrid[0].length;
+        int[] dp = new int[n+1];
+        dp[0] = 1;
+        for(int i = 0 ; i < obstacleGrid.length ;i++) {
+            for(int j = 0 ; j < n ; j++) {
+                if(obstacleGrid[i][j] == 1) {
+                    dp[j+1] = 0;
+                    continue;
+                }
+                dp[j+1] += dp[j];
+            }
+            dp[0] = 0;
+        }
+        return dp[n];
 
     }
     

@@ -30,6 +30,11 @@ public class ShortestPalindrome {
     	return true;
     }
     
+    // key is to find the longest suffix that's also a prefix since they are in reverse positions
+    //, it means they both are palindromes
+    // it did not use kmp to search for a string within a string (or needle in a haystack, which is what kmp 
+    // intends to solve. However, the prefix suffix array that's required in the kmp pre-processing is 
+    // used to identify the reversed prefix is also the match of an actual prefix starting from the beginning.
     
     public String shortestPalindrome2(String s) {
         if(s.length() == 0) return "";
@@ -75,9 +80,41 @@ public class ShortestPalindrome {
     }
     
     
+    public String getShortest(String s) {
+    	if(s.length() <= 1) return s;
+    	StringBuilder sb = new StringBuilder(s);
+    	String needle = sb.toString() + "&" + sb.reverse().toString();
+    	int[] longestProperSuffix = new int[needle.length()];
+    	int currentPointer = 0;
+    	for(int i = 1; i < needle.length(); i++) {
+    		if(needle.charAt(currentPointer) == needle.charAt(i)) {
+    			longestProperSuffix[i] = currentPointer+1;
+    			currentPointer++;
+    		} else {
+    			if(currentPointer==0) {
+    				continue;
+    			} else {
+    				currentPointer = longestProperSuffix[currentPointer - 1];
+    				i--;
+    			}
+    		}
+    	}
+    	
+    	
+    	int finalLenOfPrefixThatsAPalindrome = longestProperSuffix[needle.length()-1];
+    	String toAppend = s.substring(finalLenOfPrefixThatsAPalindrome);
+    	sb = new StringBuilder(toAppend);
+    	return sb.reverse().toString() + s;
+
+    }
+    
+    
+    
     public static void main(String[] args) {
     	ShortestPalindrome x = new ShortestPalindrome();
-    	System.out.println(x.shortestPalindrome2("abcd"));
+    	String str = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab";
+    	System.out.println(x.shortestPalindrome2(str));
+    	System.out.println(x.getShortest(str));
     	
     }
 }

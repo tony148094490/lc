@@ -8,16 +8,17 @@ public class ThreeSumSmaller {
         Arrays.sort(nums);
         int res = 0;
         for(int i = 0 ; i < nums.length - 2; i++) {
-        	int left = i + 1;
-        	int right = nums.length - 1;
-        	while(left < right) {
-        		if(nums[i] + nums[left] + nums[right] < target) {
-        			res += right - left;
-        			left++;
-        		} else {
-        			right--;
-        		}
-        	}
+            int left = i+1;
+            int right = nums.length - 1;
+            while(left < right) {
+                while(left < right && nums[i] + nums[left] + nums[right] >= target) {
+                    right--;
+                }
+                res += (right - left);
+                
+                left++;
+                
+            }
         }
         return res;
     }

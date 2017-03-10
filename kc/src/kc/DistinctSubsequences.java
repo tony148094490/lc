@@ -1,6 +1,7 @@
 package kc;
 
 public class DistinctSubsequences {
+	//note: empty sequence is sub-sequence of any string
     public int numDistinct(String s, String t) {
     	if(s.length() == 0 || t.length() == 0 || s.length() < t.length()) return 0;
     	int[][] dp = new int[t.length() + 1][s.length() + 1];

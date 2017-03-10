@@ -6,32 +6,29 @@ import java.util.List;
 
 public class CombinationSum2 {
 
-	public List<List<Integer>> combinationSum2(int[] arr, int target) {
-		List<List<Integer>> res = new ArrayList<List<Integer>>();
-		if(arr.length < 0) return res;
-		Arrays.sort(arr);
-		helper(arr, target, 0 , new ArrayList<Integer>(), res);
-		return res;
-	}
-	
-	private void helper(int[] arr, int target, int curIndex, ArrayList<Integer> curRes,
-			List<List<Integer>> res) {
-		if (target == 0) {
-			res.add(new ArrayList<Integer>(curRes));
-			return;
-		}
-		
-		if(target < 0) return;
-		
-		for(int i = curIndex; i < arr.length ; i++) {
-			if (i > curIndex && arr[i] == arr[i-1]) continue;
-			if(arr[i] <= target) {
-				curRes.add(arr[i]);
-				helper(arr,target - arr[i], i + 1, curRes, res);
-				curRes.remove(curRes.size()-1);
-			}
-		}
-	}
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        Arrays.sort(candidates);
+        helper(candidates, 0, target, new ArrayList<>(), res);
+        return res;
+    }
+    
+    public void helper(int[] arr, int cur, int target, List<Integer> path, List<List<Integer>> res) {
+        if(target == 0) {
+            if(path.size() != 0) {
+                res.add(new ArrayList<Integer>(path));
+            }
+            return;
+        }
+        if(cur == arr.length) return;
+        
+        for(int i = cur; i < arr.length && arr[i] <= target ;i++) {
+            if(i > cur && arr[i] == arr[i-1]) continue;
+            path.add(arr[i]);
+            helper(arr, i + 1 , target - arr[i], path, res);
+            path.remove(path.size()-1);
+        }
+    }
 	
 	
 	public static void main(String[] args) {

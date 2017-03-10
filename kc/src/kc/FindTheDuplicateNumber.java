@@ -18,4 +18,5 @@ public class FindTheDuplicateNumber {
             }
         }
     }
+    // another solution is to use search the whole space with binary search one by one 
 }

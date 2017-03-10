@@ -50,42 +50,36 @@ public class BestTimeToBuyAndSellStock {
     
     //cool down
     public int maxProfit3(int[] prices) {
-        if(prices.length < 2) return 0;
-        int[] buys = new int[prices.length];
-        int[] sells = new int[prices.length];
-        int[] cools = new int[prices.length];
-
-        buys[0] = (-1) * prices[0];
-        sells[0] = Integer.MIN_VALUE;
-        cools[0] = 0;
+        if(prices.length == 0) return 0;
+        int[] buy = new int[prices.length];
+        int[] sell = new int[prices.length];
+        int[] cool = new int[prices.length];
+        
+        buy[0] = 0 - prices[0];
+        cool[0] = 0;
+        sell[0] = 0;
         
         for(int i = 1; i < prices.length; i++) {
-        	buys[i] = Math.max(cools[i-1] - prices[i], buys[i-1]);
-        	sells[i] = Math.max(buys[i-1] + prices[i], sells[i-1]);
-        	cools[i] = Math.max(buys[i-1],Math.max(sells[i-1], cools[i-1]));
+            buy[i] = Math.max(buy[i-1], cool[i-1] - prices[i]);
+            cool[i] = Math.max(cool[i-1], sell[i-1]);
+            sell[i] = Math.max(sell[i-1], buy[i-1] + prices[i]);
         }
-        
-        return Math.max(cools[prices.length-1], sells[prices.length-1]);
+        return Math.max(sell[prices.length-1], cool[prices.length-1]);
     }
     
     public int maxProfit4(int[] prices, int k) {
-        	if(prices.length <= 1) return 0;
-        	if(k >= prices.length/2) {
-        	    int p = 0;
-        	    for(int i = 1 ; i < prices.length; i++) {
-        	        if(prices[i] >= prices[i-1]) p+= prices[i] - prices[i-1];
-        	    }
-        	    return p;
-        	}
-        	int[][] dp = new int[k+1][prices.length];
-        	for(int i = 1; i <= k; i++) {
-        		int firstBuy = 0 - prices[0];
-        		for(int j = 1; j < prices.length; j++) {
-        			dp[i][j] = Math.max(dp[i][j-1], firstBuy + prices[j]); //sell ?
-        			firstBuy = Math.max(firstBuy, dp[i-1][j-1] - prices[j]); //buy ?
-        		}
-        	}
-        	return dp[k][prices.length-1];
+        if(prices.length < 2) return 0;
+        int[][] profit = new int[3][prices.length];
+        for(int i = 1 ; i <= 2; i++) {
+            int profitTillNowWithBuy = 0 - prices[0];
+            for(int j = 1; j < prices.length; j++) {
+                int newProfitTillNowWithBuy = Math.max(profitTillNowWithBuy, profit[i-1][j-1] - prices[j]);
+                profit[i][j] = Math.max(profit[i][j-1], profitTillNowWithBuy + prices[j]);
+                profitTillNowWithBuy = newProfitTillNowWithBuy;
+            }
+        }
+        
+        return profit[2][prices.length-1];
         }
     
     

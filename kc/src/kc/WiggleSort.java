@@ -63,7 +63,20 @@ public class WiggleSort {
         swap(arr, pivot, right);
         return right;
     }
-    
+    private int partition(int[] nums, int lo, int hi) {
+        if( hi == lo ) return hi;
+        int pivot = lo;
+        int start = lo + 1;
+        int end = hi;
+        while(start < end) {
+            while(start < hi && nums[start] <= nums[pivot]) start++;
+            while(end > lo && nums[end] >= nums[pivot]) end--;
+            if(start < end) swap(nums, start, end);
+        }
+
+        swap(nums, pivot, end);
+        return end;
+    }
     private void swap(int[] arr, int l , int r) {
         int temp = arr[l];
         arr[l] = arr[r];
@@ -122,10 +135,9 @@ public class WiggleSort {
     }
     
     public static void main(String[] args) {
-//    	WiggleSort x = new WiggleSort();
-//    	int[] arr = {2,2,2,1,1,3,2,5,4};
-//    	x.wiggleSort(arr);
-    	List<String> cc = Arrays.asList(new String[]{""});
-    	System.out.println(cc);
+    	int[] res = {1,2};
+    	WiggleSort x = new WiggleSort();
+    	System.out.println(x.partition(res, 0, 1));
+    	for(int a : res) System.out.println(a);
     }
 }

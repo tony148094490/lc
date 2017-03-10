@@ -4,33 +4,27 @@ import java.util.Stack;
 
 public class LargestRectangleInHistogram {
     public int largestRectangleArea(int[] heights) {
-        if(heights.length <= 0) return 0;
-        int max = 0;
+        if(heights.length < 1) return 0;
         Stack<Integer> stack = new Stack<Integer>();
-        for(int i = 0 ; i < heights.length; i++) {
-            if(stack.isEmpty() || heights[stack.peek()] <= heights[i]) {
+        int max = 0;
+        stack.push(0);
+        for(int i = 1; i < heights.length; i++) {
+            if(heights[i] >= heights[stack.peek()]) {
                 stack.push(i);
-            } else {
-                int cur = stack.pop();
-                int rightEdge = i;
-                while(heights[cur] > heights[i]) {
-                    int left = stack.isEmpty() == true ? 0 : (stack.peek() + 1);
-                    max = Math.max(max, heights[cur] * (rightEdge - left));
-                    if(stack.isEmpty()) {
-                        break;
-                    } else {
-                        cur = stack.pop();
-                    }
-                }
-                if(heights[cur] <= heights[i]) stack.push(cur);
-                stack.push(i);
+                max = Math.max(max, heights[i]);
+                continue;
             }
+            while(!stack.isEmpty() && heights[i] < heights[stack.peek()]) {
+                int index = stack.pop();
+                int left = stack.size() == 0 ? 0 : stack.peek() + 1;
+                max = Math.max(max, (i - left) * heights[index]); 
+            }
+            stack.push(i);
         }
-        
         while(!stack.isEmpty()) {
-            int cur = stack.pop();
-            int left = stack.isEmpty() == true ? 0 : (stack.peek() + 1);
-            max = Math.max(max, heights[cur] * (heights.length - left));
+            int index = stack.pop();
+            int left = stack.size() == 0 ? 0 : stack.peek() + 1;
+            max = Math.max((heights.length - left) * heights[index], max);    
         }
         return max;
     }
