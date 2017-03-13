@@ -43,12 +43,11 @@ public class LongestIncreasingSubsequence {
         }
         int m = (l + r) / 2;
         if(tails[m] == target) return m;
-        if(tails[m] > target) {
+        if(tails[m] > target) {	
             return getLen(tails, l, m, target);
         } else {
-            return getLen(tails, m, r, target);
+            return getLen(tails, m+1, r, target);
         }
     }
-    
     
 }

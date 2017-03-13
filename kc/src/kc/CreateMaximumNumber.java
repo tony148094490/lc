@@ -4,6 +4,8 @@ package kc;
  * The algo goes like this:
  * get x nr of digits from left and (k - x) nr of digits from right
  * merge them together and compare it with the local maximum
+ * when merging, needs to do make sure the merged result is largest because the 
+ * two sub arrays might not be sorted, need to tie break in case of equal values
  * then get the result
  * when comparing, always use lexicographical order
  */
@@ -66,11 +68,14 @@ public class CreateMaximumNumber {
       
     public static void main(String[] args) {
     	CreateMaximumNumber x = new CreateMaximumNumber();
-    	int[] arr = {6,7};
-    	int[] arr2 = {6,0,4};
-    	for(Integer a : x.maxNumber(arr, arr2, 5)) {
-    		System.out.print(a + ",");
-    	}
- 
+//    	int[] arr = {6,7};
+//    	int[] arr2 = {6,0,4};
+//    	for(Integer a : x.maxNumber(arr, arr2, 5)) {
+//    		System.out.print(a + ",");
+//    	}
+    	int[] arr = {3,1};
+    	int[] arr2 = {3};
+    	int[] res = x.merge(arr, arr2);
+    	for(int a : res) System.out.println(a);
     }
 }

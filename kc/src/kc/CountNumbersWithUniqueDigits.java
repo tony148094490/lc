@@ -6,7 +6,7 @@ public class CountNumbersWithUniqueDigits {
         
         int res = 10;
         int nine = 9;
-        int nine2 = 9;
+        int nine2 = 9; 
         for(int i = 2 ; i <= n && nine2>0; i++ ) {
         	nine = nine * nine2;
         	res = res + nine;
@@ -17,6 +17,6 @@ public class CountNumbersWithUniqueDigits {
     
     public static void main(String[] args) {
     	CountNumbersWithUniqueDigits x = new CountNumbersWithUniqueDigits();
-    	System.out.println(x.countNumbersWithUniqueDigits(5));
+    	System.out.println(x.countNumbersWithUniqueDigits(2));
 	}
 }

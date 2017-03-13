@@ -2,19 +2,29 @@ package kc;
 
 public class BombEmney {
     public int maxKilledEnemies(char[][] grid) {
-    	if(grid.length == 0 || grid[0].length == 0) return 0;
-    	int res = 0;
-    	int[] cols = new int[grid[0].length];
-    	for(int i = 0 ; i < grid.length; i++) {
-    		int row = getRow(grid, i, 0);
-    		for(int j = 0 ; j < grid[0].length; j++) {
-    			if(grid[i][j] == 'W') continue;
-    			if(j > 0 && grid[i][j-1] == 'W') row = getRow(grid, i, j);
-    			if(i == 0 || grid[i-1][j] == 'W') cols[j] = getCol(grid, i, j);
-    			if(grid[i][j] == '0') res = Math.max(res, row + cols[j]);
-    		}
-    	}
-    	return res;
+        if(grid.length == 0) return 0;
+        int res = 0;
+        
+        int[] cols = new int[grid[0].length];
+        
+        for(int i = 0 ; i < grid.length; i++) {
+            int row = 0;
+            for(int j = 0; j < grid[0].length; j++) {
+                if(grid[i][j] == 'W') continue;
+                
+                if((j == 0) || (j > 0 && (grid[i][j-1] == 'W'))) {
+                    row = getRow(grid, i, j);
+                }
+                
+                if((i == 0) || (i > 0 && (grid[i-1][j] == 'W'))) {
+                    cols[j] = getCol(grid, i, j);
+                }
+                
+                if(grid[i][j] == '0')
+                res = Math.max(res, row + cols[j]);
+            }
+        }
+        return res;
     }
     
     private int getRow(char[][] grid, int i, int j) {

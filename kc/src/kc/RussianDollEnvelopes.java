@@ -5,15 +5,8 @@ import java.util.Comparator;
 import java.util.LinkedList;
 
 /**
- * You have a number of envelopes with widths and heights given as a pair of integers (w, h). 
- * One envelope can fit into another if and only if both the width and height of one envelope
- *  is greater than the width and height of the other envelope.
-
-What is the maximum number of envelopes can you Russian doll? (put one inside other)
-
-Example:
-Given envelopes = [[5,4],[6,4],[6,7],[2,3]], the maximum number of envelopes you can
- Russian doll is 3 ([2,3] => [5,4] => [6,7]). 
+	sort according to weidth or height and do longest increasing subsequence to the other.
+	when sorting, put larger ones in front when there is a tie.
  */
 public class RussianDollEnvelopes {
 	int[] max;	
@@ -105,6 +98,54 @@ public class RussianDollEnvelopes {
         
         }
         return heights.size();
+    }
+    
+    public int maxEnvelopes4(int[][] envelopes) {
+        if(envelopes.length < 2) return envelopes.length;
+        
+        Comparator<int[]> comp = new Comparator<int[]>(){
+            @Override
+            public int compare(int[] a, int[] b) {
+                if(a[0] != b[0]) return a[0] - b[0];
+                return b[1] - a[1];
+            }
+        };
+        
+        Arrays.sort(envelopes, comp);
+        int[][] tails = new int[envelopes.length][envelopes[0].length];
+        int end = 0;
+        tails[0][0] = envelopes[0][0];
+        tails[0][1] = envelopes[0][1];
+        for(int i = 1; i < envelopes.length; i++) {
+            if(envelopes[i][0] > tails[end][0] && envelopes[i][1] > tails[end][1]) {
+                end++;
+                tails[end][0] = envelopes[i][0];
+                tails[end][1] = envelopes[i][1];
+            } else {
+                int position = bs(tails, envelopes[i], 0, end);
+                tails[position][0] = envelopes[i][0];
+                tails[position][1] = envelopes[i][1];
+            }
+        }
+        return end + 1;
+    }
+    
+    private int bs(int[][] tails, int[] envelope, int low, int high) {
+        if(low == high) return low;
+        if(low + 1 == high) {
+            if(tails[low][1] >= envelope[1]) {
+                return low;
+            } else {
+                return high;
+            }
+        }
+        int m = low + (high - low)/2;
+        if(tails[m][1] == envelope[1]) return m;
+        if(tails[m][1] < envelope[1]) {
+            return bs(tails, envelope, m+1, high);
+        } else {
+            return bs(tails, envelope, low, m);
+        }
     }
     
     public static void main(String[] args) {
