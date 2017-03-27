@@ -37,14 +37,16 @@ public class MinimumHeighTrees {
     	while(map.size() > 2) {
     		List<Integer> newLeaves = new ArrayList<Integer>();
     		for(Integer leaf : leaves) {
-    			map.get(map.get(leaf).get(0)).remove(leaf);
-    			if(map.get(map.get(leaf).get(0)).size() == 1) {
-    				newLeaves.add(map.get(leaf).get(0));
+    			int neigh = map.get(leaf).get(0);
+    			map.get(neigh).remove(leaf);
+    			if(map.get(neigh).size() == 1) {
+    				newLeaves.add(neigh);
     			}
     			map.remove(leaf);
     		}
     		leaves = newLeaves;
     	}
+    	
     	List<Integer> res = new ArrayList<Integer>();
     	for(Integer i : map.keySet()) {
     		res.add(i);

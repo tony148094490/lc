@@ -1,5 +1,5 @@
 package kc;
-
+import java.util.UUID;
 /**
 The idea is to get the balloon bursted last and apply dp.
 While doing dp, we do from the smallest range, which consists three numbers. 
@@ -21,11 +21,11 @@ public class BurstBallons {
         
         int[][] coins = new int[nums.length+2][nums.length+2];
         for(int range = 2; range < arr.length; range++) {
-            for(int start = 0, end = start + range; end < arr.length; start++) {
-                for(int index = start + 1 ; index < end; index++) {
-                    coins[start][end] = Math.max(coins[start][end],
-                        arr[start] * arr[index] * arr[end] + coins[start][index] + 
-                        coins[index][end]);
+            for(int start = 0; start + range < arr.length; start++) {
+                for(int index = start + 1 ; index < start + range; index++) {
+                    coins[start][start + range] = Math.max(coins[start][start + range],
+                        arr[start] * arr[index] * arr[start + range] + coins[start][index] + 
+                        coins[index][start + range]);
                 }
             }
         }
@@ -35,7 +35,8 @@ public class BurstBallons {
     public static void main(String[] args) {
     	BurstBallons x = new BurstBallons();
     	int[] arr = {3,1,5,8};
-    	System.out.println(x.maxCoins(arr));
-    	
+
+    	System.out.println(UUID.randomUUID());
     }
 }
+

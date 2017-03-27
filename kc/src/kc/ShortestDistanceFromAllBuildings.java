@@ -10,6 +10,7 @@ Idea is to use 1)construct a point class 2) iterate through each starting point 
 and label the cell that's visited by incrementing it by one for each iteration. We can use two new 
 helper matrixs but we instead modify the original one and construct a new one. It doesn't make much difference.
  */
+// 0 -> empty, 1 -> building, 2 -> obstacle
 public class ShortestDistanceFromAllBuildings {
 
 	int[][] dir = {{0,1},{0,-1},{1,0},{-1,0}};

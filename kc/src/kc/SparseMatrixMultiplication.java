@@ -1,4 +1,8 @@
 package kc;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A = [
   [ 1, 0, 0],
@@ -29,6 +33,47 @@ public class SparseMatrixMultiplication {
         }
         return res;
     }
+    
+    public int[][] multiply2(int[][] A, int[][] B) {
+        if(A.length == 0 || B.length == 0) return null;
+        
+        int[][] res = new int[A.length][B[0].length];
+        
+        Map<Integer, Map<Integer, Integer>> mapA = new HashMap<>();
+        Map<Integer, Map<Integer, Integer>> mapB = new HashMap<>();
+
+        for(int i = 0 ; i < A.length; i++) {
+            for(int j = 0 ; j < A[0].length; j++) {
+                if(A[i][j] != 0) {
+                    if(!mapA.containsKey(i)) mapA.put(i, new HashMap<>());
+                    mapA.get(i).put(j, A[i][j]);
+                }
+            }
+        }
+        
+        for(int i = 0 ; i < B.length; i++) {
+            for(int j = 0 ; j < B[0].length; j++) {
+                if(B[i][j] != 0) {
+                    if(!mapB.containsKey(i)) mapB.put(i, new HashMap<>());
+                    mapB.get(i).put(j, B[i][j]);
+                }
+            }
+        }
+        
+        for(Integer i : mapA.keySet()) {
+            for(Integer j : mapA.get(i).keySet()) {
+                if(!mapB.containsKey(j)) {
+                    continue;
+                }
+                for(Integer k : mapB.get(j).keySet()) {
+                    res[i][k] += mapA.get(i).get(j) * mapB.get(j).get(k);
+                }
+            }
+        }
+        return res;
+    }
+    
+    
     
     public static void main(String[] args) {
     	int[][] A = new int[2][3];

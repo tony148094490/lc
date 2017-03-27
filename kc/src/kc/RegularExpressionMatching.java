@@ -74,19 +74,44 @@ public class RegularExpressionMatching {
         return dp[s.length()][p.length()];
     }
     
+    public boolean isMatch3(String s, String p) {
+        boolean[][] dp = new boolean[s.length() + 1][p.length() + 1];
+        dp[0][0] = true;
+        for(int i = 1; i < p.length(); i++) {
+            if(p.charAt(i) == '*') {
+                dp[0][i+1] = dp[0][i-1];
+            }
+        }
+        for(int i = 0 ; i < s.length(); i++) {
+            for(int j = 0 ; j < p.length() ; j++) {
+                if(p.charAt(j) == s.charAt(i) || p.charAt(j) == '.') {
+                    dp[i+1][j+1] = dp[i][j];
+                } else if(p.charAt(j) == '*') {
+                    dp[i+1][j+1] |= dp[i+1][j-1];
+                    dp[i+1][j+1] |= dp[i+1][j];
+                    if(i > 0 && j > 0 && (p.charAt(j-1) == s.charAt(i-1) && s.charAt(i) == s.charAt(i-1)|| p.charAt(j-1) == '.')) {
+                       dp[i+1][j+1] |= dp[i][j+1];
+                    }
+                }
+            }
+        }
+        return dp[s.length()][p.length()];
+    }
+    
+    
     public static void main(String[] args) {
     	RegularExpressionMatching x = new RegularExpressionMatching();
-    	System.out.println(x.isMatch("aa","a"));
-    	System.out.println(x.isMatch("aa","aa"));
-    	System.out.println(x.isMatch("aaa","aa"));
-    	System.out.println(x.isMatch("aa", "a*"));
-    	System.out.println(x.isMatch("aa", ".*"));
-    	System.out.println(x.isMatch("ab", ".*"));
-    	System.out.println(x.isMatch("aab", "c*a*b"));
-    	System.out.println(x.isMatch("acaabbaccbbacaabbbb", "a*.*b*.*a*aa*a*"));
-    	System.out.println(x.isMatch("a", "ab*a"));
-    	System.out.println(x.isMatch("ab", ".*c"));
-    	System.out.println(x.isMatch("bbbba", ".*a*a"));
+    	System.out.println(x.isMatch("aa","a") + "," + x.isMatch3("aa","a"));
+    	System.out.println(x.isMatch("aa","aa") + "," + x.isMatch3("aa","aa"));
+    	System.out.println(x.isMatch("aaa","aa") + "," + x.isMatch3("aaa","aa"));
+    	System.out.println(x.isMatch("aa", "a*") + "," + x.isMatch3("aa", "a*"));
+    	System.out.println(x.isMatch("aa", ".*") + "," + x.isMatch3("aa", ".*"));
+    	System.out.println(x.isMatch("ab", ".*") + "," + x.isMatch3("ab", ".*"));
+    	System.out.println(x.isMatch("aab", "c*a*b") + "," + x.isMatch3("aab", "c*a*b"));
+    	System.out.println(x.isMatch("acaabbaccbbacaabbbb", "a*.*b*.*a*aa*a*") + "," + x.isMatch3("acaabbaccbbacaabbbb", "a*.*b*.*a*aa*a*"));
+    	System.out.println(x.isMatch("a", "ab*a") + "," + x.isMatch3("a", "ab*a"));
+    	System.out.println(x.isMatch("ab", ".*c") + "," + x.isMatch3("ab", ".*c"));
+    	System.out.println(x.isMatch("bbbba", ".*a*a") + "," + x.isMatch3("bbbba", ".*a*a"));
 
     	
 	}

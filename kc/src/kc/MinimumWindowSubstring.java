@@ -3,79 +3,70 @@ package kc;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 
 public class MinimumWindowSubstring {
     public String minWindow(String s, String t) {
-        if(s.length() == 0 || t.length() == 0) return "";
-        Map<Character, Queue<Integer>> indices = new HashMap<Character, Queue<Integer>>();
-        Map<Character, Integer> map = new HashMap<Character, Integer>();
-        Map<Character, Integer> ref = new HashMap<Character, Integer>();
-        for(Character x : t.toCharArray()) {
-        	if(map.containsKey(x)) {
-        		map.put(x, map.get(x) + 1);
-        		ref.put(x, ref.get(x) + 1);
-        	} else {
-        		map.put(x,1);
-        		ref.put(x,1);
-        	}
+        if(t.length() > s.length()) return "";
+        Map<Character, Integer> ref = new HashMap<>();
+        Map<Character, Integer> map = new HashMap<>();
+        for(char c : t.toCharArray()) {
+            Integer count = map.get(c);
+            if(count == null) {
+                count = 1;
+            } else {
+                count = count + 1;
+            }
+            map.put(c, count);
+            ref.put(c, count);
         }
-        String res = "";
+        
         int maxLen = s.length() + 1;
+        String str = "";
         int start = -1;
-        for(int i = 0 ; i < s.length(); i++) {
-        	char c = s.charAt(i);
-        	if(ref.containsKey(c)) {
-        		if(start == -1) {
-        			start = i;
-        		}
-        		if(map.containsKey(c)) {
-        			if(indices.containsKey(c)) {
-        				indices.get(c).add(i);
-        			} else {
-        				Queue<Integer> q = new LinkedList<Integer>();
-        				q.add(i);
-        				indices.put(c, q);
-        			}
-        			
-        			if(map.get(c) == 1) {
-        				map.remove(c);
-        			} else {
-        				map.put(c,map.get(c)-1);
-        			}
-        			
-        			if(map.isEmpty()) {
-        				
-        				// getMax
-        				if(i - start + 1 < maxLen) {
-        					maxLen = i - start + 1;
-        					res = s.substring(start, i+1);
-        				}
-        			}
-        		}
-        		else {
-        			int last = indices.get(c).poll();
-        			if(last == start) {
-        				start++;
-        				while(start < i){
-        					char cur = s.charAt(start);
-        					if(ref.containsKey(cur)) {
-        						int index = indices.get(cur).peek();
-        						if(start == index) {
-        							break;
-        						}
-        					}
-        					start++;
-        				}   				
-        				map.put(c, 1);    				
-        				i--;
-        			} else {
-            			indices.get(c).add(i);
-        			}
-        		}
-        	}
+        
+        Map<Character, LinkedList<Integer>> window = new HashMap<>();
+        for(int i = 0 ; i < s.length() ; i++) {
+            char c = s.charAt(i);
+            if(ref.containsKey(c)) {
+                if(start == -1) {
+                    start = i;
+                }    
+                if(map.containsKey(c)) {
+                    LinkedList<Integer> list = window.get(c);
+                    if(list == null) {list = new LinkedList<>(); window.put(c, list);}
+                    list.add(i);
+                    Integer count = map.get(c);
+                    if(count == 1) {
+                        map.remove(c);
+                    } else {
+                        map.put(c, count - 1);
+                    }
+                    if(map.isEmpty()) {
+                        if(maxLen > i - start + 1) {
+                            str = s.substring(start, i+1);
+                            maxLen = i - start + 1;
+                        }
+                    }
+                } else {
+                    int last = window.get(c).poll();
+                    if(start == last) {
+                        start++;
+                        while(start < i) {
+                            if(ref.containsKey(s.charAt(start)) && window.get(s.charAt(start)).peek() == start) {
+                                break;
+                            }
+                            start++;
+                        } 
+                        i--;
+                        map.put(c, 1);
+                    } else {
+                        window.get(c).add(i);
+                    }
+                } 
+                
+            }
         }
-        return res;
+        return str;
     }
     
     public static void main(String[] args) {

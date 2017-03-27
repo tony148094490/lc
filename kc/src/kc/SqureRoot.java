@@ -11,6 +11,7 @@ public class SqureRoot {
         int ans = 0;
         while(l <= r) {
             int m = l + (r-l)/2;
+            System.out.println(m);
             if(m * m == x) return m;
             if(m > x / m) {
                 r = m - 1;
@@ -36,6 +37,6 @@ public class SqureRoot {
     
     public static void main(String[] args) {
     	SqureRoot x = new SqureRoot();
-    	System.out.println(x.mySqrt2(125));
+    	System.out.println(x.mySqrt(5));
     }
 }

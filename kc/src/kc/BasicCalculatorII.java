@@ -7,55 +7,51 @@ public class BasicCalculatorII {
         Stack<Integer> operands = new Stack<Integer>();
         Stack<Character> operators = new Stack<Character>();
         for(int i = 0 ; i < s.length(); i++) {
-            if(s.charAt(i) == ' ') continue;
-            if(s.charAt(i) == '+' || s.charAt(i) == '-' || s.charAt(i) == '*' || s.charAt(i) == '/') {
-                operators.push(s.charAt(i));
-            } else {
-                StringBuilder sb = new StringBuilder();
-                sb.append(s.charAt(i));
-                i++;
-                while(i<s.length() && (s.charAt(i)>='0' && s.charAt(i)<='9')) {
-                    sb.append(s.charAt(i));
-                    i++;
-                }
-                i--;
-                if(!operators.isEmpty() && (operators.peek() == '*' || operators.peek() == '/')) {
-	                int second = Integer.parseInt(sb.toString());
-	                int first = operands.pop();
-	                char operator = operators.pop();
-	                if(operator == '*') {
-	                    operands.push(first * second);
-	                } else {
-	                    operands.push(first / second);
-	                }
+            if(s.charAt(i) >= '0' && s.charAt(i) <='9') {
+                String number = getNr(s, i);
+                
+                if(!operators.isEmpty() && operators.peek() == '*') {
+                    operators.pop();
+                    operands.push(operands.pop() * Integer.parseInt(number));
+                } else if(!operators.isEmpty() && operators.peek() == '/') {
+                    operators.pop();
+                    operands.push(operands.pop() / Integer.parseInt(number));
                 } else {
-                	operands.push(Integer.parseInt(sb.toString()));
+                    operands.push(Integer.parseInt(number));
                 }
+                
+                i += number.length() - 1;
+            } else if( s.charAt(i) != ' ') {
+                operators.push(s.charAt(i));
             }
         }
         
-        Stack<Integer> tempOperands = new Stack<Integer>();
-        while(!operands.isEmpty()) tempOperands.push(operands.pop());
+
+        Stack<Integer> operandsII = new Stack<>();
+        Stack<Character> operatorsII = new Stack<>();
+        while(!operands.isEmpty()) operandsII.push(operands.pop());
+        while(!operators.isEmpty()) operatorsII.push(operators.pop());
         
-        Stack<Character> tempOperators = new Stack<Character>();
-        while(!operators.isEmpty()) tempOperators.push(operators.pop());
-        
-        while(!tempOperators.isEmpty()) {
-            int first = tempOperands.pop();
-            int second = tempOperands.pop();
-            char op = tempOperators.pop();
-            if(op=='+') {
-                tempOperands.push(first + second);
+        while(!operatorsII.isEmpty()) {
+            char op = operatorsII.pop();
+            if(op == '+') {
+                operandsII.push(operandsII.pop() + operandsII.pop());
             } else {
-                tempOperands.push(first - second);
+                operandsII.push(operandsII.pop() - operandsII.pop());
             }
         }
-        return tempOperands.pop();
+        return operandsII.pop();
     }
+    
+    private String getNr(String s, int i) {
+        int j = i + 1;
+        while( j < s.length() && s.charAt(j) >= '0' && s.charAt(j) <= '9') j++;
+        return s.substring(i, j);
+    }
+    
     
     public static void main(String[] args) {
     	BasicCalculatorII x = new BasicCalculatorII();
     	System.out.println(x.calculate("42 + 9" ));
-    	System.out.println("   ".split(" ").length);
 	}
 }

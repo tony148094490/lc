@@ -50,74 +50,46 @@ Can you do it in time complexity O(k log mn), where k is the length of the posit
  *
  */
 public class NumberOfIslandsII {
-    int counter;
-    int[][] map;
-    int[][] sizes;
-    
+    int count = 0;
+    int[][] dir = {{1,0},{0,1},{-1,0},{0,-1}};
+    int[] parents;
     public List<Integer> numIslands2(int m, int n, int[][] positions) {
-        map = new int[m][n];
+        List<Integer> res = new ArrayList<>();
+        if(m == 0 || n == 0) return res;
         
-        for(int i = 0 ; i < map.length; i++) {
-            for(int j = 0 ; j < map[0].length; j++) {
-                map[i][j] = -1;
-            }
-        }
+        parents = new int[m * n + 1];
         
-        sizes = new int[m][n];
-        counter = 0;
-        List<Integer> res = new ArrayList<Integer>();
-        for(int i = 0 ; i < positions.length; i++) {
-            int r = positions[i][0];
-            int c = positions[i][1];
-            sizes[r][c] = 1;
-            int hashed = n * r + c;
-            map[r][c] = hashed;
-            counter++;
-            
-            if(r > 0 && map[r-1][c] != -1) {
-                union(r-1, c, r, c);
+        for(int[] position : positions) {
+            int po = position[0] * n + position[1] + 1;
+            parents[po] = po;
+            count++;
+            for(int[] direction : dir) {
+                int x = position[0] + direction[0];
+                int y = position[1] + direction[1];
+                if(x >= m || x < 0 || y >= n || y < 0) continue;
+                int pos = x * n + y + 1;
+                if(parents[pos] != 0) {
+                    union(pos, po);
+                }
             }
-            
-            if(r < map.length-1 && map[r+1][c] != -1) {
-                union(r+1, c, r, c);
-            }
-            if(c > 0 && map[r][c-1] != -1) {
-                union(r,c-1, r, c);
-            }
-            if(c < map[0].length-1 && map[r][c+1] != -1) {
-                union(r,c+1, r, c);
-            }
-            
-            res.add(counter);
+            res.add(count);
         }
         return res;
     }
     
-    private void union(int firstRow, int firstCol, int secondRow, int secondCol) {
-        int firstParent = find(firstRow, firstCol);
-        int secondParent = find(secondRow, secondCol);
-        if(firstParent == secondParent) return;
-        int firstParentRow = firstParent/map[0].length;
-        int firstParentCol = firstParent - firstParentRow * map[0].length;
-        int secondParentRow = secondParent/map[0].length;
-        int secondParentCol = secondParent - secondParentRow * map[0].length;
-        if(sizes[firstParentRow][firstParentCol] < sizes[secondParentRow][secondParentCol]) {
-            map[firstParentRow][firstParentCol] = secondParent;
-            sizes[secondParentRow][secondParentCol] += sizes[firstParentRow][firstParentCol];
-        } else {
-            map[secondParentRow][secondParentCol] = firstParent;
-            sizes[firstParentRow][firstParentCol] += sizes[secondParentRow][secondParentCol];
-        }
-        counter--;
+    private void union(int a, int b) {
+        int aa = find(a);
+        int bb = find(b);
+        if(aa == bb) return;
+        count--;
+        parents[bb] = aa;
     }
     
-    private int find(int r, int c) {
-        while(map[r][c] != map[r].length * r + c) {
-            int row = map[r][c] / map[r].length;
-            int col = map[r][c] - row * map[r].length;
-            r = row;
-            c = col;
+    private int find(int p) {
+        if(p != parents[p]) {
+            int parent = find(parents[p]);
+            parents[p] = parent;
         }
-        return r * map[r].length + c;
+        return parents[p];
     }
 }

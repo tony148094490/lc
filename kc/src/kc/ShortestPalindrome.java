@@ -42,38 +42,7 @@ public class ShortestPalindrome {
         StringBuilder sb = new StringBuilder(s);
         String res = sb.toString() + " " + sb.reverse().toString();
         int[] kmp = new int[res.length()];
-        int i = 0;
-        int j = 1;
-        while(j < res.length()) {
-            if(res.charAt(j) == res.charAt(i)) {
-                kmp[j] = i + 1;
-                j++;
-                i++;
-            } else {
-                if(i == 0) {
-                    kmp[j] = 0;
-                    j++;
-                    continue;
-                }
-                
-                while(i > 0) {
-                    i = kmp[i-1];
-                    if(res.charAt(j) == res.charAt(i)) {
-                        kmp[j] = i + 1;
-                        j++;
-                        i++;
-                        break;
-                    }
-                    
-                    if (i == 0) {
-                        kmp[j] = 0;
-                        j++;
-                        break;
-                    }            
-                }
-            }
-            
-        }
+        kmp = lps(res);
         int len = kmp[kmp.length-1];
         StringBuilder newSb = new StringBuilder(s);
         return newSb.reverse().substring(0, s.length() - len) + s;
@@ -98,9 +67,9 @@ public class ShortestPalindrome {
     				i--;
     			}
     		}
+    		
     	}
-    	
-    	
+
     	int finalLenOfPrefixThatsAPalindrome = longestProperSuffix[needle.length()-1];
     	String toAppend = s.substring(finalLenOfPrefixThatsAPalindrome);
     	sb = new StringBuilder(toAppend);
@@ -108,11 +77,39 @@ public class ShortestPalindrome {
 
     }
     
+    private int[] lps(String str) {
+    int[] res = new int[str.length()];
+    int first = 0;
+    int second = 1;
+    while(second < str.length()) {
+        if(str.charAt(first) == str.charAt(second)) {
+            res[second] = first + 1;
+            first++;
+        } else {
+            if(first == 0) {
+                second++;
+                continue;
+            }
+            
+            while(first > 0 && str.charAt(first) != str.charAt(second)) {
+                first = res[first-1] ; 
+            }
+            
+            if(str.charAt(first) == str.charAt(second)) {
+                res[second] = first+1;
+                first++;
+            }
+        }
+
+        second++;
+    }
+    return res;
+}
     
     
     public static void main(String[] args) {
     	ShortestPalindrome x = new ShortestPalindrome();
-    	String str = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab";
+    	String str = "ababb";
     	System.out.println(x.shortestPalindrome2(str));
     	System.out.println(x.getShortest(str));
     	

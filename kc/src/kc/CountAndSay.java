@@ -24,9 +24,8 @@ public class CountAndSay {
 					newSb.append(1);
 				}
 				newSb.append(lastString.charAt(i));
-				sb = newSb;
 			}
-			
+			sb = newSb;
 		}
 		return sb.toString();
 	}

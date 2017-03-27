@@ -9,7 +9,7 @@ public class MultiplyStrings {
     	for(int i = num1.length()-1 ; i >= 0; i--) {
     		for(int j = num2.length()-1; j >=0; j--) {
     			int c = (int)(num1.charAt(i) - '0') * (int)(num2.charAt(j) - '0');
-    			if(i+j>=0) res[i + j] += (res[i+j + 1] + c) / 10;
+    			res[i + j] += (res[i+j + 1] + c) / 10;
     			res[i+j+1] = (res[i+j+1] + c) %10;
     		}
     	}
