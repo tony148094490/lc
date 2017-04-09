@@ -27,7 +27,7 @@ public class DataStreamAsDisjointIntervals {
 	        			interval.start = val;
 	        		} else if(position - 1 >= 0 && ranges.get(position-1).end + 1 == val) {
         				ranges.get(position-1).end = val;
-        			} else if (interval.start > val) {
+        			} else {
     	        		ranges.add(position, newInterval);
         			}	
 	        	} else {

@@ -31,10 +31,10 @@ public class ContainsDuplicate {
         if(k < 1 || t < 0) return false;
         
         //bucketing based on value
-        long range = (long) t + 1;
+        long range = (long) t + 1; // for t = 0
         Map<Long, Long> buckets = new HashMap<>();
         for(int i = 0 ; i < nums.length ; i++) {
-            long offsetNumber = (long) (nums[i]) - Integer.MIN_VALUE;
+            long offsetNumber = (long) (nums[i]) - Integer.MIN_VALUE; // to avoid {-4, 4} t = 5;
 
             long thisBucket = offsetNumber / range;
             if(buckets.containsKey(thisBucket) || 

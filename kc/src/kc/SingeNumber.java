@@ -16,12 +16,14 @@ public class SingeNumber {
         for(Integer x : nums) {
         	two = two ^ (one & x); 
         	one = one ^ x; 
-        	
+        	System.out.println(two + "," + one);
+
         	//adjust the one and two if needed
         	mask = ~(one & two);
         	
         	one = mask & one;
         	two = mask & two;
+        	
         }
         
         return one;
@@ -66,10 +68,9 @@ public class SingeNumber {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		SingeNumber x = new SingeNumber();
-		int[] arr = {1,2,1,3,2,5};
-		int[] res = x.singleNumber3(arr);
+		int[] arr = {1,1,1,3};
+		int res = x.singleNumber2(arr);
 		
-		System.out.println(res[0] + "," + res[1]);
 	}
 
 }

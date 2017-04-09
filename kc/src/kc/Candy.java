@@ -1,54 +1,39 @@
 package kc;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Candy {
     public int candy(int[] ratings) {
-        if(ratings.length < 2) return ratings.length;
-    	int[] c = new int[ratings.length];
-        int i = 0;
-        while( i < ratings.length - 1) {
-        	if(ratings[i] < ratings[i+1]) {
-        		c[i] = 1;
-        		i++;
-        		while(i<ratings.length && ratings[i-1] < ratings[i]) {
-        			c[i] = c[i-1] + 1;
-        			i++;
-        		}
-        		i--;
-        	} else if(ratings[i] > ratings[i+1]) {
-        		i++;
-        		int k = i;
-        		while(i<ratings.length && ratings[i-1] > ratings[i]) {
-        			i++;
-        		}
-        		k = i - 1;
-        		c[k] = 1;
-        		k--;
-        		while(k >= 0 && ratings[k] > ratings[k+1]) {       			
-        			c[k] = Math.max(c[k],c[k+1] + 1);
-        			k--;
-        		}
-        		i--;
-        	} else {
-        		if(c[i] == 0) {
-        			c[i] = 1;
-        			c[i+1] = 1;
-        		} else {
-        			c[i+1] = 1;
-        		}
-        		i++;
-        	}
+        if(ratings.length == 0) return 0;
+        if(ratings.length == 1) return 1;
+        int[] res = new int[ratings.length];
+        res[0] = 1;
+        for(int i = 1; i < ratings.length; i++) {
+            if(ratings[i] > ratings[i-1]) {
+                res[i] = res[i-1] + 1;
+            } else {
+                res[i] = 1;
+            }
         }
         
-        int res = 0;
-        for(Integer x : c) {System.out.println(x);
-        	res += x;
+        for(int i = ratings.length-2; i >= 0 ;i--) {
+            if(ratings[i] > ratings[i+1] && res[i] <= res[i+1]) {
+                res[i] = res[i+1] + 1;
+            }
         }
-        return res;
+        int sum = 0;
+        for(int x : res) sum += x;
+        return sum;
     }
     
     public static void main(String[] args) {
 		int[] arr = {4,2,3,4,1};
 		Candy x = new Candy();
-		System.out.println(x.candy(arr));
+		String line = "AddressLine1=xxxxxx, AddressLine2=xxxxxx,";
+		String pattern = "[Aa]ddressLine(1|2)=.*?,";
+		Pattern r = Pattern.compile(pattern);
+		Matcher m = r.matcher(line);
+		System.out.println(m.replaceAll("AddressLine1=***,"));
 	}
 }
