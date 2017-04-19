@@ -33,57 +33,44 @@ public class KthLargestElementInArray {
     }
 
 
-	public int findKthLargest2(int[] nums, int k) {
-		if(nums.length == 0 || k > nums.length) return -1;
-		int l = 0;
-		int h = nums.length-1;
-		int pivot = sort(nums, l+1, h, l);
-		while(pivot != k - 1) {
-			if(pivot > k -1) {
-				h = pivot-1;
-				pivot = sort(nums, l+1, h, l);
-			} else {
-				l = pivot+1;
-				pivot = sort(nums, l+1, h,l);
-			}
-		}
-		return nums[pivot];
-	}
-	
-	private int sort(int[] nums, int i, int j, int pivot) {
-		int left = i;
-		int right = j;
-		while(left < right) {
-			while(left < right && nums[left] > nums[pivot]) left++;
-			while(left < right && nums[right] <= nums[pivot]) right--;
-			if(left < right) {
-				swap(nums, left, right);
-				left++;
-				right--;
-			} else {
-				break;
-			}
-		}
-		
-		if(left == right) {
-			if(nums[left] > nums[pivot]) {
-				swap(nums,pivot,left);
-				return left;
-			} else {
-				swap(nums, pivot, left-1);
-				return left-1;
-			}
-		} else {
-			swap(nums, pivot, right);
-			return right;
-		}
-	}
-	
-	private void swap(int[] nums, int l, int r) {
-		int temp = nums[l];
-		nums[l] = nums[r];
-		nums[r] = temp;
-	}
+    public int findKthLargest2(int[] nums, int k) {
+        int i = quickSort(nums, 0, nums.length-1, k);
+        return nums[i];
+    }
+    
+    private int quickSort(int[] nums, int left, int right, int k) {
+        if(left == right) return left;
+        int sorted = pivot(nums, left, right);
+        if(sorted == k - 1) return sorted;
+        if(sorted > k - 1) {
+            return quickSort(nums, left, sorted-1, k);
+        } else {
+            return quickSort(nums, sorted + 1, right, k);
+        }
+    }
+    
+    private int pivot(int[] nums, int start, int end) {
+        int piv = nums[start];
+        int left = start;
+        int right = end;
+        while(left <= right) {
+            while(left <= right && nums[left] >= piv) left++;
+            while(left <= right && nums[right] <= piv) right--;
+            if(left <= right) {
+                swap(nums,left, right);
+                left++;
+                right--;
+            }
+        }
+        swap(nums, start, right);
+        return right;
+    }
+    
+    private void swap(int[] nums, int a, int b) {
+        int temp = nums[a];
+        nums[a] = nums[b];
+        nums[b] = temp;
+    }
 	
 	public static void main(String[] args) {
 		int[] arr = {3,2,1,5,6,4,2,2,2,2,2,2,2};
