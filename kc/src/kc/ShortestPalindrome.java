@@ -48,35 +48,6 @@ public class ShortestPalindrome {
         return newSb.reverse().substring(0, s.length() - len) + s;
     }
     
-    
-    public String getShortest(String s) {
-    	if(s.length() <= 1) return s;
-    	StringBuilder sb = new StringBuilder(s);
-    	String needle = sb.toString() + "&" + sb.reverse().toString();
-    	int[] longestProperSuffix = new int[needle.length()];
-    	int currentPointer = 0;
-    	for(int i = 1; i < needle.length(); i++) {
-    		if(needle.charAt(currentPointer) == needle.charAt(i)) {
-    			longestProperSuffix[i] = currentPointer+1;
-    			currentPointer++;
-    		} else {
-    			if(currentPointer==0) {
-    				continue;
-    			} else {
-    				currentPointer = longestProperSuffix[currentPointer - 1];
-    				i--;
-    			}
-    		}
-    		
-    	}
-
-    	int finalLenOfPrefixThatsAPalindrome = longestProperSuffix[needle.length()-1];
-    	String toAppend = s.substring(finalLenOfPrefixThatsAPalindrome);
-    	sb = new StringBuilder(toAppend);
-    	return sb.reverse().toString() + s;
-
-    }
-    
     private int[] lps(String str) {
     int[] res = new int[str.length()];
     int first = 0;
@@ -88,10 +59,11 @@ public class ShortestPalindrome {
         } else {
             if(first == 0) {
                 second++;
-                continue;
             }
             
             while(first > 0 && str.charAt(first) != str.charAt(second)) {
+            	// when backing off, we need to back off to the first appearance of the pattern
+            	// instead of the last one
                 first = res[first-1] ; 
             }
             
@@ -111,7 +83,6 @@ public class ShortestPalindrome {
     	ShortestPalindrome x = new ShortestPalindrome();
     	String str = "ababb";
     	System.out.println(x.shortestPalindrome2(str));
-    	System.out.println(x.getShortest(str));
     	
     }
 }

@@ -10,73 +10,73 @@ import java.util.Set;
 
 public class WordLadderII {
     public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
-        List<List<String>> res = new ArrayList<>();
+        Set<String> dict = new HashSet<>();
+        for(String str : wordList) dict.add(str);
+        dict.remove(beginWord);
         Map<String, Set<String>> map = new HashMap<>();
-        Set<String> set = new HashSet<>();
-        for(String str : wordList) set.add(str);
-        if(!set.contains(endWord)) return res;
+        List<List<String>> res = new ArrayList<>();
         Set<String> parents = new HashSet<>();
         parents.add(beginWord);
-        set.remove(beginWord);
+        Set<String> children = new HashSet<>();
         boolean found = false;
-        Set<String> childrenList = new HashSet<>();
         while(!parents.isEmpty()) {
             for(String parent : parents) {
-                Set<String> children = getChildren(parent, set, childrenList);
-                if(children.contains(endWord)) found = true;
-                if(found && children.contains(endWord)) {
-                    LinkedList<String> newRes = new LinkedList<>();
-                    newRes.add(endWord);
-                    getPath(parent, map, newRes, res);
-                } else {
-                    for(String str : children) {
-                        Set<String> resSet= map.get(str);
-                        if(resSet == null) resSet = new HashSet<>();
-                        resSet.add(parent);
-                        map.put(str, resSet);
+                Set<String> kids = getNeighbors(parent, dict);
+                if(kids.contains(endWord)) {
+                    found = true;
+                    LinkedList<String> path = new LinkedList<>();
+                    path.add(endWord);
+                    getRes(parent, map, path, res);
+                }
+                
+                if(!found) {
+                    children.addAll(kids);
+                    for(String str : kids) {
+                        Set<String> folks = map.get(str);
+                        if(folks == null) folks = new HashSet<>();
+                        folks.add(parent);
+                        map.put(str, folks);
                     }
                 }
-            
             }
-            if(found) {
+                            
+            if(!found) {
+                dict.removeAll(children);
+                parents = children;
+                children = new HashSet<>();
+            } else {
                 break;
             }
-            parents = childrenList;
-            childrenList = new HashSet<>();
-            for(String str : parents) set.remove(str);
         }
-        
-
         return res;
     }
     
-    private void getPath(String parent, Map<String, Set<String>> map, LinkedList<String> cur, List<List<String>> res) {
-        cur.addFirst(parent);
+    private void getRes(String parent, Map<String, Set<String>> map, LinkedList<String> path, List<List<String>> res) {
         if(!map.containsKey(parent)) {
-            res.add(new LinkedList<String>(cur));
-        } else {
-            for(String str : map.get(parent)) {
-                getPath(str, map, cur, res);
-            }
+            path.add(0,parent);
+            res.add(new ArrayList<>(path));
+            path.removeFirst();
+            return;
         }
-        cur.removeFirst();
+        path.add(0, parent);
+        for(String child : map.get(parent)) {
+            getRes(child, map, path, res);
+        }
+        path.removeFirst();
     }
     
-    private Set<String> getChildren(String parent, Set<String> dict, Set<String> children) {
-        char[] arr = parent.toCharArray();
+    private Set<String> getNeighbors(String str, Set<String> dict) {
         Set<String> res = new HashSet<>();
-        for(int i = 0 ; i < parent.length(); i++) {
-            char c = arr[i];
-            for(char j = 'a' ; j <= 'z' ;j++) {
-                if(j == c) continue;
-                arr[i] = j;
-                String newString = new String(arr);
-                if(dict.contains(newString)) {
-                    res.add(newString);
-                    children.add(newString);
-                }
+        char[] chars = str.toCharArray();
+        for(int i = 0 ; i < str.length(); i++) {
+            char cur = str.charAt(i);
+            for(char j = 'a'; j <= 'z'; j++) {
+                if(j == cur) continue;
+                chars[i] = j;
+                String toCheck = new String(chars);
+                if(dict.contains(toCheck)) res.add(toCheck);
             }
-            arr[i] = c;
+            chars[i] = cur;
         }
         return res;
     }

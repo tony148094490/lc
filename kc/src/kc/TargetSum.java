@@ -23,4 +23,34 @@ public class TargetSum {
         }
         return dp[nums.length][S + sum];
     }
+    
+    public int findTargetSumWays2(int[] nums, int S) {
+            if(nums.length == 0) return 0;
+            int sum = nums[0];
+            for(int i = 1; i < nums.length;i++) {
+                sum += nums[i];
+            }
+            if(sum < S || -sum > S) return 0;
+            
+            int[][] dp = new int[sum * 2 + 1][nums.length + 1];
+            
+            dp[sum][0] = 1;
+            
+            for(int j = 1; j < dp[0].length; j++) {
+                for(int i = 0; i < dp.length; i++) {
+                    // use j's number as -
+                    if(i + nums[j-1] < dp.length) {
+                        dp[i][j] += dp[i+nums[j-1]][j-1];
+                    }
+                    
+                    // use j's number as +
+                    if(i - nums[j-1] >= 0) {
+                        dp[i][j] += dp[i-nums[j-1]][j-1];
+                    }
+                    
+                }
+            }
+
+            return dp[S + sum][nums.length];
+    }
 }

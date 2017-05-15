@@ -47,10 +47,62 @@ public class RemoveInvalidParentheses {
     	}
     	return left == 0;
     }
+    
+    public List<String> removeInvalidParentheses2(String s) {
+        List<String> res = new ArrayList<>();
+        if(isValid(s)) {
+            res.add(s);
+            return res;
+        }
+        Set<String> dedupe = new HashSet<>();
+
+        LinkedList<String> parents = new LinkedList<>();
+        LinkedList<String> children = new LinkedList<>();
+        parents.add(s);
+        boolean found = false;
+        while(!parents.isEmpty()) {
+            String parent = parents.poll();
+            for(int i = 0 ; i < parent.length(); i++) {
+                String child = parent.substring(0,i) + parent.substring(i+1);
+                if(isValid2(child)) {
+                    found = true;
+                    if(!dedupe.contains(child)) {
+                        dedupe.add(child);
+                        res.add(child);   
+                    }
+                } else {
+                    children.add(child);   
+                }
+            }
+            
+            if(parents.isEmpty()) {
+                if(found) {
+                    return res;
+                }
+                parents = children;
+                children = new LinkedList<>();
+            }
+        }
+        
+        // no valid options
+        return res;
+    }
+    private boolean isValid2(String s) {
+        int left = 0;
+        for(int i = 0 ; i < s.length(); i++) {
+            if(s.charAt(i) == '(') {
+                left++;
+            } else if(s.charAt(i) == ')'){
+                left--;
+            }
+            if(left < 0) return false;
+        }
+        return left == 0;
+    }
 
     public static void main(String[] args) {
     	RemoveInvalidParentheses x = new RemoveInvalidParentheses();
 
-    	System.out.println(x.removeInvalidParentheses("aaa()"));
+    	System.out.println(x.removeInvalidParentheses2("()(((((((()"));
     }
 }

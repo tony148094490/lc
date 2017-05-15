@@ -31,31 +31,38 @@ import java.util.Stack;
 public class MiniParser {
     public NestedInteger deserialize(String s) {
         if(s.length() == 0) return null;
-        if(s.charAt(0) != '[') return new NestedInteger(Integer.parseInt(s));
-        
+        if(Character.isDigit(s.charAt(0)) || s.charAt(0) == '-') return new NestedInteger(Integer.parseInt(s));
         Stack<NestedInteger> stack = new Stack<>();
-        int l = 0;
-        NestedInteger x = null;
+        NestedInteger num = new NestedInteger();
+        stack.push(num);
+        NestedInteger res = num;
         for(int i = 0 ; i < s.length(); i++) {
-            if(s.charAt(i) == '[') {
-                if(x != null) {
-                    stack.push(x);//push in parent
-                }
-                x = new NestedInteger();// tracking the new child
-                l = i + 1;
-            } else if(s.charAt(i) == ']') {
-                if(l < i) x.add(new NestedInteger(Integer.parseInt(s.substring(l, i)))); //avoid [] or ]]
-                if(!stack.isEmpty()) {
-                    stack.peek().add(x);
-                    x = stack.pop();
-                }
-                l = i + 1;
+            NestedInteger parent = stack.pop();
+            if(Character.isDigit(s.charAt(i)) || s.charAt(i) == '-') {
+                String cur = getNr(s, i);
+                NestedInteger n = new NestedInteger(Integer.parseInt(cur));
+                parent.add(n);
+                stack.push(parent);
+                i += cur.length() - 1;
             } else if(s.charAt(i) == ',') {
-                if(l < i) x.add(new NestedInteger(Integer.parseInt(s.substring(l,i)))); // avoid ],
-                l = i + 1;
+                stack.push(parent);
+            } else if(s.charAt(i) == '[') {
+                NestedInteger newInteger = new NestedInteger();
+                stack.push(parent);
+                stack.push(newInteger);
+            } else if(s.charAt(i) == ']') {
+                NestedInteger grandpa = stack.pop();
+                grandpa.add(parent);
+                stack.push(grandpa);
+                res = parent;
             }
         }
-        return x;
+        return res;
+    }
+    private String getNr(String s, int index) {
+        int i = index;
+        while(i < s.length() && (s.charAt(i) == '-' || Character.isDigit(s.charAt(i)))) i++;
+        return s.substring(index, i);
     }
     
     public static void main(String[] args) {

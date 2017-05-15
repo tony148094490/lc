@@ -134,6 +134,21 @@ public class WiggleSort {
     	return new int[] {lt, gt};
     }
     
+    public void wiggleSort1(int[] nums) {
+        if(nums.length < 2) return;
+        boolean up = false;
+        int index = 1;
+        while(index < nums.length) {
+            if(up && nums[index] > nums[index-1]) {
+                swap(nums, index, index-1);
+            } else if(!up && nums[index] < nums[index-1]) {
+                swap(nums, index, index-1);
+            }
+            up = !up;
+            index++;
+        }
+    }
+    
     public static void main(String[] args) {
     	int[] res = {1,2};
     	WiggleSort x = new WiggleSort();

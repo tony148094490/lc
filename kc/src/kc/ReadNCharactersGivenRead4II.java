@@ -1,34 +1,39 @@
 package kc;
 
 public class ReadNCharactersGivenRead4II {
-    private char[] buffer = new char[4];
-    private int index = 0;
-    private int progress = 0;
+    char[] mem = new char[4];
+    int memStart = 0;
+    int memEnd = 0;
+    
     /**
      * @param buf Destination buffer
      * @param n   Maximum number of characters to read
      * @return    The number of characters read
      */
     public int read(char[] buf, int n) {
-        int res = 0;
-        while(res < n) {
-            if(progress == 0) {
-                index = this.read4(buffer);
-            }
-            
-            if(index == 0) {
-                return res;
-            }
-            
-            while(progress < index && res < n) {
-                buf[res] = buffer[progress];
-                progress++;
-                res++;
-            }
-            
-            if(progress == index) progress = 0;
+    	
+    	//try re-loading if it's at the end or at the beginning
+        if(memEnd == 0) {
+            memEnd = read4(mem);
+            memStart = 0;
         }
-        return res;
+        
+        if(memEnd == 0) return 0;
+        
+        if(memStart == memEnd) return 0;
+        
+        
+        for(int i = 0; i < n; i++) {
+            buf[i] = mem[memStart];
+            memStart++;
+            if(memStart == memEnd) {
+                if(memEnd <= 3) return i+1;
+                memEnd = read4(mem);
+                memStart = 0;
+                if(memEnd == 0) return i+1;
+            }
+        }
+        return n;
     }
     
 	public int read4(char[] buf) {
