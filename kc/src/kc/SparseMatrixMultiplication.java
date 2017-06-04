@@ -1,7 +1,7 @@
 package kc;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A = [
@@ -35,41 +35,55 @@ public class SparseMatrixMultiplication {
     }
     
     public int[][] multiply2(int[][] A, int[][] B) {
-        if(A.length == 0 || B.length == 0) return null;
+        if(A.length == 0 || B.length ==0) return new int[0][0];
+        List<List<Integer>> a = new ArrayList<>();
+        List<List<Integer>> b = new ArrayList<>();
+        
+        for(int i = 0 ; i < A.length; i++) {
+            List<Integer> list = new ArrayList<>();
+            for(int j = 0; j < A[0].length; j++) {
+                if(A[i][j] != 0) {
+                    list.add(j);
+                }
+            }
+            a.add(list);
+        }
+        
+        for(int i = 0 ; i < B[0].length; i++) {
+            List<Integer> list = new ArrayList<>();
+            for(int j = 0; j < B.length; j++) {
+                if(B[j][i] != 0) {
+                    list.add(j);
+                }
+            }
+            b.add(list);
+        }
         
         int[][] res = new int[A.length][B[0].length];
         
-        Map<Integer, Map<Integer, Integer>> mapA = new HashMap<>();
-        Map<Integer, Map<Integer, Integer>> mapB = new HashMap<>();
-
-        for(int i = 0 ; i < A.length; i++) {
-            for(int j = 0 ; j < A[0].length; j++) {
-                if(A[i][j] != 0) {
-                    if(!mapA.containsKey(i)) mapA.put(i, new HashMap<>());
-                    mapA.get(i).put(j, A[i][j]);
+        for(int i = 0 ; i < a.size(); i++) {
+            List<Integer> aa = a.get(i);
+            if(aa.isEmpty()) continue;
+            for(int j = 0 ; j < b.size(); j++) {
+                List<Integer> bb = b.get(j);
+                if(bb.isEmpty()) continue;
+                
+                int aStart = 0;
+                int bStart = 0;
+                while(aStart < aa.size() && bStart < bb.size()) {
+                    if(aa.get(aStart) == bb.get(bStart)) {
+                        res[i][j] += A[i][aa.get(aStart)] * B[bb.get(bStart)][j];
+                        aStart++;
+                        bStart++;
+                    } else if(aa.get(aStart) > bb.get(bStart)) {
+                        bStart++;
+                    } else {
+                        aStart++;
+                    }
                 }
             }
         }
         
-        for(int i = 0 ; i < B.length; i++) {
-            for(int j = 0 ; j < B[0].length; j++) {
-                if(B[i][j] != 0) {
-                    if(!mapB.containsKey(i)) mapB.put(i, new HashMap<>());
-                    mapB.get(i).put(j, B[i][j]);
-                }
-            }
-        }
-        
-        for(Integer i : mapA.keySet()) {
-            for(Integer j : mapA.get(i).keySet()) {
-                if(!mapB.containsKey(j)) {
-                    continue;
-                }
-                for(Integer k : mapB.get(j).keySet()) {
-                    res[i][k] += mapA.get(i).get(j) * mapB.get(j).get(k);
-                }
-            }
-        }
         return res;
     }
     

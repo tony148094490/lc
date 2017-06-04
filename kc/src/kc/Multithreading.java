@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,7 +16,7 @@ public class Multithreading {
      * @param url a url of root page
      * @return all urls
      */
-    
+    Random rand = new Random();
     public static BlockingQueue<String> queue = new LinkedBlockingQueue<String>();
 
     public static HashMap<String, Boolean> mp = new HashMap<String, Boolean>();
@@ -47,6 +48,46 @@ public class Multithreading {
         return results;   
         
     }
+    
+    public static void main(String[] args) {
+		
+		BlockingQueue<Character> bq = new LinkedBlockingQueue<Character>();
+		ExecutorService es = Executors.newFixedThreadPool(10);
+		try {
+			bq.put('A');
+			for(int i = 0 ; i < 10; i++) {
+				es.submit(new Runnable(){
+					@Override
+					public void run() {
+						try {
+							while(true){
+								Character newTask = bq.take();
+								Character nextTask = newTask == 'Z' ? 'A' : (char) (newTask + 1);
+								bq.put(nextTask);
+								System.out.println("Runnable is running " + ", " + Thread.currentThread());
+								Thread.sleep(new Random().nextInt(100) * 100);
+							}
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e){
+            // e.printStackTrace();
+        }
+
+		//System.out.println(bq);
+		es.shutdownNow();
+	}
 }
 
 class TaskRunner implements Runnable {
@@ -64,7 +105,7 @@ class TaskRunner implements Runnable {
             String domain = "";
             try {
                 URL netUrl = new URL(url);
-                domain = netUrl.getHost();
+                domain = netUrl.getHost();            
             } catch (MalformedURLException e) {
                 // e.printStackTrace(); 
             }
@@ -82,4 +123,6 @@ class TaskRunner implements Runnable {
             }
         }
     }
+    
+
 }

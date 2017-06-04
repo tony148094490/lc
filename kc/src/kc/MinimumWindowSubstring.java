@@ -69,6 +69,32 @@ public class MinimumWindowSubstring {
         return str;
     }
     
+    public String minWindow2(String s, String t) {
+        int[] cnt = new int[256];//char 有256个数
+        for (char c : t.toCharArray()) cnt[c]++;
+        
+        int min = Integer.MAX_VALUE, from = 0, total = t.length();
+        for (int i = 0, j = 0; i < s.length(); i++) {
+        	cnt[s.charAt(i)]--;
+            if (cnt[s.charAt(i)] >= 0) total--;
+            while (total == 0) {                    // total=0 means valid window
+                if (i - j + 1 < min) {//try to update the min length
+                    min = i - j + 1;
+                    from = j;
+                }
+                
+                cnt[s.charAt(j)]++;
+                if(cnt[s.charAt(j)] > 0) {
+                	total++;
+                }
+                
+                j++;
+
+            }
+        }
+        return (min == Integer.MAX_VALUE) ? "" : s.substring(from, from + min);
+    }
+    
     public static void main(String[] args) {
     	MinimumWindowSubstring x = new MinimumWindowSubstring();
     	String s = "ADOBECODEBANC";
@@ -85,6 +111,10 @@ public class MinimumWindowSubstring {
     	System.out.println(x.minWindow(ss, tt));
     	System.out.println(x.minWindow(sss, ttt));
     	System.out.println(x.minWindow(ssss, tttt));
-
+    	System.out.println();
+    	System.out.println(x.minWindow2(s, t));
+    	System.out.println(x.minWindow2(ss, tt));
+    	System.out.println(x.minWindow2(sss, ttt));
+    	System.out.println(x.minWindow2(ssss, tttt));
 	}
 }

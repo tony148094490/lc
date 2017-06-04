@@ -1,6 +1,7 @@
 package kc;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class SerializeAndDeserializeBinaryTree {
     // Encodes a tree to a single string.
@@ -60,6 +61,56 @@ public class SerializeAndDeserializeBinaryTree {
         return root;
     }
     
+    private TreeNode serialize2(TreeNode root) {
+    	helper(root);
+    	return root;
+    }
+    
+    private TreeNode helper(TreeNode root) {
+    	if(root == null) {
+    		return new TreeNode(-1);
+    	}
+    	
+    	TreeNode left = root.left;
+    	TreeNode right = root.right;
+    	root.left = null;
+    	root.right = null;
+    	
+    	if(left == null) {
+    		root.right = new TreeNode(-1);
+    		root = root.right;
+    	} else {
+    		root.right = left;
+    		root = helper(left);
+    	}
+
+    	if(right == null) {
+    		root.right = new TreeNode(-1);
+    		root = root.right;
+    	} else {
+    		root.right = right;
+    		root = helper(right);
+    	}
+    	
+    	return root;
+    }
+    
+    TreeNode pointer = null;
+    private TreeNode deserialize2(TreeNode root) {
+    	if(root.val == -1) {
+    		pointer = root;
+    		return null;
+    	}
+    	
+    	TreeNode newRoot = new TreeNode(root.val);
+    	pointer = newRoot;
+    	
+    	newRoot.left = deserialize2(root.right);
+    	newRoot.right = deserialize2(pointer.right);
+    	
+    	return newRoot;
+    }
+    
     public static void main(String[] args) {
     	
     	TreeNode a = new TreeNode(1);
@@ -70,9 +121,14 @@ public class SerializeAndDeserializeBinaryTree {
     	TreeNode f = new TreeNode(6);
     	TreeNode g = new TreeNode(7);
     	TreeNode n = new TreeNode(8);
+    	
     	a.left = b;a.right = c;b.left=d;b.right=e;e.left=g;c.right=f;f.right=n;
     	SerializeAndDeserializeBinaryTree x = new SerializeAndDeserializeBinaryTree();
-    	System.out.println(x.deserialize(x.serialize(a)));
+    	
+    	System.out.println(a.levelOrderTraversal());
+    	System.out.println(x.serialize2(a).levelOrderTraversal());
+    	System.out.println(x.deserialize2(a).levelOrderTraversal());
+    	//System.out.println(x.deserialize(x.serialize(a)));
     	
     	
     }

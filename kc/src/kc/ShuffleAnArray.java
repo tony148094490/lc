@@ -45,6 +45,14 @@ public class ShuffleAnArray {
     	}
     	System.out.println();
 
-    	
 	}
+    
+    private class S<T> {
+    	T[] children;
+    	T cur;
+    	public S(T a) {
+    		cur = a;
+    	}
+    }
 }
+

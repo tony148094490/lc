@@ -19,6 +19,46 @@ public class FlattenBinartTreeToLinkedList {
     	
     	flatten(right);
     }
+ 
+ /**
+  * This is better   
+  * @param root
+  * @return
+  */
+    public TreeNode find(TreeNode root) {
+    	TreeNode tail = dfs(root, null);
+    	
+    	this.head.left = tail;
+    	tail.right = this.head;
+    	return this.head;
+    }
+    TreeNode head = null;
+    private TreeNode dfs(TreeNode root, TreeNode prev) {
+    	if(root.left == null && root.right == null) {
+    		if(prev == null) {
+    			prev = root;
+    			head = root;
+    			return prev;
+    		}
+    		prev.right = root;
+    		root.left = prev;
+    		prev = root;
+    		return prev;
+    	}
+    	
+    	if(root.left != null)
+    	prev = dfs(root.left, prev);
+
+    	prev.right = root;
+    	root.left = prev;
+    	prev = root;
+    	
+    	if(root.right != null)
+    	prev = dfs(root.right, prev);
+    	
+    	return prev;
+    }
+    
     
     public static void main(String[] args) {
 		TreeNode a = new TreeNode(1);
@@ -31,8 +71,12 @@ public class FlattenBinartTreeToLinkedList {
 		a.left = b;a.right=e;b.left = c;b.right=d;e.right=f;
 		
 		FlattenBinartTreeToLinkedList x = new FlattenBinartTreeToLinkedList();
-		x.flatten(a);
-		System.out.println(a.levelOrderTraversal());
+		TreeNode root = x.find(a);
+		while(root != null) {
+			System.out.print(root.val);
+			root = root.left;
+		}
 	}
     
 }
+

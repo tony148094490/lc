@@ -80,10 +80,11 @@ This can only be done by top down breath first search
 
  */
 public class BinaryTreeVerticalOrderTraversal {
-    Map<Integer, List<Integer>> levels = new HashMap<Integer, List<Integer>>();
-    int min = Integer.MAX_VALUE;
-    int max = Integer.MIN_VALUE;
+
     public List<List<Integer>> verticalOrder(TreeNode root) {
+        Map<Integer, List<Integer>> levels = new HashMap<Integer, List<Integer>>();
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
         List<List<Integer>> res = new ArrayList<List<Integer>>();
         if(root == null) return res;
         Queue<TreeNode> parents = new LinkedList<TreeNode>();

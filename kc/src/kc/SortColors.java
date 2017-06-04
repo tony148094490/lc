@@ -25,6 +25,24 @@ public class SortColors {
 		nums[l] = nums[r];
 		nums[r] = temp;
 	}
+	
+	private void sort(int[] nums) {
+		int zero = 0;
+		int two = nums.length-1;
+		int one = 0;
+		while(one <= two) {
+			if(nums[one] == 0) {
+				swap(nums, one, zero);
+				one++;
+				zero++;
+			} else if (nums[one] == 2) {
+				swap(nums,one, two);
+				two--;
+			} else {
+				one++;
+			}
+		}
+	}
     
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

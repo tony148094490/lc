@@ -1,8 +1,8 @@
 package kc;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,11 +42,13 @@ public class WordBreakII {
     
     
     public static void main(String[] args) {
-    	WordBreakII x = new WordBreakII();
-    	String s = "abcd";
-    	Set<String> set = new HashSet<String>();
-    	String[] dict = {"a","abc","b","cd"};
-    	for(String str: dict) set.add(str);
-    	System.out.println(x.wordBreak(s, set));
+//    	WordBreakII x = new WordBreakII();
+//    	String s = "abcd";
+//    	Set<String> set = new HashSet<String>();
+//    	String[] dict = {"a","abc","b","cd"};
+//    	for(String str: dict) set.add(str);
+//    	System.out.println(x.wordBreak(s, set));
+    	BigDecimal a = new BigDecimal(1212.1).setScale(2, BigDecimal.ROUND_HALF_UP);
+    	System.out.println(a);
 	}
 }

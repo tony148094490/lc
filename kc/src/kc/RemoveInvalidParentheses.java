@@ -99,6 +99,43 @@ public class RemoveInvalidParentheses {
         }
         return left == 0;
     }
+    
+    private String remove(String s) {
+    	StringBuilder sb = new StringBuilder(s);
+    	int extraLeft = 0;
+    	int extraRight = 0;
+    	int index = 0;
+    	while(index < sb.length()) {
+    		if(sb.charAt(index) == '(') {
+    			extraLeft++;
+    		} else if(sb.charAt(index) == ')') {
+    			if(extraLeft > 0) {
+    				extraLeft--;
+    			} else {
+    				extraRight++;
+    			}
+    		}
+    		index++;
+    	}
+    	
+    	index = 0;
+    	while(extraRight > 0 && index < sb.length()) {
+    		if(sb.charAt(index) == ')') {
+    			sb.deleteCharAt(index);
+    			extraRight--;
+    		}
+    		index++;
+    	}
+    	
+    	index = sb.length()-1;
+    	while(extraLeft > 0 && index >= 0) {
+    		if(sb.charAt(index) == '(') {
+    			sb.deleteCharAt(index);
+    		}
+    		index--;
+    	}
+    	return sb.toString();
+    }
 
     public static void main(String[] args) {
     	RemoveInvalidParentheses x = new RemoveInvalidParentheses();

@@ -42,6 +42,9 @@ T is "ece" which its length is 3.
         }
         return max;		
     }
+    
+    
+    
     public static void main(String[] args) {
     	LongestSubstringWithAtMostKDistinctCharacters x = new LongestSubstringWithAtMostKDistinctCharacters();
     	String s = "eceba";
