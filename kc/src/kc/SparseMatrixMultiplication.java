@@ -88,6 +88,79 @@ public class SparseMatrixMultiplication {
     }
     
     
+    public int[][] multiply3(int[][] A, int[][] B) {
+        List<List<Point>> a = new ArrayList<>();
+        for(int i = 0 ; i < A.length; i++) {
+            List<Point> list = new ArrayList<>();
+            for(int j = 0 ; j < A[0].length; j++) {
+                if(A[i][j] == 0) continue;
+                Point point = new Point(i,j,A[i][j]);
+                list.add(point);
+            }
+            if(list.size() > 0) a.add(list);
+        }
+        
+        List<List<Point>> b = new ArrayList<>();
+        for(int i = 0 ; i < B[0].length; i++) {
+            List<Point> list = new ArrayList<>();
+            for(int j = 0 ; j < B.length; j++) {
+                if(B[j][i] == 0) continue;
+                Point point = new Point(j, i, B[j][i]);
+                list.add(point);
+            }
+            b.add(list);
+        }
+        
+        int[][] res = new int[A.length][B[0].length];
+        
+        int aa = 0;
+        int bb = 0;
+        
+        while(aa < a.size() ) {
+            
+            bb = 0;
+            while(bb < b.size()) {
+            
+                List<Point> aList = a.get(aa);
+                List<Point> bList = b.get(bb);
+                
+                int i = 0;
+                int j = 0;
+                
+                while(i < aList.size() && j < bList.size()) {
+                    Point pointA = aList.get(i);
+                    Point pointB = bList.get(j);
+                    
+                    if(pointA.y == pointB.x) {
+                        res[pointA.x][pointB.y] += pointA.v * pointB.v;
+                        i++;
+                        j++;
+                    } else if(pointA.y > pointB.x) {
+                        j++;
+                    } else {
+                        i++;
+                    }
+                }
+                
+                bb++;
+            }
+            aa++;
+            
+        }
+        return res;
+    }
+    
+    public class Point {
+        int x;
+        int y;
+        int v;
+        public Point(int x, int y, int v) {
+            this.x = x;
+            this.y = y;
+            this.v = v;
+        }
+    }
+    
     
     public static void main(String[] args) {
     	int[][] A = new int[2][3];

@@ -49,10 +49,14 @@ public class FlattenBinartTreeToLinkedList {
     	if(root.left != null)
     	prev = dfs(root.left, prev);
 
-    	prev.right = root;
-    	root.left = prev;
-    	prev = root;
-    	
+    	if(prev == null) {
+    		prev = root;
+    		this.head = prev;
+    	} else {
+	    	prev.right = root;
+	    	root.left = prev;
+	    	prev = root;
+    	}
     	if(root.right != null)
     	prev = dfs(root.right, prev);
     	
@@ -68,7 +72,7 @@ public class FlattenBinartTreeToLinkedList {
 		TreeNode e = new TreeNode(5);
 		TreeNode f = new TreeNode(6);
 
-		a.left = b;a.right=e;b.left = c;b.right=d;e.right=f;
+		a.right=e;b.left = c;b.right=d;e.right=f;
 		
 		FlattenBinartTreeToLinkedList x = new FlattenBinartTreeToLinkedList();
 		TreeNode root = x.find(a);

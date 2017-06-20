@@ -25,26 +25,6 @@ public class BestTimeToBuyAndSellStock {
 	        if(prices[i] >= prices[i-1]) p+= prices[i] - prices[i-1];
 	    }
 	    return p;
-//    	int maxProfit = 0;
-//        int buy = 0;
-//        int maxSell = -1;
-//        for(int i = 1; i < prices.length; i++) {
-//        	if(maxSell != -1 && prices[i] < prices[maxSell]) {
-//        		maxProfit += (prices[maxSell] - prices[buy]);
-//        		buy = i;
-//        		maxSell = -1;
-//        	} else if(maxSell == -1) {
-//        		if(prices[i] > prices[buy]) {
-//        			maxSell = i;
-//        		} else {
-//        			buy = i;
-//        		}
-//        	} else if (prices[i] > prices[maxSell]) {
-//        		maxSell = i;
-//        	}
-//        } 
-//        if(maxSell != -1) maxProfit += (prices[maxSell] - prices[buy]);
-//        return maxProfit;
     }
     
     
@@ -69,8 +49,8 @@ public class BestTimeToBuyAndSellStock {
     
     public int maxProfit4(int[] prices, int k) {
         if(prices.length < 2) return 0;
-        int[][] profit = new int[3][prices.length];
-        for(int i = 1 ; i <= 2; i++) {
+        int[][] profit = new int[k+1][prices.length];
+        for(int i = 1 ; i <= k; i++) {
             int profitTillNowWithBuy = 0 - prices[0];
             for(int j = 1; j < prices.length; j++) {
                 int newProfitTillNowWithBuy = Math.max(profitTillNowWithBuy, profit[i-1][j-1] - prices[j]);
@@ -79,7 +59,7 @@ public class BestTimeToBuyAndSellStock {
             }
         }
         
-        return profit[2][prices.length-1];
+        return profit[k][prices.length-1];
         }
     
     

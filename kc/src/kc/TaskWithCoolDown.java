@@ -33,16 +33,12 @@ public class TaskWithCoolDown {
 	}
 	
 	public String coolDown(int[] arr, int coolDown) {
-		LinkedList<Integer> q = new LinkedList<>();
 		Map<Integer, Integer> map = new HashMap<>();
 		StringBuilder sb = new StringBuilder();
 		int time = 0;
 		for(int x : arr) {
 			if(map.containsKey(x)) {
 				if(map.get(x) + coolDown < time) {
-					while(!q.isEmpty() && map.get(q.peek()) + coolDown < time) {
-						map.remove(q.poll());
-					}
 					map.put(x, time);
 					sb.append(x);
 					time++;
@@ -54,19 +50,12 @@ public class TaskWithCoolDown {
 						diff--;
 					}
 					time = newTime;
-					while(!q.isEmpty() && map.get(q.peek()) + coolDown < time) {
-						map.remove(q.poll());
-					}
 					map.put(x, time);
 					sb.append(x);
 					time++;
 				}
 			} else {
-				while(!q.isEmpty() && map.get(q.peek()) + coolDown < time) {
-					map.remove(q.poll());
-				}
 				sb.append(x);
-				q.offer(x);
 				map.put(x, time);
 				time++;
 			}

@@ -49,44 +49,44 @@ public class Multithreading {
         
     }
     
-    public static void main(String[] args) {
-		
-		BlockingQueue<Character> bq = new LinkedBlockingQueue<Character>();
-		ExecutorService es = Executors.newFixedThreadPool(10);
-		try {
-			bq.put('A');
-			for(int i = 0 ; i < 10; i++) {
-				es.submit(new Runnable(){
-					@Override
-					public void run() {
-						try {
-							while(true){
-								Character newTask = bq.take();
-								Character nextTask = newTask == 'Z' ? 'A' : (char) (newTask + 1);
-								bq.put(nextTask);
-								System.out.println("Runnable is running " + ", " + Thread.currentThread());
-								Thread.sleep(new Random().nextInt(100) * 100);
+    public static void main(String[] args) throws InterruptedException {
+    	BlockingQueue<Integer> bq = new LinkedBlockingQueue<>();
+    	ExecutorService es = Executors.newFixedThreadPool(20);
+    	bq.put(10);
+    	
+    	ReadWriteLock lock = new ReadWriteLock();
+    	for(int i = 0 ; i < 20; i++) {
+    		es.submit(new Runnable() {
+    			@Override
+    			public void run() {
+    				while(true){
+	    				try {
+	        				// Read
+							lock.lockRead();
+							System.out.println(bq.size());
+							lock.unlockRead();
+							
+							int cur = bq.take();
+							List<Integer> addBack = new ArrayList<>();
+							for(int i = 1 ; i <= 10; i++) {
+								addBack.add(i * 10 + cur);
 							}
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
+							
+		    				// Write
+							lock.lockWrite();
+							for(Integer i : addBack) bq.put(i);
+							lock.unlockWrite();
+						} catch (Exception e) {
 							e.printStackTrace();
 						}
-					}
-				});
-			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e){
-            // e.printStackTrace();
-        }
-
-		//System.out.println(bq);
-		es.shutdownNow();
+    				}
+    			}
+    		});
+    	}
+    	
+    	Thread.sleep(10000);
+    	
+    	es.shutdownNow();
 	}
 }
 
