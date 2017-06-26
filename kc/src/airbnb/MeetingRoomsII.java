@@ -1,9 +1,11 @@
-package kc;
+package airbnb;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+
+import kc.Interval;
 
 public class MeetingRoomsII {
     public int minMeetingRooms(Interval[] intervals) {

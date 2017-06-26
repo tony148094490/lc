@@ -1,11 +1,14 @@
-package kc;
+package airbnb;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
+// follow up return all possible combo, use in degree and out degree to do it again
 public class AlienDictionary {
     public String alienOrder(String[] words) {
         if(words.length == 0) return "";
@@ -50,6 +53,47 @@ public class AlienDictionary {
         }
         return true;
     }
+    
+    private String bfs(String[] words) {
+        if(words == null || words.length == 0) return "";
+        Map<Character, Set<Character>> map = new HashMap<>();
+        Map<Character, Set<Character>> out = new HashMap<>();
+        for(String str : words) {
+            for(char c : str.toCharArray()) {
+                map.putIfAbsent(c, new HashSet<>());
+                out.putIfAbsent(c, new HashSet<>());
+            }
+        }
+        for(int i = 1; i < words.length; i++) {
+            String last = words[i-1];
+            String cur = words[i];
+            int len = Math.min(last.length(), cur.length());
+            for(int j = 0 ; j < len; j++) {
+                if(last.charAt(j) != cur.charAt(j)) {
+                    map.get(cur.charAt(j)).add(last.charAt(j));
+                    out.get(last.charAt(j)).add(cur.charAt(j));
+                    break;
+                }
+            }
+        }
+        
+        Queue<Character> q = new LinkedList<>();
+        for(char c : map.keySet()) {
+            if(map.get(c).size() == 0) q.add(c);
+        }
+        String res = "";
+        while(!q.isEmpty()) {
+            char parent = q.poll();
+            for(char c : out.get(parent)) {
+                map.get(c).remove(parent);
+                if(map.get(c).size() == 0) q.add(c);
+            }
+            res += parent;
+        }
+
+        return res.length() == map.size() ? res : "";
+    }
+    
     
     public static void main(String[] args) {
     	AlienDictionary x = new AlienDictionary();

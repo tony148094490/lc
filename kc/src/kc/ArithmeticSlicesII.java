@@ -19,4 +19,11 @@ public class ArithmeticSlicesII {
     	}
     	return res;
     }
+    
+   public static void main(String[] args) {
+	   int[] res = new int[10];
+	   for(int x : res) {
+		  
+	   }
+   }
 }

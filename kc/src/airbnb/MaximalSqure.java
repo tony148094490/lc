@@ -1,4 +1,4 @@
-package kc;
+package airbnb;
 
 public class MaximalSqure {
     public int maximalSquare(char[][] matrix) {

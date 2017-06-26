@@ -1,6 +1,8 @@
-package kc;
+package airbnb;
 
 import java.util.Stack;
+
+import kc.NestedInteger;
 
 /**
  * public interface NestedInteger {

@@ -1,4 +1,4 @@
-package kc;
+package airbnb;
 
 /**
  * '.' Matches any single character.
@@ -17,6 +17,9 @@ isMatch("aa", "a*") → true
 isMatch("aa", ".*") → true
 isMatch("ab", ".*") → true
 isMatch("aab", "c*a*b") → true
+
+
+consider '+'
  *
  */
 public class RegularExpressionMatching {

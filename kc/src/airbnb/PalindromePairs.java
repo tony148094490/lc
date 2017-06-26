@@ -1,11 +1,11 @@
-package kc;
+package airbnb;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+// Use trie to work it out as well
 public class PalindromePairs {
     public List<List<Integer>> palindromePairs(String[] words) {
         // two parts

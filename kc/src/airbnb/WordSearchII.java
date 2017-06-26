@@ -1,11 +1,11 @@
-package kc;
+package airbnb;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class WorkdSearchII {
+public class WordSearchII {
     TrieNode root = new TrieNode();
     
     public List<String> findWords(char[][] board, String[] words) {

@@ -1,7 +1,9 @@
-package kc;
+package airbnb;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import kc.Interval;
 
 /**
  * Given a set of non-overlapping intervals, insert a new interval into the intervals (merge if necessary).

@@ -1,7 +1,9 @@
-package kc;
+package airbnb;
 
 import java.util.Arrays;
 import java.util.Comparator;
+
+import kc.Interval;
 
 public class MeetingRooms {
     public boolean canAttendMeetings(Interval[] intervals) {
