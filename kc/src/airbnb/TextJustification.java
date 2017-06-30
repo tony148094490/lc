@@ -5,86 +5,93 @@ import java.util.List;
 
 public class TextJustification {
     public List<String> fullJustify(String[] words, int maxWidth) {
-    	List<String> res = new ArrayList<String>();
-        for(int i = 0 ; i < words.length; i++) {
-        	List<String> list = new ArrayList<String>();
-        	list.add(words[i]);
-        	int curLength = words[i].length();
-        	i++;
-        	while(curLength + (list.size() - 1) < maxWidth && i < words.length) {
-        		list.add(words[i]);
-        		curLength += words[i].length();
-        		i++;
-        	}
-
-        	boolean lastLine = false;
-        	
-        	if(curLength + list.size() - 1 > maxWidth) {
-        		curLength -= list.get(list.size()-1).length();
-        		list.remove(list.size()-1);
-        		i-=2;
-        	} else if (curLength + list.size() - 1 == maxWidth) {
-        		i-=1;
-        	} else if(i == words.length) {
-        		lastLine = true;
-        	}
-    		String newRes = getLevel(list, maxWidth - curLength, lastLine);
-    		res.add(newRes);
+        if(words.length == 0 || maxWidth <= 0) {
+            List<String> res = new ArrayList<>();
+            res.add("");
+            return res;
+        }
+        
+        List<String> res = new ArrayList<>();
+        List<String> curLevel = new ArrayList<>();
+        int len = 0;
+        for(String str : words) {
+            if(str.length() > maxWidth) return new ArrayList<>();
+            curLevel.add(str);
+            len += str.length();
+            if(len == maxWidth) {
+                String local = curLevel.get(0);
+                for(int i = 1; i < curLevel.size(); i++) {
+                    local += " ";
+                    local += curLevel.get(i);
+                }
+                res.add(local);
+                len = 0;
+                curLevel = new ArrayList<>();
+            } else if(len < maxWidth) {
+                len++;
+            } else {
+                curLevel.remove(curLevel.size()-1);
+                String justified = justify(curLevel, maxWidth);
+                res.add(justified);
+                len = str.length() + 1;
+                curLevel = new ArrayList<>();
+                curLevel.add(str);
+            }
+        }
+        
+        if(!curLevel.isEmpty()) {
+            String local = curLevel.get(0);
+            for(int i = 1; i < curLevel.size(); i++) {
+                local += " ";
+                local += curLevel.get(i);
+            }
+            for(int j = local.length(); j < maxWidth; j++) local += " ";
+            res.add(local);
         }
         return res;
     }
     
-    
-    private String getLevel(List<String> strs, int spaces, boolean lastLine) {
-    	if(lastLine) {
-    		StringBuilder sb = new StringBuilder();
-    		sb.append(strs.get(0));
-    		for(int i = 1; i < strs.size(); i++){
-    			sb.append(" ");
-    			sb.append(strs.get(i));
-    		}
-    		while(spaces - (strs.size() - 1) > 0) {
-    			sb.append(" ");
-    			spaces--;
-    		}
-    		return sb.toString();
-    	}
-    	
-    	int slots = strs.size() - 1;
-    	if(slots == 0) {
-    		String str = strs.get(0);
-    		while(spaces > 0) {
-    			str += " ";
-    			spaces--;
-    		}
-    		return str;
-    	}
-    	int spaceEachSlot = spaces/slots;
-    	int spacesLeft = spaces - spaceEachSlot * slots;	
-    	StringBuilder sb = new StringBuilder();    	
-    	for(int i = 0 ; i < strs.size(); i++) {
-    		sb.append(strs.get(i));
-    		if(i!=strs.size()-1) {
-    			for(int j = 0 ; j < spaceEachSlot;j++)sb.append(" ");
-    			if(spacesLeft != 0) {
-    				sb.append(" ");
-    				spacesLeft--;
-    			}
-    		}
-    	}
-    	
-    	return sb.toString();
+    private String justify(List<String> list, int max) {
+        if(list.size() == 1) {
+            String str = list.get(0);
+            for(int i = str.length(); i < max; i++) {
+                str += " ";
+            } 
+            return str;
+        }
+        int slots = list.size() - 1;
+        int totalLen = 0;
+        for(String s : list) totalLen += s.length();
+        int spaces = max - totalLen;
+        int baseSpacePerSlot = spaces/slots;
+        int spares = spaces - baseSpacePerSlot * slots;
+        
+        String res = "";
+        for(int i = 0 ; i < list.size() - 1; i++) {
+            res += list.get(i);
+            for(int j = 0 ; j < baseSpacePerSlot; j++) res += " ";
+            if(spares > 0) {
+                res += " ";
+                spares--;
+            }
+        }
+        res += list.get(list.size()-1);
+        return res;
     }
+    
+ 
     
     public static void main(String[] args) {
     	TextJustification x = new TextJustification();
     	String[] arr ={"This", "is", "an", "example", "of", "text", "justification."};
     	String[] arr2 ={"a", "b", "c", "d", "e", "f", "g"};
     	String[] arr3 ={"Listen","to","many,","speak","to","a","few."};
+    	String[] arr4 = {"abc", "abcd", "abc"};
     	
-    	System.out.println(x.fullJustify(arr, 16));
-    	System.out.println(x.fullJustify(arr2, 1));
-    	System.out.println(x.fullJustify(arr3, 6));
+//    	System.out.println(x.fullJustify(arr, 16));
+//    	System.out.println(x.fullJustify(arr2, 1));
+//    	System.out.println(x.fullJustify(arr3, 6));
+    	System.out.println(x.fullJustify(arr4, 4));
     	
     	
 	}

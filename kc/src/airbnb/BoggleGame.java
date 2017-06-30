@@ -1,4 +1,5 @@
 package airbnb;
+
 /**
  * Two variations:
  * 1) char can be re-used
@@ -14,101 +15,80 @@ package airbnb;
 // 然后把这个词加到第一个function return的list里。为了加速搜索要用trie但trie写起来有点麻烦所以小哥就让写一个hashset里面有所有的prefix。时间有点久有点忘了但大概就是这样。。。
 public class BoggleGame {
 	
+	// idea is this: seach in the trie for each position, when meeting a word, do two things: 1) increament the count and recurse from neighbors or
+	// 2) keep the count the same and keep moving
+	
+	// references above have some stuff but the sol below is much more cleaner
+	private TrieNode root = new TrieNode();
+	private int max = 0;
+	
+	public int getMaxNrWordsFromPath(char[][] board, String[] dict) {
+		if(dict == null || board == null || dict.length == 0 || board.length == 0) return 0; // discuss output with interviewer
+		buildTrie(dict, this.root);
+		for(int i = 0 ; i < board.length; i++) {
+			for(int j = 0 ; j < board[0].length; j++) {
+				search(board,i,j,root,0, new boolean[board.length][board[0].length]);
+			}
+		}
+		return max;
+	}
+	
+	private void search(char[][] board, int i, int j, TrieNode curRoot, int count, boolean[][] visited) {
+		if(i < 0 || i >= board.length || j < 0 || j >= board[0].length) return;
+		
+		if(visited[i][j]) return;
+		
+		if(curRoot.children[board[i][j] - 'a'] == null) return;
+		
+		visited[i][j] = true;
+		
+		curRoot = curRoot.children[board[i][j] - 'a'];
+		
+		if(curRoot.isWord) {
+			curRoot.isWord = false; // this is the tricky part, so that this word can not be counted again, backtracking
+			max = Math.max(max, count + 1);
+			search(board, i+1,j,this.root,count+1,visited); // search from the top of the trie again
+			search(board, i-1,j,this.root,count+1,visited); // search from the top of the trie again
+			search(board, i,j+1,this.root,count+1,visited); // search from the top of the trie again
+			search(board, i,j-1,this.root,count+1,visited); // search from the top of the trie again
+			curRoot.isWord = true;
+		}
+		
+		search(board,i+1,j,curRoot, count, visited);
+		search(board,i-1,j,curRoot, count, visited);
+		search(board,i,j+1,curRoot, count, visited);
+		search(board,i,j-1,curRoot, count, visited);
+		
+		visited[i][j] = false;
+	}
+	
+	private void buildTrie(String[] dict, TrieNode root) {
+		
+		for(String str : dict) {
+			TrieNode cur = root;
+			for(int i = 0 ; i < str.length(); i++) {
+				int index = str.charAt(i) - 'a';
+				if(cur.children[index] == null) {
+					cur.children[index] = new TrieNode();
+				}
+				cur = cur.children[index];
+			}
+			cur.isWord = true;
+		}
+	}
+	
+	public class TrieNode {
+		TrieNode[] children = new TrieNode[26]; // only lower case, needs to discuss
+		boolean isWord = false;
+	}
 	
 	
+	// Test client
+	public static void main(String[] args) {
+		BoggleGame game = new BoggleGame();
+		char[][] board = {{'a','b','c','a'},{'d','d','c','b'},{'b','b','d','s'}};
+		String[] dict = {"abc", "abs","dd" ,"bb" ,"dc"};
+		System.out.println(game.getMaxNrWordsFromPath(board, dict));
+		
+	}
 }
-
-/**
- * 
-Java: (This is the good one)
-Trie+dfs
-import java.util.*;
-
-class TNode{
-        TNode[] leaves;
-        boolean isword;
-        public TNode(){
-                this.leaves=new TNode[26];
-                this.isword=false;
-        }
-}
-
-public class Solution {
-        public static void main(String[] args){
-                String[] dict={"abs","abc","dd","bb"};
-                char[][] mat={{'a','b','c'},{'d','d','d'},{'b','b','d'}};
-                Solution sol=new Solution();
-                System.out.println(sol.findmaxPath(dict,mat));
-        }
-       
-        private int max=0;
-        private TNode root=new TNode();
-       
-        public int findmaxPath(String[] words, char[][] mat){
-                for(int i=0;i<words.length;i++){
-                        insertT(words[i]);
-                }
-                int range=mat.length*mat[0].length;
-                HashSet<Integer> set=new HashSet<Integer>();
-                for(int i=0;i<range;i++){
-                        pathfind(set,this.root,mat,i,0);
-                }
-                return this.max;
-        }
-       
-        public void pathfind(Set<Integer> set, TNode node, char[][] mat, int pos, int curcount){
-                if(node.isword){
-                        this.max=Math.max(max,curcount+1);
-                        node.isword=false;
-                        pathfind(set,this.root,mat,pos,curcount+1);
-                        node.isword=true;
-                }
-                int x=pos/mat[0].length;
-                int y=pos%mat[0].length;
-                if(node.leaves[mat[x][y]-'a']!=null){
-                        set.add(pos);
-                        for(Integer connect:connected(pos,mat)){
-                                if(!set.contains(connect)){
-                                        pathfind(set,node.leaves[mat[x][y]-'a'],mat,connect,curcount);
-                                }
-                        }
-                        set.remove(pos);
-                }
-                return;
-        }
-       
-        public List<Integer> connected(int pos, char[][] mat){
-                int m=mat.length;
-                int n=mat[0].length;
-                int x=pos/n;
-                int y=pos%n;
-                List<Integer> res=new ArrayList<Integer>();
-                for(int i=-1;i<=1;i+=2){
-                        if(x+i>=0&&x+i<m){
-                                res.add((x+i)*n+y);
-                        }
-                        if(y+i>=0&&y+i<n){
-                                res.add(x+y+i);
-                        }
-                }
-                return res;
-        }
-       
-        public void insertT(String s){
-                TNode cur=this.root;
-                for(int i=0;i<s.length();i++){
-                        if(cur.leaves[s.charAt(i)-'a']==null){
-                                 cur.leaves[s.charAt(i)-'a']=new TNode();
-                        }
-                        cur=cur.leaves[s.charAt(i)-'a'];
-                        if(i==s.length()-1){
-                                cur.isword=true;
-                        }
-                }
-        }
-}
- * 
- */
-
-
-
