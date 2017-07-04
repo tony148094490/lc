@@ -16,40 +16,29 @@ This is because the new interval [4,9] overlaps with [3,5],[6,7],[8,10].
  */
 public class InsertIntervals {
     public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
-    	int initialSize = intervals.size();
-        for(int i = 0; i < intervals.size(); i++) {
-        	Interval cur = intervals.get(i);
-        	if(cur.start == newInterval.start){
-        		if(newInterval.end < cur.end){
-        			intervals.add(i, newInterval);
-        			break;
-        		} else {
-        			intervals.add(i+1, newInterval);
-        			break;
-        		}
-        	} else if(cur.start > newInterval.start){
-        		intervals.add(i, newInterval);
-        		break;
-        	} 
-        }
-        if(initialSize == intervals.size()) {
-        	intervals.add(newInterval);
-        }
-        
-        List<Interval> list = new ArrayList<Interval>();
-        Interval prev = intervals.get(0);
-        list.add(prev);
-        for(int i = 1; i < intervals.size();i++) {
-        	Interval cur = intervals.get(i);
-        	if(cur.start > prev.end) {
-        		list.add(cur);
-        		prev = cur;
-        	} else {
-        		if(prev.end < cur.end) {
-        			prev.end = cur.end;
-        		} 
-        	}
-        }
-        return list;
+    	int index = 0;
+    	List<Interval> res = new ArrayList<>();
+    	while(index < intervals.size()) {
+    		if(intervals.get(index).end < newInterval.start) {
+    			res.add(intervals.get(index));
+    			index++;
+    		} else {
+    			break;
+    		}
+    	}
+    	
+    	while(index < intervals.size() && intervals.get(index).start <= newInterval.end) {
+    		newInterval = new Interval(Math.min(intervals.get(index).start, newInterval.start),
+    				Math.max(intervals.get(index).end, newInterval.end));
+    		index++;
+    	}
+    	
+    	res.add(newInterval);
+    	
+    	while(index < intervals.size()) {
+    		res.add(intervals.get(index));
+    		index++;
+    	}
+    	return res;
     }
 }

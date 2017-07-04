@@ -1,7 +1,7 @@
 package airbnb;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -14,46 +14,22 @@ return [1,6],[8,10],[15,18].
  */
 public class MergeIntervals {
     public List<Interval> merge(List<Interval> intervals) {
-        List<Interval> res = new ArrayList<Interval>();
-        if(intervals.size() == 0) return res;
+        if(intervals == null || intervals.isEmpty()) return new ArrayList<>();
+        Comparator<Interval> comp = (a,b) -> {return a.start - b.start;};
         
-        Comparator<Interval> comp = new Comparator<Interval>(){
-        	@Override
-        	public int compare(Interval a, Interval b) {
-        		if(a.start < b.start) {
-        			return -1;
-        		} else if(a.start == b.start){
-        			if(a.end < b.end){
-        				return -1;
-        			}  else if(a.end == b.end){
-        				return 0;
-        			}  else {
-        				return 1;
-        			}
-        		} else {
-        			return 1;
-        		}
-        	}
-        };
-        Interval[] arr = new Interval[intervals.size()];
-        for(int i = 0 ; i < arr.length; i++){
-        	arr[i] = intervals.get(i);
-        }
+        Collections.sort(intervals, comp);
         
-        Arrays.sort(arr, comp);
-        
-        Interval prev = arr[0];
-        res.add(prev);
-        for(int i = 1; i < arr.length; i++) {
-        	Interval cur = arr[i];
-        	if(cur.start > prev.end){
-        		res.add(cur);
-        		prev = cur;
-        	} else {
-        		if(cur.end > prev.end) {
-        			prev.end = cur.end;
-        		} 
-        	}
+        List<Interval> res = new ArrayList<>();
+        res.add(intervals.get(0));
+        Interval last = intervals.get(0);
+        for(int i = 1; i < intervals.size(); i++) {
+            Interval cur = intervals.get(i);
+            if(cur.start > last.end) {
+                res.add(cur);
+                last = cur;
+            } else {
+                last.end = Math.max(cur.end, last.end);
+            }
         }
         return res;
     }

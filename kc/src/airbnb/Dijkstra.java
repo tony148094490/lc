@@ -13,6 +13,7 @@ import java.util.PriorityQueue;
 // this question is the same as wizard (see the other file)
 // 总共有0，1，2，3，4，5，6，7，8，9个人， 每个人认识一些人， 
 // 求从0到9，cost最小的路径。cost(i, j) = (j - i) * (j - i).
+// Important NOTICE: Dijkstra can only work with non-negative weight (or where negative weight)
 public class Dijkstra {
 	// assumption, a full 9 sublist
 	// version 1: get min distance
