@@ -1,4 +1,5 @@
 package airbnb;
+// same as Dijkstra algo
 // http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=277494
 // http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=278915
 //  There are 10 wizards, 0-9, you are given a list that each entry is a list of wizards known by wizard. Define the cost between wizards and wizard[j] as square of different of i and j. To find the min cost between 0 and 9.

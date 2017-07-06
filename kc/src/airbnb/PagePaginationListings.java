@@ -1,11 +1,9 @@
 package airbnb;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 // http://www.1point3acres.com/bbs/thread-154499-1-1.html
 // 她要求除了最后一页，每一页都要满。即使有相同id，还有就是比如说有5个id都是1，最后结果有3页，他希望第一页一个1，后面两页都两个1，而不是113

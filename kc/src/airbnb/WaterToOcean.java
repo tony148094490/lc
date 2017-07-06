@@ -32,5 +32,10 @@ package airbnb;
 * OLLLLWW
 */
 public class WaterToOcean {
-
+		// http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=141746
+		// this question was raised in mid 2015, you can actually tell skills of people increased a lot from 2015 - 2017
+		// simple bfs/dfs
+		public void findOcean(String[] map, int row, int column) {
+			
+		}
 }

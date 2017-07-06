@@ -7,9 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
-
+// a.k.a find people to people or wizard to wizard distance
 // https://tinyurl.com/yarhobmg
 // http://www.1point3acres.com/bbs/thread-229065-1-1.html
+// https://tinyurl.com/ycn47fu4
 // this question is the same as wizard (see the other file)
 // 总共有0，1，2，3，4，5，6，7，8，9个人， 每个人认识一些人， 
 // 求从0到9，cost最小的路径。cost(i, j) = (j - i) * (j - i).
