@@ -20,58 +20,44 @@ import java.util.Stack;
  */
 public class FavavateCities {
 	public List<Integer> get(List<List<Integer>> lists) {
-		List<Integer> res = new ArrayList<>();
 		Map<Integer, Set<Integer>> map = new HashMap<>();
 		for(List<Integer> list : lists) {
-			for(int i = 1; i < list.size(); i++) {
-				int first = list.get(i-1);
-				int second = list.get(i);
-				if(!map.containsKey(first)) {
-					Set<Integer> set = new HashSet<>();
-					set.add(second);
-					map.put(first, set);
-				} else {
-					map.get(first).add(second);
-				}
-				
-				map.putIfAbsent(second, new HashSet<>());
+			for(int i = 0 ; i < list.size() - 1; i++) {
+				map.putIfAbsent(list.get(i), new HashSet<>());
+				map.putIfAbsent(list.get(i+1), new HashSet<>());
+				map.get(list.get(i)).add(list.get(i+1));
 			}
 		}
-				
+
 		Set<Integer> overall = new HashSet<>();
 		Stack<Integer> stack = new Stack<>();
-		for(int x : map.keySet()) {
-			if(!overall.contains(x)) {
-				if(!dfs(map, x, new HashSet<>(), stack, overall)) return new ArrayList<>();
-			}
+		for(int i : map.keySet()) {
+			if(overall.contains(i)) continue;
+			if(!dfs(map,i,new HashSet<>(), stack, overall)) return new ArrayList<>();
 		}
 		
+		List<Integer> res = new ArrayList<>();
 		while(!stack.isEmpty()) res.add(stack.pop());
-		
 		return res;
 	}
-	
-	private boolean dfs(Map<Integer, Set<Integer>> map, int cur, Set<Integer> visited, Stack<Integer> res, Set<Integer> overall) {
-		if(!map.containsKey(cur)) {
-			return true;
-		}
-		
+
+	private boolean dfs(Map<Integer, Set<Integer>> map, int cur, Set<Integer> visited, Stack<Integer> stack, Set<Integer> overall) {
 		if(visited.contains(cur)) return false;
-		
 		visited.add(cur);
-		
-		for(Integer nei : map.get(cur)) {
-			if(!dfs(map, nei, visited, res, overall)) return false;
+		for(Integer x : map.get(cur)) {
+			if(!dfs(map, x, visited, stack, overall)) {
+				visited.remove(cur);
+				return false;
+			}
 		}
-		
 		visited.remove(cur);
 		if(!overall.contains(cur)) {
+			stack.push(cur);
 			overall.add(cur);
-			res.push(cur);
 		}
-		
 		return true;
 	}
+
 	
 	public static void main(String[] args) {
 		List<List<Integer>> res = new ArrayList<>();

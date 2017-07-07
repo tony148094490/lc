@@ -58,108 +58,86 @@ import java.util.Map;
  */
 public class FileSystem {
 	// needs to communicate and see if trie should be used 
-	private Dir root;
+	Dir rootDir = new Dir(null);
 
-	public FileSystem() {
-		root = new Dir(null);
-	}
-	
 	public void create(String path, String val) throws Exception {
-		//validate(path); 
 		if(path == null || path.isEmpty()) throw new Exception();
-		String[] orig = path.split("/");
-		List<String> list = new ArrayList<>();
-		for(String str : orig) {
+		String[] tokens = path.split("/");
+		List<String> actualTokens = new ArrayList<>();
+		for(String str : tokens) {
 			if(str.isEmpty()) continue;
-			list.add(str);
+			actualTokens.add(str);
 		}
-		
-		String[] dirs = new String[list.size()]; 
-		dirs = list.toArray(dirs);
-		
-		Dir cur = root;
-		for(int i = 0 ; i < dirs.length - 1; i++) {
-			String sub = dirs[i];
-			if(!cur.subDir.containsKey(sub)) throw new Exception();
-			cur = cur.subDir.get(sub);
+		Dir cur = rootDir;
+		for(int i = 0 ; i < actualTokens.size() - 1; i++) {
+			if(!cur.subdirs.containsKey((actualTokens.get(i)))) throw new Exception();
+			cur = cur.subdirs.get(actualTokens.get(i));
 		}
-		String lastSub = dirs[dirs.length-1];
-		if(cur.subDir.containsKey(lastSub)) throw new Exception();
-		cur.subDir.put(lastSub, new Dir(val));
+		if(cur.subdirs.containsKey(actualTokens.get(actualTokens.size()-1))) throw new Exception();
+		cur.subdirs.put(actualTokens.get(actualTokens.size()-1), new Dir(val));
 	}
-	
-	public void setValue(String path, String value) throws Exception {
+
+	public void setValue(String path, String val) throws Exception {
 		if(path == null || path.isEmpty()) throw new Exception();
-		String[] orig = path.split("/");
-		List<String> list = new ArrayList<>();
-		for(String str : orig) {
+		String[] tokens = path.split("/");
+		List<String> actualTokens = new ArrayList<>();
+		for(String str : tokens) {
 			if(str.isEmpty()) continue;
-			list.add(str);
+			actualTokens.add(str);
 		}
-		String[] dirs = new String[list.size()]; 
-		dirs = list.toArray(dirs);
-		
-		Dir cur = root;
-		for(int i = 0 ; i < dirs.length; i++) {
-			String sub = dirs[i];
-			if(!cur.subDir.containsKey(sub)) throw new Exception();
-			cur = cur.subDir.get(sub);
-			
-			// looks like callback is only invoked during setValue function, need to get clarity with interviewer
-			// also this line won't monitor the root dir, but can be changed easily to do so.
+		Dir cur = rootDir;
+		for(int i = 0 ; i < actualTokens.size(); i++) {
 			if(cur.callback != null) cur.callback.fireRules();
+			if(!cur.subdirs.containsKey(actualTokens.get(i))) throw new Exception();
+			cur = cur.subdirs.get(actualTokens.get(i));
 		}
-		cur.value = value;
+		if(cur.callback != null) cur.callback.fireRules();
+		cur.val = val;
 	}
-	
+
 	public String getValue(String path) throws Exception {
 		if(path == null || path.isEmpty()) throw new Exception();
-		String[] orig = path.split("/");
-		List<String> list = new ArrayList<>();
-		for(String str : orig) {
+		String[] tokens = path.split("/");
+		List<String> actualTokens = new ArrayList<>();
+		for(String str : tokens) {
 			if(str.isEmpty()) continue;
-			list.add(str);
+			actualTokens.add(str);
 		}
-		String[] dirs = new String[list.size()]; 
-		dirs = list.toArray(dirs);
-		Dir cur = root;
-		for(int i = 0 ; i < dirs.length; i++) {
-			String sub = dirs[i];
-			if(!cur.subDir.containsKey(sub)) throw new Exception();
-			cur = cur.subDir.get(sub);
+		Dir cur = rootDir;
+		for(int i = 0 ; i < actualTokens.size(); i++) {
+			if(!cur.subdirs.containsKey(actualTokens.get(i))) throw new Exception();
+			cur = cur.subdirs.get(actualTokens.get(i));
 		}
-		return cur.value;
+
+		return cur.val;
 	}
-	
+
 	public void watch(String path, Callback callback) throws Exception {
 		if(path == null || path.isEmpty()) throw new Exception();
-		String[] orig = path.split("/");
-		List<String> list = new ArrayList<>();
-		for(String str : orig) {
+		String[] tokens = path.split("/");
+		List<String> actualTokens = new ArrayList<>();
+		for(String str : tokens) {
 			if(str.isEmpty()) continue;
-			list.add(str);
+			actualTokens.add(str);
 		}
-		String[] dirs = new String[list.size()]; 
-		dirs = list.toArray(dirs);
-		Dir cur = root;
-		for(int i = 0 ; i < dirs.length; i++) {
-			String sub = dirs[i];
-			if(!cur.subDir.containsKey(sub)) throw new Exception();
-			cur = cur.subDir.get(sub);
+		Dir cur = rootDir;
+		for(int i = 0 ; i < actualTokens.size(); i++) {
+			if(!cur.subdirs.containsKey(actualTokens.get(i))) throw new Exception();
+			cur = cur.subdirs.get(actualTokens.get(i));
 		}
 		cur.callback = callback;
 	}
-	
+
 	public class Dir {
-		Map<String, Dir> subDir;
-		String value;
+		Map<String, Dir> subdirs;
+		String val;
 		Callback callback;
-		
 		public Dir(String v) {
-			this.value = v;
-			subDir = new HashMap<>();
+			val = v;
+			subdirs = new HashMap<>();
 		}
 	}
+
 	
 	// need to discuss Callback subclass design: multiple instances or multiple implementations
 	
@@ -194,7 +172,7 @@ public class FileSystem {
 		}
 		
 		public void fireRules() {
-			System.out.println(path + " changed value " + receiver);
+			System.out.println(path + " changed value and receiver is " + receiver);
 		}
 		
 		public void notifyReceiver() {

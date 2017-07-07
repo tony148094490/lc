@@ -54,7 +54,6 @@ public class CommonCities {
 			}
 		}
 		return res;
-		// pre-sort and binary search buddies's list with self's cities might reduce time complexity, each one would be Nlg(M) instead of N + M
 	}
 	
 	// first follow up: output all cities corresponding to the buddy. kind of trivial after first question

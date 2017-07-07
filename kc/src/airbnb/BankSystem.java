@@ -11,36 +11,30 @@ public class BankSystem {
 	
 	// use ordered map to help with the date search later on.
 	// if treemap is not allowed, use linkedlist<Transaction> with binary search
-	Map<Long, TreeMap<Long, Integer>> map = new HashMap<>();
+	Map<Long, TreeMap<Long, Integer>> bank = new HashMap<>();
 	public void deposit(long accountId, int amount, long time) {
-		TreeMap<Long, Integer> accountBalance = map.getOrDefault(accountId, new TreeMap<>());
-		int currentBalance = 0;
-		if(accountBalance.size() > 0)
-		currentBalance = accountBalance.lastEntry().getValue();
-		
-		currentBalance += amount;
-		
-		accountBalance.put(time, currentBalance);
-		
-		map.put(accountId, accountBalance);
+			bank.putIfAbsent(accountId, new TreeMap<>());
+			TreeMap<Long, Integer> account = bank.get(accountId);
+			int newBalance = account.lastEntry().getValue() + amount;
+			account.put(time, newBalance);
 	}
 	
-	public void withdraw(long accountId, int amount, long time) throws Exception {
-		if(!map.containsKey(accountId) || map.get(accountId).lastEntry().getValue() < amount) throw new Exception("Not enough balance for account: " + accountId);
-		map.get(accountId).put(time, map.get(accountId).lastEntry().getValue() - amount);
+	public void withdraw(long accountId, int amount, long time) {
+		if(!bank.containsKey(accountId)) return;//or throw exception
+		TreeMap<Long, Integer> account = bank.get(accountId);
+		int remainder = account.lastEntry().getValue() - amount;
+		if(remainder < 0) return; // or throw exception
+		account.put(time, remainder);
 	}
 	
-	// return the balance at start date and end date. Not between.
-	public int[] getRemain(long accountId, long start, long end, long time) throws Exception {
-		if(!map.containsKey(accountId)) throw new Exception("Acount " + accountId + " does not exist.");
+	public int[] getStatus(long accountId, long start, long end) {
+		if(!bank.containsKey(accountId)) return new int[2]; // or throw exception
 		int[] res = new int[2];
-		
-		if(map.get(accountId).floorEntry(start) != null)
-		res[0] = map.get(accountId).floorEntry(start).getValue();
-		
-		if(map.get(accountId).floorEntry(end) != null) 
-		res[1] = map.get(accountId).floorEntry(end).getValue();
-		
+		TreeMap<Long, Integer> account = bank.get(accountId);
+		Integer s = account.floorEntry(start).getValue();
+		Integer e = account.ceilingEntry(end).getValue();
+		res[0] = s == null ? 0 : s;
+		res[1] = e == null ? 0 : e;
 		return res;
 	}
 }

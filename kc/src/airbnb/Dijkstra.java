@@ -16,23 +16,22 @@ import java.util.PriorityQueue;
 // 求从0到9，cost最小的路径。cost(i, j) = (j - i) * (j - i).
 // Important NOTICE: Dijkstra can only work with non-negative weight (or where negative weight)
 public class Dijkstra {
-	// assumption, a full 9 sublist
+	// assumption, a full 9 sublist, get the min cost from person 0 to person 9
 	// version 1: get min distance
 	public int getMin(List<List<Integer>> relation) {
 		Node source = null, destination = null;
 		Map<Integer, Node> nodeMap = new HashMap<>();
 		for(int i = 0 ; i < relation.size(); i++) {
-			Node node = nodeMap.getOrDefault(i, new Node(i));
+			nodeMap.putIfAbsent(i, new Node(i));
+			Node node = nodeMap.get(i);
 			for(int j : relation.get(i)) {
-				if(!nodeMap.containsKey(j)) {
-					Node neigh = new Node(j);
-					nodeMap.put(j, neigh);
-				}
+				nodeMap.putIfAbsent(j, new Node(j));
 				node.neighbors.add(nodeMap.get(j));
 			}
-			if(i == 0) source = node;
-			if(i == relation.size() - 1) destination = node;
 		}
+		
+		source = nodeMap.get(0);
+		destination = nodeMap.get(9);
 		
 		Comparator<Node> comp = (a,b) -> {return a.distanceToOrigin - b.distanceToOrigin;};
 		PriorityQueue<Node> pq = new PriorityQueue<Node>(comp);
@@ -40,6 +39,10 @@ public class Dijkstra {
 		pq.add(source);
 		while(!pq.isEmpty()) {
 			Node parent = pq.poll();
+			
+			// can break earlier if one to one. cannot break if it's one to many because cost is positive and its neighbors will always have higher cost
+			if(parent == destination) return parent.distanceToOrigin; 
+			
 			for(Node neighbor : parent.neighbors) {
 				int newDistance = parent.distanceToOrigin + (parent.id - neighbor.id) * (parent.id - neighbor.id);
 				if(neighbor.distanceToOrigin > newDistance) {

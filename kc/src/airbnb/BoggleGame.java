@@ -23,64 +23,65 @@ public class BoggleGame {
 	private int max = 0;
 	
 	public int getMaxNrWordsFromPath(char[][] board, String[] dict) {
-		if(dict == null || board == null || dict.length == 0 || board.length == 0) return 0; // discuss output with interviewer
-		buildTrie(dict, this.root);
+		buildTrie(root, dict);
 		for(int i = 0 ; i < board.length; i++) {
 			for(int j = 0 ; j < board[0].length; j++) {
-				search(board,i,j,root,0, new boolean[board.length][board[0].length]);
+				dfs(board, root, i, j, 0);
 			}
 		}
 		return max;
 	}
-	
-	private void search(char[][] board, int i, int j, TrieNode curRoot, int count, boolean[][] visited) {
-		if(i < 0 || i >= board.length || j < 0 || j >= board[0].length) return;
-		
-		if(visited[i][j]) return;
-		
-		if(curRoot.children[board[i][j] - 'a'] == null) return;
-		
-		visited[i][j] = true;
-		
-		curRoot = curRoot.children[board[i][j] - 'a'];
-		
-		if(curRoot.isWord) {
-			curRoot.isWord = false; // this is the tricky part, so that this word can not be counted again, backtracking
-			max = Math.max(max, count + 1);
-			search(board, i+1,j,this.root,count+1,visited); // search from the top of the trie again
-			search(board, i-1,j,this.root,count+1,visited); // search from the top of the trie again
-			search(board, i,j+1,this.root,count+1,visited); // search from the top of the trie again
-			search(board, i,j-1,this.root,count+1,visited); // search from the top of the trie again
-			curRoot.isWord = true;
+
+	private void dfs(char[][] board, TrieNode cur, int i, int j, int curSize) {
+		if(i < 0 || i > board.length - 1 || j < 0 || j > board[0].length-1 || board[i][j] == ' ') return;
+		if(cur.children[board[i][j] - 'a'] == null) return;
+		cur = cur.children[board[i][j] - 'a'];
+		char c = board[i][j];
+		if(cur.isWord) {
+			// keep the current word
+			board[i][j] = ' ';
+			cur.isWord = false; // if the question is to ask number of distinct words, then this is necessary, otherwise no.
+			max = Math.max(max, curSize + 1);
+			dfs(board, root, i+1,j, curSize + 1);
+			dfs(board, root, i-1,j, curSize + 1);
+			dfs(board, root, i, j+1, curSize + 1);
+			dfs(board, root, i, j-1, curSize + 1);
+			cur.isWord = true;
 		}
 		
-		search(board,i+1,j,curRoot, count, visited);
-		search(board,i-1,j,curRoot, count, visited);
-		search(board,i,j+1,curRoot, count, visited);
-		search(board,i,j-1,curRoot, count, visited);
+		// not to keep
+		dfs(board, cur, i + 1 , j , curSize);
+		dfs(board, cur, i-1,j,curSize);
+		dfs(board, cur, i, j+1, curSize);
+		dfs(board, cur, i, j-1, curSize);
 		
-		visited[i][j] = false;
+
+		board[i][j] = c;
 	}
-	
-	private void buildTrie(String[] dict, TrieNode root) {
-		
+
+
+	private void buildTrie(TrieNode root, String[] dict) {
+		TrieNode cur;
 		for(String str : dict) {
-			TrieNode cur = root;
-			for(int i = 0 ; i < str.length(); i++) {
-				int index = str.charAt(i) - 'a';
-				if(cur.children[index] == null) {
-					cur.children[index] = new TrieNode();
-				}
-				cur = cur.children[index];
+			cur = root;
+			for(char c : str.toCharArray()) {
+				if(cur.children[c - 'a'] == null) cur.children[c-'a'] = new TrieNode();
+				cur = cur.children[c-'a'];
 			}
 			cur.isWord = true;
 		}
 	}
-	
+
+
 	public class TrieNode {
-		TrieNode[] children = new TrieNode[26]; // only lower case, needs to discuss
-		boolean isWord = false;
+		TrieNode[] children;
+		boolean isWord;
+		public TrieNode() {
+			isWord = false;
+			children = new TrieNode[26];
+		}
 	}
+
 	
 	
 	// Test client

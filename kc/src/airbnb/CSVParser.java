@@ -28,39 +28,42 @@ http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=140445
 public class CSVParser {
 	// idea is that we keep every other consecutive double quote and 
 	public String parseCSV(String input) {
-		if(input == null || input.isEmpty()) return "";
-		List<String> items = new ArrayList<>();
+		if(input.isEmpty() || input.length() == 0) return "";
+		List<String> res = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
 		boolean inQuote = false;
 		for(int i = 0 ; i < input.length(); i++) {
-			char cur = input.charAt(i);
+			char c = input.charAt(i);
 			if(inQuote) {
-				if(cur == '"') {
+				if(c == '"') {
 					if(i + 1 < input.length() && input.charAt(i+1) == '"') {
-						sb.append('"');
+						sb.append(c);
 						i++;
 					} else {
 						inQuote = false;
 					}
 				} else {
-					sb.append(cur);
+					sb.append(c);
 				}
 			} else {
-				if(cur == '"') {
+				if(c == '"') {
 					inQuote = true;
-				} else if (cur == ','){
-					items.add(sb.toString());
-					sb = new StringBuilder();
 				} else {
-					sb.append(cur);
+					if(c == ',') {
+						res.add(sb.toString());
+						sb = new StringBuilder();
+					} else {
+						sb.append(c);
+					}
 				}
 			}
 		}
-		
-		if(sb.length() > 0) items.add(sb.toString());
+		if(sb.length() > 0) res.add(sb.toString());
 		sb = new StringBuilder();
-		for(String str : items) sb.append(str).append('|');
-		return sb.substring(0,sb.length()-1);
+		for(String str : res) {
+			sb.append(str).append("|");
+		}
+		return sb.substring(0, sb.length()-1);
 	}
 	
 	// from web
@@ -134,7 +137,6 @@ public class CSVParser {
         System.out.println(c.parseCSV(test7));
         System.out.println(c.parseCSV(test8));
         System.out.println(c.parseCSV(test9));
-        
 		System.out.println("---------");
         System.out.println(c.parseCSV2(test1));
         System.out.println(c.parseCSV2(test2));
