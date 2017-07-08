@@ -12,8 +12,7 @@ A->C, 500.
 // 给很多 tuple <depart city, dest city, cost> 代表flight, 找出 给订 city A, city B, maxStops, 最小cost的path. 这题其实简单...
 // 可是刚开始竟然说 A* ....讨论了一阵子, 其实DFS就可解....只能怪自己  
 
-// dp or bfs or dfs ?
-// bellman ford
+// dfs ?
 // http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=215824
 /*
  * http://www.1point3acres.com/bbs/thread-220456-1-1.html

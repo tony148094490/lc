@@ -27,7 +27,7 @@ public class BasicCalculator {
         }
         return res;
     }
-    
+    	
     private String getNumber(String s, int j) {
         int i = j;
         while(i < s.length() && s.charAt(i) >= '0' && s.charAt(i) <= '9') i++;

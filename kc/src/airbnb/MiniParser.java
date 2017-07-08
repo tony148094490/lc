@@ -32,39 +32,39 @@ import kc.NestedInteger;
  */
 public class MiniParser {
     public NestedInteger deserialize(String s) {
-        if(s.length() == 0) return null;
-        if(Character.isDigit(s.charAt(0)) || s.charAt(0) == '-') return new NestedInteger(Integer.parseInt(s));
+        if(s.isEmpty()) return null;
         Stack<NestedInteger> stack = new Stack<>();
-        NestedInteger num = new NestedInteger();
-        stack.push(num);
-        NestedInteger res = num;
+        stack.push(new NestedInteger());
         for(int i = 0 ; i < s.length(); i++) {
+            char c = s.charAt(i);
             NestedInteger parent = stack.pop();
-            if(Character.isDigit(s.charAt(i)) || s.charAt(i) == '-') {
-                String cur = getNr(s, i);
-                NestedInteger n = new NestedInteger(Integer.parseInt(cur));
-                parent.add(n);
+            if(Character.isDigit(c) || c == '-') {
+                String nr = getNr(s, i);
+                NestedInteger number = new NestedInteger(Integer.parseInt(nr));
+                parent.add(number);
                 stack.push(parent);
-                i += cur.length() - 1;
-            } else if(s.charAt(i) == ',') {
+                i += nr.length() - 1;
+            } else if(c == ',') {
                 stack.push(parent);
-            } else if(s.charAt(i) == '[') {
-                NestedInteger newInteger = new NestedInteger();
+            } else if(c == '[') {
                 stack.push(parent);
-                stack.push(newInteger);
-            } else if(s.charAt(i) == ']') {
+                stack.push(new NestedInteger());
+            } else if(c == ']') {
                 NestedInteger grandpa = stack.pop();
                 grandpa.add(parent);
                 stack.push(grandpa);
-                res = parent;
+            } else {
+                return null;   
             }
         }
-        return res;
+        
+        return stack.pop().getList().get(0);
     }
-    private String getNr(String s, int index) {
-        int i = index;
-        while(i < s.length() && (s.charAt(i) == '-' || Character.isDigit(s.charAt(i)))) i++;
-        return s.substring(index, i);
+    
+    private String getNr(String s, int i) {
+        int start = i;
+        while(i < s.length() && (Character.isDigit(s.charAt(i)) || s.charAt(i) == '-')) i++;
+        return s.substring(start, i);
     }
     
     public static void main(String[] args) {

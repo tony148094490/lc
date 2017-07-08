@@ -8,15 +8,21 @@ public class LargeFileBS {
 		int guess = lower + (higher - lower) / 2;
 		int candidate = Integer.MAX_VALUE;
 		int count = 0;
+		int equalToGuess = 0;
 		for(int i = 0 ; i < arr.length; i++) {
 			if(arr[i] < guess) count++;
-			if(arr[i] >= guess) candidate = Math.min(candidate, arr[i]);
+			if(arr[i] > guess) candidate = Math.min(candidate, arr[i]);
+			if(arr[i] == guess) equalToGuess++;
 		}
 		
 		if(count == nr / 2) return candidate;
+		
 		if(count < nr / 2) {
+			if(count + equalToGuess >= nr/2) return guess;
+			
 			return getMedian(arr, guess+1, higher, nr);
 		} else {
+			
 			return getMedian(arr, lower, guess-1, nr);
 		}
 	}

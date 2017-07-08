@@ -22,6 +22,7 @@ http://acm.hdu.edu.cn/showproblem.php?pid=1827
 https://www.youtube.com/watch?v=RpgcYiky7uw (tushar :D)
  */
 public class LeastNumberOfNodesToCoverWholeGraph {
+	// steps: 1) find sccs 2) connect sccs 3) topo sccs 4) get one of each from scc
 
 	public List<Integer> minCoverWithSCC(Map<Integer, Set<Integer>> graph) {
 		
@@ -29,7 +30,8 @@ public class LeastNumberOfNodesToCoverWholeGraph {
 		List<SCC> sccs = findSCCs(graph);
 																	//	  <- 
 		// we cannot just get one from each scc because we may have 1 -> 2 ->3 where 2 and 3 forms one scc and 1 itself is scc, and the result should be just 1, instead of 1 and 2(or3)
-		
+		System.out.println("got here");
+
 		// connect sccs, very naive...
 		Map<SCC, Set<SCC>> sccMap = new HashMap<>();
 		for(int i = 0 ; i < sccs.size(); i++) {
@@ -42,13 +44,14 @@ public class LeastNumberOfNodesToCoverWholeGraph {
 			}
 		}
 		
+		
 		// toplo sort sccMap
 		Stack<SCC> stack = new Stack<SCC>();
 		Set<SCC> visited = new HashSet<>();
 		for(SCC scc : sccMap.keySet()) {
 			getSCCOrder(sccMap, stack, visited, scc);
 		}
-		
+
 		List<Integer> finalResult = new ArrayList<>();
 		while(!stack.isEmpty()) {
 			SCC scc = stack.pop();
@@ -102,8 +105,8 @@ public class LeastNumberOfNodesToCoverWholeGraph {
 		Map<Integer, Set<Integer>> reversedGraph = reverseGraph(graph);
 		visited = new HashSet<>();
 		while(!stack.isEmpty()) {
-			if(!visited.contains(stack.peek())) {
-				int newVert = stack.pop();
+			int newVert = stack.pop();
+			if(!visited.contains(newVert)) {
 				SCC scc = new SCC(newVert);
 				getSCC(newVert, visited, reversedGraph, scc);
 				res.add(scc);
@@ -153,7 +156,23 @@ public class LeastNumberOfNodesToCoverWholeGraph {
 	
 	public static void main(String[] args) {
 		LeastNumberOfNodesToCoverWholeGraph x = new LeastNumberOfNodesToCoverWholeGraph();
+		Map<Integer, Set<Integer>> graph = new HashMap<>();
+		graph.put(1, new HashSet<>());
+		graph.put(2, new HashSet<>());
+		graph.put(3, new HashSet<>());
+		graph.put(4, new HashSet<>());
+		graph.put(5, new HashSet<>());
+		graph.put(6, new HashSet<>());
+		graph.get(1).add(2);
+		graph.get(2).add(3);
+		graph.get(3).add(1);
+		//graph.get(3).add(4);
+		graph.get(4).add(3);
+		graph.get(4).add(5);
+		graph.get(5).add(6);
+		graph.get(6).add(4);
 		
+		System.out.println(x.minCoverWithSCC(graph));
 	}
 }
 

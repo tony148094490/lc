@@ -14,42 +14,42 @@ import java.net.UnknownHostException;
 public class GuessPswd {
 
 	
-	public int guess(int port, String hostId) throws UnknownHostException, IOException {
-		int[] multiplier = {1000, 100, 10, 1};
+	public int guess(int port, String hostId) throws Exception {
 		int[] res = new int[4];
-		
+		int[] mask = {1000, 100, 10, 1};
+
 		int hit = 0;
-		int base = 1;
-		while(hit < 4) {
-			int tempRes = getAnswer(base * 1111, port, hostId);
+
+		for(int i = 1; i <= 6 && hit < 4; i++) {
+			int totalForThisDigit = getAnswer(i * 1111, port, hostId);
 			int j = 0;
-			while(j < 4 && tempRes > 0) {
-				if(res[j] != 0) {
-					j++;
-					continue;
-				}
-				int singleDigitGuess = multiplier[j] * base;
-				if (getAnswer(singleDigitGuess, port, hostId) != 0) {
-					res[j] = base;
-					tempRes--;
+			while(j < 4 && totalForThisDigit > 0) {
+				if(res[j] != 0) continue;
+				int newTry = mask[j] * i;
+				int newAnswer = getAnswer(newTry, port, hostId);
+				if(newAnswer != 0) {
+					res[j] = i;
+					totalForThisDigit--;
 					hit++;
+					if(hit == 4) break;
 				}
 				j++;
 			}
-			base++;
 		}
-		
-		int sum = 0;
-		for(int i = 0 ; i < multiplier.length; i++) sum += (res[i] * multiplier[i]);
-		return sum;
+
+		int answer = 0;
+		for(int i = 0 ; i < mask.length;i++) {
+			answer += mask[i] * res[i];
+		}
+		return answer;
 	}
-	
-	private int getAnswer(int nr, int port, String hostId) throws UnknownHostException, IOException {
-		Socket socket = new Socket(hostId, port);
-		DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-		out.writeInt(nr);
-		DataInputStream in = new DataInputStream(socket.getInputStream());
-		int res = in.readInt();
+
+	private int getAnswer(int nr, int port, String hostId) throws IOException {
+		Socket socket = new Socket();
+		DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+		output.writeInt(nr);
+		DataInputStream input = new DataInputStream(socket.getInputStream());
+		int res = input.readInt();
 		socket.close();
 		return res;
 	}
