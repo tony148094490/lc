@@ -1,52 +1,42 @@
 package kc;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MaxPointsOnAPlane {
     public int maxPoints(Point[] points) {
-        if(points.length < 2) return points.length;
-        int max = 2;
-
-        for(int i = 0; i < points.length; i++) {
-            Map<Double, Integer> map = new HashMap<Double, Integer>();
-            Map<Integer, Integer> xx = new HashMap<Integer, Integer>();
-            int samep = 0;
-
-            for(int j = 0; j < points.length; j++) {
-            	if(i == j) continue;
-            	
-                Point a = points[i];
-                Point b = points[j];
-                
-                double slope = 0;
-                //double yIntersection = 0;
-                if((a.x == b.x) && (a.y == b.y)) {
-                	samep = samep+1;
+        if(points.length <= 2) return points.length;
+        int res = 2;
+        for(int i = 0 ; i < points.length; i++) {
+            Map<BigDecimal, Integer> map = new HashMap<>();
+            int samePoints = 0;
+            Map<Integer, Integer> xs = new HashMap<>();
+            Point cur = points[i];
+            for(int j = 0 ; j < points.length; j++) {
+                if(i == j) continue;
+                Point next = points[j];
+                if(cur.x == next.x && cur.y == next.y) {
+                    samePoints++;
                 }
-                                
-                if(a.x == b.x) {
-                    if(xx.containsKey(a.x)) {
-                        xx.put(a.x, xx.get(a.x) + 1);
-                    } else {
-                        xx.put(a.x, 2);
-                    }
-                    max = Math.max(xx.get(a.x), max);
+                
+                if (cur.x == next.x) {
+                    xs.putIfAbsent(cur.x, 1);
+                    xs.put(cur.x, xs.get(cur.x) + 1);
+                    res = Math.max(res, xs.get(cur.x));
                 } else {
-                    slope = ((double) a.y - (double) b.y) / ((double) a.x - (double) b.x);
-                    //yIntersection = (double) a.y - slope * (double) a.x;
+                    BigDecimal slope = new BigDecimal(cur.y - next.y).divide(new BigDecimal(cur.x-next.x), MathContext.DECIMAL128);
                     if(map.containsKey(slope)) {
                         map.put(slope, map.get(slope) + 1);
-                        max = Math.max(max, map.get(slope) + samep);
+                        res = Math.max(res, map.get(slope) + samePoints);
                     } else {
                         map.put(slope, 2);
                     }
                 }
-                
             }
         }
-        
-        return max;
+        return res;
     }
     
     public static void main(String[] args) {

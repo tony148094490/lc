@@ -8,36 +8,42 @@ public class QueueWithArrayList {
 
 	Node root = new Node();
 	Node tail = root;
-	
-	public void add(int element) {
-		if(tail.numbers.size() <= 9) {
-			tail.numbers.add(element);
-		} else {
-			tail.next.numbers.add(element);
-			tail = tail.next;
-		}
 
-	}
-	
-	public int poll() throws Exception {
-		int res = 0;
-		if(root.numbers.size() > 1) {
-			res = root.numbers.remove(0);
-		} else if (root.numbers.size() == 1){
-			res = root.numbers.remove(0);
-			root = root.next;
+	public void add(int element) {
+
+		if(tail.array.size() == 10) {
+			tail.next = new Node();
+			tail = tail.next;
+			tail.array.add(element);
 		} else {
-			throw new Exception("Empty queue");
+			tail.array.add(element);
 		}
-		return res;
 	}
-	
+
+	public int poll() throws Exception {
+		if(isEmpty()) throw new Exception();
+		int element = root.array.remove(0);
+		if(root.array.size() == 0) {
+			root = root.next;
+			if(root == null) {
+				root = new Node();
+				tail = root; // tricky, tail needs to be updated as well in case root catches up tail
+			}
+		}
+		return element;
+	}
+
 	public boolean isEmpty() {
-		return root.numbers.isEmpty();
+		if(root == null || root.array.size() == 0) return false;
+		return true;
 	}
-	
+
 	public class Node {
-		Node next = new Node();
-		ArrayList<Integer> numbers = new ArrayList<>();
+		Node next;
+		ArrayList<Integer> array;
+		public Node() {
+			array = new ArrayList<>();
+		}
 	}
+
 }

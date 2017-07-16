@@ -135,8 +135,8 @@ public class PagePaginationListings {
 		}
 		res.add(new ArrayList<>(cur));
 
-		// if there are still listings that are not printed out and the current page is filled up, we don't just output the rest, but attempt 
-		// reorder based on the rules again. 
+		// if there are still listings that are not printed out and the current page is filled up, 
+		//we don't just output the rest, but attempt reorder based on the rules again. 
 		if(temp.size() > 0) {
 			res.addAll(getPage(temp, PAGE_COUNT));
 		}

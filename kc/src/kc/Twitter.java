@@ -3,146 +3,100 @@ package kc;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 public class Twitter {
-	int global_time = 0;
-	Map<Integer, User> users;
+    private static final int NEWS_LIMIT = 10;
+    private Map<Integer, User> userMap;
+    private long counter = 0;
     /** Initialize your data structure here. */
     public Twitter() {
-        users = new HashMap<Integer, User>();
+        userMap = new HashMap<>();    
     }
     
     /** Compose a new tweet. */
     public void postTweet(int userId, int tweetId) {
-        Tweet newTweet = new Tweet(userId, global_time, tweetId);
-        global_time++;
-    	if(users.containsKey(userId)) {
-    		users.get(userId).tweets.add(newTweet);
-        } else {
-        	User newUser = new User(userId);
-        	newUser.tweets.add(newTweet);
-        	users.put(userId, newUser);
+        synchronized(this) {
+            userMap.putIfAbsent(userId, new User(userId));
+            User user = userMap.get(userId);
+            Tweet newTweet = new Tweet(userId, tweetId, this.counter);
+            this.counter += 1;
+            user.tweets.addFirst(newTweet);
         }
     }
     
     /** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
     public List<Integer> getNewsFeed(int userId) {
-    	if(!users.containsKey(userId)) return new ArrayList<Integer>();
-    	
-        User user = users.get(userId);
-        List<User> followees = user.followees;
-        if(followees.size() == 0) {
-        	List<Integer> list = new ArrayList<Integer>();
-        	for(int i = user.tweets.size() -1 ; i >= 0; i--){
-        		if(list.size() == 10) break;
-        		list.add(user.tweets.get(i).value);
-        	}
-        	return list;
+        if(!userMap.containsKey(userId)) return new ArrayList<>();
+        Comparator<Tweet> comp = (a,b) -> {return (int) (b.counter - a.counter);};
+        PriorityQueue<Tweet> pq = new PriorityQueue<Tweet>(comp);
+        Map<Integer, Iterator<Tweet>> map = new HashMap<>();
+        for(User followee : userMap.get(userId).followees) {
+            Iterator<Tweet> iterator = followee.tweets.iterator();
+            if(!iterator.hasNext()) continue;
+            map.put(followee.userId, followee.tweets.iterator());
         }
         
-    	Comparator<Tweet> comp = new Comparator<Tweet>(){
-    		public int compare(Tweet a, Tweet b) {
-    			if(a.time > b.time) {
-    				return -1;
-    			} else if(a.time < b.time) {
-    				return 1;
-    			} else{
-    				return 0;
-    			}
-    		}
-    	};
-    	
-    	List<User> users = new ArrayList<User>();
-    	Map<Integer, Integer> counter = new HashMap<Integer, Integer>();
-    	for(User us : followees) {
-    		users.add(us);
-    		counter.put(us.userId, us.tweets.size()-1);
-    	}
-    	users.add(user);
-    	counter.put(user.userId, user.tweets.size()-1);
-    	
-    	
-        PriorityQueue<Tweet> heap = new PriorityQueue<Tweet>(users.size(), comp);
+        if(userMap.get(userId).tweets.iterator().hasNext()) map.put(userId, userMap.get(userId).tweets.iterator());
         
-        for(User us : users) {
-        	if(us.tweets.size() != 0) {
-        		heap.offer(us.tweets.get(counter.get(us.userId)));
-        		counter.put(us.userId, counter.get(us.userId) -1);
-        	}
+        List<Integer> res = new ArrayList<>();
+        for(int f : map.keySet()) {
+            pq.add(map.get(f).next());
         }
-        
-        List<Integer> res = new ArrayList<Integer>();
-        
-        while(!heap.isEmpty()) {
-        	Tweet t = heap.poll();
-        	int tUserId = t.userId;
-        	if(counter.get(tUserId) >= 0) {
-        		heap.offer(this.users.get(tUserId).tweets.get(counter.get(tUserId)));
-        		counter.put(tUserId, counter.get(tUserId) - 1);
-        	}
-        	
-        	res.add(t.value);        	
-        	if(res.size() == 10) break;
+        while(!pq.isEmpty()) {
+            Tweet newTweet = pq.poll();
+
+            res.add(newTweet.tweetId);
+            if(res.size() == NEWS_LIMIT) break;
+            int uid = newTweet.userId;
+            if(map.get(uid).hasNext()) pq.add(map.get(uid).next());
         }
         return res;
     }
     
     /** Follower follows a followee. If the operation is invalid, it should be a no-op. */
     public void follow(int followerId, int followeeId) {
-    	if(followerId == followeeId) return;
-        if(!users.containsKey(followerId)) {
-        	User user = new User(followerId);
-        	users.put(followerId, user);
-        } 
-        
-        if(!users.containsKey(followeeId)) {
-        	User user = new User(followeeId);
-        	users.put(followeeId, user);
-        }
-        
-        User followee = users.get(followeeId);
-        
-        if(!users.get(followerId).followees.contains(followee))
-        users.get(followerId).followees.add(users.get(followeeId));
+        userMap.putIfAbsent(followerId, new User(followerId));
+        userMap.putIfAbsent(followeeId, new User(followeeId));
+        userMap.get(followeeId).followers.add(userMap.get(followerId));
+        userMap.get(followerId).followees.add(userMap.get(followeeId));
     }
     
     /** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
     public void unfollow(int followerId, int followeeId) {
-        if(!users.containsKey(followerId) || !users.containsKey(followeeId)) {
-        	return;
-        }
-        User follower = users.get(followerId);
-        User followee = users.get(followeeId);
-        
-        for(User us : follower.followees) {
-        	if(us == followee) {
-        		follower.followees.remove(us);
-        		return;
-        	}
+        if(!userMap.containsKey(followerId) || !userMap.containsKey(followeeId)) return;
+        userMap.get(followeeId).followers.remove(userMap.get(followerId));
+        userMap.get(followerId).followees.remove(userMap.get(followeeId));
+    }
+    
+    public class Tweet {
+        int tweetId;
+        int userId;
+        long counter;
+        public Tweet(int user, int tweet, long counter) {
+            tweetId = tweet;
+            userId = user;
+            this.counter = counter;
         }
     }
     
-    private class Tweet {
-    	Integer time;
-    	Integer value;
-    	Integer userId;
-    	public Tweet(int userId, int time, int value) {
-    		this.time = time;
-    		this.value = value;
-    		this.userId = userId;
-    	}
-    }
-    
-    private class User {
-    	List<Tweet> tweets = new ArrayList<Tweet>();
-    	List<User> followees = new ArrayList<User>();
-    	Integer userId;
-    	public User(int userId) {
-    		this.userId = userId;
-    	}
+    public class User {
+        Set<User> followers;
+        Set<User> followees;
+        LinkedList<Tweet> tweets;
+        int userId;
+        public User(int user) {
+            userId = user;
+            followers = new HashSet<>();
+            followees = new HashSet<>();
+            tweets = new LinkedList<>();
+        }
     }
     
     public static void main(String[] args) {

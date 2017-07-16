@@ -1,6 +1,5 @@
 package airbnb;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,7 +37,6 @@ public class SlidingPuzzle {
 		pq.add(puzzle);
 		while(!pq.isEmpty()) {
 			Puzzle parent = pq.poll();
-			//map.remove(parent.toState());
 			if(parent.isSolved()) {
 				System.out.println(parent.pathTowardFinish.split(",").length);
 				System.out.println(parent.toState());
@@ -59,8 +57,6 @@ public class SlidingPuzzle {
 							pq.add(newPuzzle);
 						}
 						System.out.println(state);
-						//System.out.println();
-						//Thread.sleep(1000);
 					}
 				}
 			}

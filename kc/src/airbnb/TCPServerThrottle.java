@@ -3,6 +3,8 @@ package airbnb;
 import java.io.*;
 import java.net.*;
 
+// this is server side, not needed for client
+// this is some made up code, just ignore this
 public class TCPServerThrottle implements Runnable{
 
 	private ServerSocket serverSocket;

@@ -43,25 +43,31 @@ public class ParentChildrenTree {
 	// states map can be in other format, this is (left -> (right, parent/next))
 	public boolean validNTA(Map<Character, Map<Character, String>> map, char[] input, String acceptedApexValues) {
 		
-		Set<Character> acceptable = new HashSet<>();
-		for(Character c : acceptedApexValues.toCharArray()) acceptable.add(c);
-		
 		if(input.length == 0) return false;
 		
-		if(input.length == 1) return acceptable.contains(input[0]);
+		// base case, reached last point
+		if(input.length == 1) {
+			for(char c : acceptedApexValues.toCharArray()) {
+				if(c == input[0]) return true;
+			}
+			return false;
+		}
 		
+		// exit earlier if computed before
 		String inputString = new String(input);
 		if(cache.containsKey(inputString)) return cache.get(inputString);
 		
+		// based on given input, we can get multiple (expoential) potential next iteration candidates 
 		Set<String> nextStates = getNextStates(input, map);
 		
 		for(String str : nextStates) {
 			if(validNTA(map, str.toCharArray(), acceptedApexValues)) {
-				cache.put(inputString, true);
+				cache.put(inputString, true);// i think this might not needed (as we only care to fail fast, instead of 'succeed' fast) 
 				return true;
 			}
 		}
 		
+		// cache failures
 		cache.put(inputString, false);
 		return false;
 	}
@@ -78,7 +84,7 @@ public class ParentChildrenTree {
 			return;
 		}
 		
-		// no valid next state
+		// no valid next state as the left-right combo do not have a valid next state
 		if(!map.containsKey(input[index-1]) || !map.get(input[index]).containsKey(input[index])) return;
 		
 		String next = map.get(input[index-1]).get(input[index]);
@@ -93,7 +99,7 @@ public class ParentChildrenTree {
 		ParentChildrenTree solver = new ParentChildrenTree();
 		// example from https://users.cs.duke.edu/~ola/courses/cps149/problems/week2/trellis.html
 		
-		// NTA 1:
+		// NTA 1:, the only acceptable final state is 'c'.
 		Map<Character, Map<Character, String>> map = new HashMap<>();
 		map.put('a', new HashMap<>());		//		a	b	c
 		map.put('b', new HashMap<>());		//		---------	
@@ -131,7 +137,7 @@ public class ParentChildrenTree {
 					", result: " + ((solver.validNTA(map, inputs.get(i).toCharArray(), "c") == true) ? "accept" : "reject"));
 		}
 		
-		// NTA 2:
+		// NTA 2: the acceptable final states are 'b' and 'c'
 		Map<Character, Map<Character, String>> map2 = new HashMap<>();
 		map2.put('a', new HashMap<>());
 		map2.put('b', new HashMap<>());

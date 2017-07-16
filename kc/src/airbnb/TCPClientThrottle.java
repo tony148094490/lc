@@ -26,59 +26,73 @@ STATUS     (过几秒后，你又发STATUS指令过去).
 对就是这样，像是简单物理实验。
 
 写完TCP client后，要求是写一个方法将速度控制到达一个target speed
-
+最后一个问题是求这个 delta力 和 delta速度 之间的函数关系
 
 probably more detailed analysis before coding
  *
  */
 public class TCPClientThrottle {
 	
-	// basic one-off connection
-	public static void main(String[] args) throws InterruptedException {
-		int target = Integer.parseInt(args[0]);
-		double lowerBoundThrottle = 0;
-		double upperBoundThrottle = 200;
-		
-		try {
-			// Try to establish connection to server
-			Socket client = new Socket("localhost", 6603);
-			int counter = 0;
-			while(true){
-				// establish outgoing message.
-				DataOutputStream out = new DataOutputStream(client.getOutputStream());
-	
-				out.writeUTF("STATUS");
-				
-				DataInputStream in = new DataInputStream(client.getInputStream());
-				
-				// parse result
-				String res = in.readUTF();
-				System.out.println("Current Status is: " + res + ", target is " + target);
-				
-				String[] parts = res.split(" ");
-				double throttle = Double.parseDouble(parts[0]);
-				double speed = Double.parseDouble(parts[1]);
-				
-				if(speed > target) {
-					upperBoundThrottle = throttle;
-					String instruction = "THROTTLE " + String.valueOf(lowerBoundThrottle + (upperBoundThrottle - lowerBoundThrottle)/2);
-					out.writeUTF(instruction);
-				} else if(speed == target) {
-					counter++;
-					if(counter == 10)
-					break;
-				} else {
-					upperBoundThrottle = 200;
-					out.writeUTF("THROTTLE " + upperBoundThrottle);
-				}
-				
-				Thread.sleep(1000);
-			}
-			client.close();
-		} catch (IOException e) {
-				// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	// we need to dynamically reduce the acceleration when approaching the target
+	// we can make some assumptions here:
+	// 1) Any throttle corresponds to a constant speed. i.e it will stablize at a speed eventually
+	// 2) Given a throttle number, car will approach a target speed
+	// 3) The wider diff between given throttle and current speed is, the greater accerlation (negative or position) it will have
+	// So there are two ways of doing this:
+	// 1) Very naievly, we apply a throttle, wait for an extended period of time until accerlation appoaches 0 and note down the speed
+	//    do this using binary search until reaching the target speed
+	// 2) Get a rough understanding of the thrttole-speed relation and apply the final throttle based on the target speed
+	public void stablizeNaive(String ip, int port, double target) throws Exception {
+		double lower = 0;
+		double higher = 1000;
+		double eps = 0.00000001;
+		while(true) {
+			double mid = (lower + higher) / 2;
+			changeSpeed(ip, port, mid);
 
+			Thread.sleep(2000); // sleep 2 seconds to allow car react
+
+			while(true) {
+				double[] firstTry = getSpeed(ip, port);
+				Thread.sleep(500); // sleep 500 ms.
+				double[] secondTry = getSpeed(ip, port);
+				if(Math.abs(secondTry[1] - firstTry[1]) < eps) {
+					// reached terminal speed
+					break;
+				}
+			}
+
+			// get the speed and prepare for binary search
+			double[] res = getSpeed(ip, port);
+			if(Math.abs(res[1] - target) < eps) {
+				continue;
+			} else {
+				if(res[1] > target) {
+					higher = mid-1;
+				} else {
+					lower = mid+1;
+				}
+			}
+		}
+	}
+
+	public double[] getSpeed(String ip, int port) throws Exception {
+		Socket socket = new Socket(ip, port);
+		DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+		output.writeUTF("STATUS");
+		DataInputStream input = new DataInputStream(socket.getInputStream());
+		String res = input.readUTF();
+		double throttle = Double.parseDouble(res.split(" ")[0]);
+		double speed = Double.parseDouble(res.split(" ")[1]);
+		socket.close();
+		return new double[]{throttle, speed};
+	}
+
+	public void changeSpeed(String ip, int port, double target) throws Exception {
+		Socket socket = new Socket(ip, port);
+		DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+		String instruction = "THROTTLE " + String.valueOf(target);
+		output.writeUTF(instruction);
+		socket.close();
 	}
 }

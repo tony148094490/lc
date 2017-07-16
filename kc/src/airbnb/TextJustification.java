@@ -5,74 +5,68 @@ import java.util.List;
 
 public class TextJustification {
     public List<String> fullJustify(String[] words, int maxWidth) {
-        if(words.length == 0 || maxWidth <= 0) {
-            List<String> res = new ArrayList<>();
+        List<String> res = new ArrayList<>();
+        if(maxWidth == 0) {
             res.add("");
             return res;
         }
-        
-        List<String> res = new ArrayList<>();
-        List<String> curLevel = new ArrayList<>();
-        int len = 0;
-        for(String str : words) {
-            if(str.length() > maxWidth) return new ArrayList<>();
-            curLevel.add(str);
-            len += str.length();
-            if(len == maxWidth) {
-                String local = curLevel.get(0);
-                for(int i = 1; i < curLevel.size(); i++) {
-                    local += " ";
-                    local += curLevel.get(i);
-                }
-                res.add(local);
-                len = 0;
-                curLevel = new ArrayList<>();
-            } else if(len < maxWidth) {
-                len++;
+        List<String> cur = new ArrayList<>();
+        cur.add(words[0]);
+        int len = words[0].length();
+        for(int i = 1; i < words.length; i++) {
+            if(len + words[i].length() >= maxWidth) {
+                res.add(justify(cur, maxWidth - (len - cur.size()+1)));
+                cur = new ArrayList<>();
+                cur.add(words[i]);
+                len = words[i].length();
+
             } else {
-                curLevel.remove(curLevel.size()-1);
-                String justified = justify(curLevel, maxWidth);
-                res.add(justified);
-                len = str.length() + 1;
-                curLevel = new ArrayList<>();
-                curLevel.add(str);
+                cur.add(words[i]);
+                len += 1;
+                len += words[i].length();
             }
         }
         
-        if(!curLevel.isEmpty()) {
-            String local = curLevel.get(0);
-            for(int i = 1; i < curLevel.size(); i++) {
-                local += " ";
-                local += curLevel.get(i);
+        if(cur.size() > 0) {
+            String last = "";
+            for(String str : cur) {
+                last += str;
+                last += " ";
             }
-            for(int j = local.length(); j < maxWidth; j++) local += " ";
-            res.add(local);
+            last = last.substring(0, last.length()-1);
+            while(last.length() < maxWidth) {
+                last += " ";
+            }
+            res.add(last);
         }
         return res;
     }
     
-    private String justify(List<String> list, int max) {
+    private String justify(List<String> list, int spaces) {
+        if(list.size() == 0) return "";
         if(list.size() == 1) {
-            String str = list.get(0);
-            for(int i = str.length(); i < max; i++) {
-                str += " ";
-            } 
-            return str;
+            String res = list.get(0);
+            while(spaces > 0) {
+                res += " ";
+                spaces--;
+            }
+            return res;
         }
-        int slots = list.size() - 1;
-        int totalLen = 0;
-        for(String s : list) totalLen += s.length();
-        int spaces = max - totalLen;
-        int baseSpacePerSlot = spaces/slots;
-        int spares = spaces - baseSpacePerSlot * slots;
+        System.out.println(spaces);
+        int avg = spaces / (list.size() - 1);
+        int additional = spaces - (avg * (list.size()-1));
         
         String res = "";
         for(int i = 0 ; i < list.size() - 1; i++) {
             res += list.get(i);
-            for(int j = 0 ; j < baseSpacePerSlot; j++) res += " ";
-            if(spares > 0) {
+            int inbetween = 0;
+            while(inbetween < avg) {
                 res += " ";
-                spares--;
+                inbetween++;
+            }
+            if(additional > 0) {
+                res += " ";
+                additional--;
             }
         }
         res += list.get(list.size()-1);

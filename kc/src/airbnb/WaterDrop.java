@@ -39,31 +39,25 @@ https://tinyurl.com/yakaj5he
 
 public class WaterDrop {
 		// this is the impl of the simple situation (idea 1)
-		public int[] getMap(int[] terrian, int dumpPoint, int waterAmount) {
-						
-			while(waterAmount > 0) {
-				int cur = dumpPoint;
-				while(cur > 0 && terrian[cur-1] <= terrian[cur]) cur--;
-				int leftMost = cur;
-				
-				if(terrian[leftMost] < terrian[dumpPoint]) {
-					terrian[leftMost]++;
+	public int[] getMap(int[] terrian, int dumpPoint, int waterDrop) {
+		while(waterDrop > 0) {
+			int leftMost = dumpPoint;
+			while(leftMost > 0 && terrian[leftMost-1] <= terrian[leftMost]) leftMost--;
+			if(terrian[leftMost] < terrian[dumpPoint]) {
+				terrian[leftMost]++;
+			} else {
+				int rightMost = dumpPoint;
+				while(rightMost < terrian.length-1 && terrian[rightMost] >= terrian[rightMost+1]) rightMost++;
+				if(terrian[rightMost] < terrian[dumpPoint]) {
+					terrian[rightMost]++;
 				} else {
-					cur = dumpPoint;
-					while(cur < terrian.length - 1 && terrian[cur] >= terrian[cur+1]) cur++;
-					int rightMost = cur;
-					
-					if(terrian[rightMost] < terrian[dumpPoint]) {
-						terrian[rightMost]++;
-					} else {
-						terrian[leftMost]++;
-					}
+					terrian[leftMost]++;
 				}
-				
-				waterAmount--;
 			}
-			return terrian;
+			waterDrop--;
 		}
+		return terrian;
+	}
 		
 		public static void main(String[] args) {
 			int[] terrian = {3,2,1,2};
