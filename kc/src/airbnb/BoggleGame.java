@@ -37,9 +37,9 @@ public class BoggleGame {
 		if(cur.children[board[i][j] - 'a'] == null) return;
 		cur = cur.children[board[i][j] - 'a'];
 		char c = board[i][j];
+		board[i][j] = ' ';
 		if(cur.isWord) {
 			// keep the current word
-			board[i][j] = ' ';
 			cur.isWord = false; // if the question is to ask number of distinct words, then this is necessary, otherwise no.
 			max = Math.max(max, curSize + 1);
 			dfs(board, root, i+1,j, curSize + 1);

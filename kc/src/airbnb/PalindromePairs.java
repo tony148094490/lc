@@ -56,10 +56,11 @@ public class PalindromePairs {
         }
         return true;
     }
-
+        
     public static void main(String[] args) {
     	PalindromePairs x = new PalindromePairs();
     	String[] arr = {"abcd", "dcba", "lls", "s", "sssll"};
     	System.out.println(x.palindromePairs(arr));
+    	
     }
 }

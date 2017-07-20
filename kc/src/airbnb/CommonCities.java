@@ -1,8 +1,10 @@
 package airbnb;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Set;
 
 // https://tinyurl.com/y7jwpjyo  1. 我有一个感兴趣的城市列表，我的朋友们每个人也有感兴趣的城市列表，如果朋友和我感兴趣的城市占总共他总城市个数的至少一半，
@@ -31,27 +33,29 @@ public class CommonCities {
 	
 	// first question
 	public List<Buddy> getBuddies(List<Buddy> list, Buddy self) {
-		List<Buddy> res = new ArrayList<>();
-		int mySize = self.favs.size();
-		List<List<Buddy>> buckets = new ArrayList<>();
-		for(int i = 0 ; i < mySize; i++) {
-			buckets.add(new ArrayList<>());
-		}
+		Comparator<Buddy> comp = new Comparator<Buddy>(){
+			@Override
+			public int compare(Buddy a, Buddy b) {
+				if(a.matchedScore > b.matchedScore) return -1;
+				return 1;
+			}
+		};
+		PriorityQueue<Buddy> pq = new PriorityQueue<>(comp);
+
 		for(Buddy buddy : list) {
-			int size = buddy.favs.size();
-			if(size > mySize * 2) continue;
-			int counter = 0;
-			for(String city : buddy.favs) {
-				if(self.favs.contains(city)) counter++;
+			if(buddy.favCities.size() > self.favCities.size() * 2) continue;
+			int matched = 0;
+			for(String city : buddy.favCities) {
+				if(self.favCities.contains(city)) matched++;
 			}
-			buckets.get(counter-1).add(buddy);
+			if(matched * 2 >= buddy.favCities.size()) {
+				buddy.matchedScore = (double) matched / (double) buddy.favCities.size();
+				pq.add(buddy);
+			}
 		}
-		
-		for(int i = mySize-1; i >= 0; i--) {
-			List<Buddy> buddies = buckets.get(i);
-			for(Buddy buddy : buddies) {
-				if(buddy.favs.size() < (i+1) * 2) res.add(buddy);
-			}
+		List<Buddy> res = new ArrayList<>();
+		while(!pq.isEmpty()) {
+			res.add(pq.poll());
 		}
 		return res;
 	}
@@ -64,8 +68,9 @@ public class CommonCities {
 	// public List<String> getRecommendation(List<Buddy> list, Buddy self, int max) 
 	
 	public class Buddy {
-		Set<String> favs = new HashSet<>();
+		Set<String> favCities = new HashSet<>();
 		String name;
+		double matchedScore; //helper field
 		public Buddy(String n) {
 			name = n;
 		}

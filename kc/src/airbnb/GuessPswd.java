@@ -4,7 +4,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 // http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=281246
 // http://www.1point3acres.com/bbs/thread-189016-1-1.html

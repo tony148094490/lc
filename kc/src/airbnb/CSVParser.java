@@ -106,10 +106,10 @@ public class CSVParser {
         }
         return sb.toString();
     }
-	
+
 	public static void main(String[] args) {
 		
-		String test1 = "\"\"\"Alexandra Alex\"\"\"";
+		String test1 = "\"\"Alexandra Alex\"\"";
 		String test2 = "\"Alexandra \"\"Alex\"\"\",Menendez,alex.menendez@gmail.com,Miami,1";
 		String test3 = "Jane,Roberts,janer@msn.com,\"San Francisco, CA\",0";
 		String test4 = "a,\"c,\"\"1\"\"\",2,2,a\"b";

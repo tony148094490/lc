@@ -34,8 +34,8 @@ public class HibertCurve {
 		
 	    public static int hilbertCurve(int x, int y, int iter) {
 	        if (iter == 0) return 1;
-	        int len = 1 << (iter - 1);
-	        int num = 1 << (2 * (iter - 1));
+	        int len = 1 << (iter - 1); // side edge that can cuts quadrant 1 and 2, 3 and 4.
+	        int num = 1 << (2 * (iter - 1)); // sum of prev iterations
 
 	        if (x >= len && y >= len) {
 	            // 3 Shape is identical with previous iteration
@@ -48,9 +48,10 @@ public class HibertCurve {
 	            return hilbertCurve(y, x, iter - 1);
 	        } else {
 	            // 4 Anti-Clockwise rotate 90
-	            return 3 * num + hilbertCurve(len - 1 - y, 2 * len - 1 - x, iter - 1);
+	            return 3 * num + hilbertCurve(len - 1 - y, len - 1 - (x - len), iter - 1);
 	        }
 	    }
+	    
 	    
 	    public static void main(String[] args) {
 	    	HibertCurve h = new HibertCurve();
@@ -61,9 +62,8 @@ public class HibertCurve {
 	        System.out.println(hilbertCurve(4,1,4) + ", " + h.hilbertCurve2(4L, 1L, 4));
 	        System.out.println(hilbertCurve(4,2,4) +  ", " + h.hilbertCurve2(4L, 2L, 4));
 	        System.out.println(hilbertCurve(4,5,4) +  ", " + h.hilbertCurve2(4L, 5L, 4));
-	        
-	    	System.out.println(hilbertCurve(4,0,3));
-	    	System.out.println(h.hilbertCurve2(4, 0, 3));
+	    	System.out.println(hilbertCurve(4,0,3) + ", " +  h.hilbertCurve2(4L, 0L, 3)); 
+
 
 		}
 }

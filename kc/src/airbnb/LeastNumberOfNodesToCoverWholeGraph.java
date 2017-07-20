@@ -30,7 +30,6 @@ public class LeastNumberOfNodesToCoverWholeGraph {
 		List<SCC> sccs = findSCCs(graph);
 																	//	  <- 
 		// we cannot just get one from each scc because we may have 1 -> 2 ->3 where 2 and 3 forms one scc and 1 itself is scc, and the result should be just 1, instead of 1 and 2(or3)
-		System.out.println("got here");
 
 		// connect sccs, very naive...
 		Map<SCC, Set<SCC>> sccMap = new HashMap<>();
@@ -132,15 +131,11 @@ public class LeastNumberOfNodesToCoverWholeGraph {
 	
 	private Map<Integer, Set<Integer>> reverseGraph(Map<Integer, Set<Integer>> graph) {
 		Map<Integer, Set<Integer>> res = new HashMap<>();
-		for(Entry<Integer, Set<Integer>> entry : graph.entrySet()) {
-			int key = entry.getKey();
-			if(!res.containsKey(key)) res.put(key, new HashSet<>());
-			Set<Integer> values = entry.getValue();
-			for(Integer next : values) {
-				if(!res.containsKey(next)) {
-					res.put(next, new HashSet<>());
-				}
-				res.get(next).add(key);
+		for(Integer x : graph.keySet()) {
+			res.putIfAbsent(x, new HashSet<>());
+			for(Integer y : graph.get(x)) {
+				res.putIfAbsent(y, new HashSet<>());
+				res.get(y).add(x);
 			}
 		}
 		return res;

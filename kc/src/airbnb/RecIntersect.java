@@ -30,31 +30,39 @@ public class RecIntersect {
 			public int compare(Line a, Line b) {
 				if(a.value != b.value) {
 					if(a.value > b.value) return 1;
-					if(a.value < b.value) return -1;
-					return 0;
+					else return -1;
 				}
 				if(a.lower && !b.lower) {
 					return -1;
-				} else if(!a.lower && b.lower) {
-					return 1;
 				} else {
-					return 0;
+					return 1;
 				}
 			}
 		};
 
+		// java comparator can actually cause Set to dedupe
 		TreeSet<Line> xss = new TreeSet<Line>(comp);
 		for(Rec rec : recs) {
+
 			xss.add(new Line(rec.xmin, true, rec));
 			xss.add(new Line(rec.xmax, false, rec));
+
 		}
 
 
 		Comparator<Rec> intervalComp = new Comparator<Rec>(){
 			@Override
 			public int compare(Rec a, Rec b) {
-				if(a.ymin != b.ymin) return a.ymin - b.ymin < 0 ? -1 : 1;
-				return a.ymax - b.ymax < 0 ? -1 : 1;
+				if(a.ymin < b.ymin) {
+					return -1;
+				} else if(a.ymin > b.ymin) {
+					return 1;
+				} else if(a.ymax < b.ymax) {
+					return -1;
+				} else {
+					return 1;
+				}
+
 			}
 		};
 
@@ -66,15 +74,20 @@ public class RecIntersect {
 				Rec r = line.rec;
 				Rec floor = yinterval.floor(r);
 				Rec ceiling = yinterval.ceiling(r);
-
+				
 				if(floor != null && ((floor.ymin <= r.ymin && floor.ymax >= r.ymin) || (floor.ymin <= r.ymax && floor.ymax >= r.ymax))) {
 					res.add(r);
-				} else if(ceiling != null && ((ceiling.ymin <= r.ymin && ceiling.ymax >= r.ymin) || (ceiling.ymin <= r.ymax && ceiling.ymax >= r.ymax))) {
+					res.add(floor);
+				} 
+				
+				if(ceiling != null && ((ceiling.ymin <= r.ymin && ceiling.ymax >= r.ymin) || (ceiling.ymin <= r.ymax && ceiling.ymax >= r.ymax))) {
 					res.add(r);
+					res.add(ceiling);
 				}
-				res.add(r);
+
 				yinterval.add(r);
 			} else {
+
 				yinterval.remove(line.rec);
 			}
 		}
@@ -98,7 +111,7 @@ public class RecIntersect {
 		double xmax;
 		double ymin;
 		double ymax;
-		public Rec(double xmin, double xmax, double ymin, double ymax) {
+		public Rec(double xmin, double ymin, double xmax, double ymax) {
 			this.xmin = xmin;
 			this.xmax = xmax;
 			this.ymin = ymin;
@@ -117,7 +130,7 @@ public class RecIntersect {
 		Rec [] rects2 = {
                 sol.new Rec(0, 1, 4, 2),
                 sol.new Rec(0, 4, 4, 5),
-                sol.new Rec(1,2,0,5)
+                sol.new Rec(1,2,3,5)
         };
 		
 		System.out.println(sol.getInter(rects));

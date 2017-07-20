@@ -4,34 +4,42 @@ import java.util.Stack;
 
 public class BasicCalculatorII {
     public int calculate(String s) {
-        if(s == null || s.isEmpty()) {
-            return 0;
-        }
         Stack<Integer> stack = new Stack<>();
-        int number = 0;
-        char sign = '+';
-        for(int i = 0 ; i < s.length(); i++) {
-            if(Character.isDigit(s.charAt(i))) {
-                number = number * 10 + (s.charAt(i) - '0');
-            }
-            
-            if((!Character.isDigit(s.charAt(i)) && s.charAt(i) != ' ') || i == s.length()-1) {
-                if(sign  == '+') {
-                    stack.push(number);
-                } else if(sign == '-') {
-                    stack.push(-number);
-                } else if(sign == '*') {
-                    stack.push(stack.pop() * number);
+        char prevSign = '+';
+        int n = 0;
+        for(int i = 0 ;  i < s.length(); i++ ) {
+            char cur = s.charAt(i);
+            if(Character.isDigit(cur)) {
+                String nr = getNr(s, i);
+                n = Integer.parseInt(nr);
+                i += (nr.length()-1);
+            } 
+
+            if((cur != ' ' && !Character.isDigit(cur) )|| i == s.length()-1) {
+                if(prevSign == '+') {
+                    stack.push(n);
+                } else if(prevSign == '-') {
+                    stack.push(-n);
+                } else if(prevSign == '*') {
+                    stack.push(stack.pop() * n);
                 } else {
-                    stack.push(stack.pop() / number);
+                    stack.push(stack.pop() / n);
                 }
-                number = 0;
-                sign = s.charAt(i);
+                prevSign = cur;
+                n = 0;
             }
         }
+        
         int res = 0;
         while(!stack.isEmpty()) res += stack.pop();
         return res;
+        
+    }
+    
+    private String getNr(String s, int i) {
+        int start = i;
+        while(i < s.length() && Character.isDigit(s.charAt(i))) i++;
+        return s.substring(start, i);
     }
     
     public static void main(String[] args) {

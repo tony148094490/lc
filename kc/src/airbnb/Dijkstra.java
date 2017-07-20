@@ -40,7 +40,7 @@ public class Dijkstra {
 		while(!pq.isEmpty()) {
 			Node parent = pq.poll();
 			
-			// can break earlier if one to one. cannot break if it's one to many because cost is positive and its neighbors will always have higher cost
+			// can break earlier
 			if(parent == destination) return parent.distanceToOrigin; 
 			
 			for(Node neighbor : parent.neighbors) {
@@ -59,7 +59,6 @@ public class Dijkstra {
 		
 		return destination.distanceToOrigin;
 	}
-	
 	
 	// version 2: get min path
 	 public List<Integer> getPath(List<List<Integer>> relation) {
@@ -86,6 +85,7 @@ public class Dijkstra {
 			pq.add(source);
 			while(!pq.isEmpty()) {
 				Node parent = pq.poll();
+				if(parent == destination) break;
 				for(Node neighbor : parent.neighbors) {
 					int newDistance = parent.distanceToOrigin + (parent.id - neighbor.id) * (parent.id - neighbor.id);
 					if(neighbor.distanceToOrigin > newDistance) {
@@ -111,7 +111,6 @@ public class Dijkstra {
 			Collections.reverse(res);
 			return res;
 	 }
-	
 	
 	public class Node {
 		int id;
@@ -170,5 +169,6 @@ public class Dijkstra {
 		
 		System.out.println(d.getMin(relation));
 		System.out.println(d.getPath(relation));
+		
 	}
 }
