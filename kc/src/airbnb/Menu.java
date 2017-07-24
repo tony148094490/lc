@@ -73,6 +73,14 @@ public class Menu {
 	            }
 	        }
 	    }
+	    
+	    
+//	public List<List<Double>> getCombo3(double[] menu, double target) {
+//		
+//	}
+	
+	
+
 	
 	public static void main(String[] args) {
 		double[] prices = {0.32,1.30,3.37, 0.65,0.95,2.30};

@@ -166,7 +166,7 @@ public class LeastNumberOfNodesToCoverWholeGraph {
 		graph.get(4).add(5);
 		graph.get(5).add(6);
 		graph.get(6).add(4);
-		
+
 		System.out.println(x.minCoverWithSCC(graph));
 	}
 }

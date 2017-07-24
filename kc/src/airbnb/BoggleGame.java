@@ -59,7 +59,6 @@ public class BoggleGame {
 		board[i][j] = c;
 	}
 
-
 	private void buildTrie(TrieNode root, String[] dict) {
 		TrieNode cur;
 		for(String str : dict) {
@@ -72,7 +71,6 @@ public class BoggleGame {
 		}
 	}
 
-
 	public class TrieNode {
 		TrieNode[] children;
 		boolean isWord;
@@ -82,8 +80,6 @@ public class BoggleGame {
 		}
 	}
 
-	
-	
 	// Test client
 	public static void main(String[] args) {
 		BoggleGame game = new BoggleGame();

@@ -8,6 +8,8 @@ public class TreeNode {
 	int val;
 	TreeNode left;
 	TreeNode right;
+	TreeNode prev;
+	TreeNode next;
 	List<TreeNode> children;
 	TreeNode(int x) {
 		val = x;

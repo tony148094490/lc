@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 // 第一轮高频，给N个人的busy time interval，让你找出所有人都有空的time interval。
+// assumption: the time range is in earlierstInterval.start - latestInterval.end. Otherwise we need to factor in some edge cases.
 public class MeetingScheduling {
 	public List<Interval> get(List<List<Interval>> calendars) {
 		List<Interval> schedules = new ArrayList<>();

@@ -60,6 +60,42 @@ class Solution {
     input.add("29,22,2.1,San Jose");
     input.add("30,23,1.1,San Jose");
   }
+  
+Page 1
+1,28,300.1,SanFrancisco. 
+4,5,209.1,SanFrancisco
+20,7,208.1,SanFrancisco
+23,8,207.1,SanFrancisco
+16,10,206.1,Oakland
+6,29,204.1,SanFrancisco 
+7,20,203.1,SanFrancisco
+8,21,202.1,SanFrancisco
+2,18,201.1,SanFrancisco
+15,27,109.1,Oakland
+10,13,108.1,Oakland
+11,26,107.1,Oakland
+Page 2
+1,16,205.1,SanFrancisco. 
+2,30,200.1,SanFrancisco
+12,9,106.1,Oakland
+13,1,105.1,Oakland
+22,17,104.1,Oakland
+28,24,102.1,Oakland
+18,14,11.1,SanJose
+6,25,10.1,Oakland
+19,15,9.1,SanJose
+3,19,8.1,SanJose
+27,12,6.1,Oakland
+25,4,4.1,SanJose.
+Page 3.
+1,2,103.1,Oakland.
+3,11,7.1,Oakland
+5,6,3.1,SanJose
+29,22,2.1,SanJose
+30,23,1.1,SanJose
+Page 4
+1,3,5.1,Oakland
+  
  *
  * !!!!!!!!!!Important!!!!!!!!!!!!!
  * 比方说input是 1231111222，每页5个
@@ -87,81 +123,56 @@ public class PagePaginationListings {
 		// use doubly-linked list to extract a given indexed element
 		// this may not be the right answer but should be fairly close.
 		// a follow up or possible variant is that the hosts should be evenly distributed, i.e when page is not full and we need to put duplicates in the same page
-		// we should evenly distribute the ids. This can be very tricky though, but i don't think this is the actual question.
+		// we should evenly distribute the ids. This can be very tricky though, but i don't think this is the actual question.	
 		List<List<String>> res = new ArrayList<>();
 		List<String> cur = new ArrayList<>();
-		LinkedList<String> temp = new LinkedList<>();
-		Set<String> visitedHost = new HashSet<>();
-		
-		int tempIndex = 0;
 		int overallIndex = 0;
-		
+		LinkedList<String> temp = new LinkedList<>();
+		int tempIndex = 0;
+		Set<String> visited = new HashSet<>();
 		while(overallIndex < input.size()) {
-			// first we take a look at previous skipped ones
-			while(tempIndex < temp.size()) {
-				String prevListing = temp.get(tempIndex);
-				if(!visitedHost.contains(prevListing.split(",")[0])) {
-					cur.add(prevListing);
+			while(tempIndex < temp.size() && cur.size() < PAGE_COUNT) {
+				String tempListing = temp.get(tempIndex);
+				String[] split = tempListing.split(",");
+				if(!visited.contains(split[0])) {
+					cur.add(tempListing);
+					visited.add(split[0]);
 					temp.remove(tempIndex);
-					if(temp.isEmpty()) tempIndex = 0;
-					if(cur.size() == PAGE_COUNT) {
-						tempIndex = 0;
-						break;
-					}
+				} else {
+					tempIndex++;
 				}
-				tempIndex++;
 			}
-			
 			if(cur.size() == PAGE_COUNT) {
+				tempIndex = 0;
+				visited = new HashSet<>();
 				res.add(new ArrayList<>(cur));
-				visitedHost = new HashSet<>();
 				cur = new ArrayList<>();
 			} else {
-				String listing = input.get(overallIndex);
-				if(!visitedHost.contains(listing.split(",")[0])) {
-					cur.add(listing);
-					visitedHost.add(listing.split(",")[0]);
-				} else {
-					temp.add(listing);
+				// if or while both are okay
+				while(cur.size() < PAGE_COUNT && overallIndex < input.size()) {
+					String listing = input.get(overallIndex);
+					String[] split = listing.split(",");
+					if(visited.contains(split[0])) {
+						temp.add(listing);
+					} else {
+						visited.add(split[0]);
+						cur.add(listing);
+					}
+					overallIndex++;
 				}
-				overallIndex++;
 			}
-			
 		}
 
-		// the 'duplicates' have lower order than the first timers even if duplicates might have higher scores and need to be displayed again.
-		while(!temp.isEmpty() && cur.size() < PAGE_COUNT) {
+		while(temp.size() > 0 && cur.size() < PAGE_COUNT) {
 			cur.add(temp.poll());
 		}
-		res.add(new ArrayList<>(cur));
 
-		// if there are still listings that are not printed out and the current page is filled up, 
-		//we don't just output the rest, but attempt reorder based on the rules again. 
+		res.add(new ArrayList<>(cur));
 		if(temp.size() > 0) {
 			res.addAll(getPage(temp, PAGE_COUNT));
 		}
-		
-		return res;	
+		return res;
 	}
-	
-	// second solution (WRONG!!)
-//    public static Map<Integer, List<String>> displayPages(List<String> input, int size) {
-//        // Map Solution
-//        Map<Integer, List<String>> map = new HashMap<>();
-//        Map<String, Integer> pageIndex = new HashMap<>();
-//        for (int i = 0; i < input.size(); i++) {
-//            String[] logItems = input.get(i).split(",");
-//            // Update the index
-//            int hostIdPageNum = pageIndex.getOrDefault(logItems[0], 0) + 1;
-//            while (map.containsKey(hostIdPageNum) && map.get(hostIdPageNum).size() == size) hostIdPageNum++;
-//            map.putIfAbsent(hostIdPageNum, new ArrayList<>());
-//            map.get(hostIdPageNum).add(input.get(i));
-//            pageIndex.put(logItems[0], hostIdPageNum);
-//        }
-//        return map;
-//    }
-	
-	
 	public static void main(String[] args) {
 
 	    ArrayList<String> input = new ArrayList<String>();

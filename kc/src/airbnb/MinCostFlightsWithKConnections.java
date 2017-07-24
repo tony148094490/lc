@@ -1,6 +1,7 @@
 package airbnb;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,9 @@ public class MinCostFlightsWithKConnections {
 	int cost = Integer.MAX_VALUE;
 	
 	public List<String> getPath(String departure, String destination, int maxStops, Map<String, Map<String, Integer>> flights) {
-		dfs(departure, destination, maxStops, flights, new ArrayList<>(), 0);
+		List<String> curPath = new ArrayList<>();
+		curPath.add(departure);
+		dfs(departure, destination, maxStops, flights, curPath, 0);
 		return path;
 	}
 	
@@ -41,15 +44,35 @@ public class MinCostFlightsWithKConnections {
 			return;
 		}
 
-		Map<String, Integer> nextStops = map.get(destination);
+		Map<String, Integer> nextStops = map.get(departure);
 		for(String str : nextStops.keySet()) {
 			curPath.add(str);
 			dfs(str, destination, maxStops, map, curPath, curCost + nextStops.get(str));
 			curPath.remove(curPath.size()-1);
 		}
 	}
+
 	
 	public static void main(String[] args) {
+		Map<String, Map<String, Integer>> flights = new HashMap<>();
+		flights.put("A", new HashMap<>());
+		flights.put("B", new HashMap<>());
+		flights.put("C", new HashMap<>());
+		flights.put("D", new HashMap<>());
+		flights.put("E", new HashMap<>());
+		flights.put("F", new HashMap<>());
+		flights.put("G", new HashMap<>());
+		flights.get("A").put("G", 1000);
+		flights.get("A").put("B", 100);
+		flights.get("A").put("E", 50);
+		flights.get("B").put("C", 500);
+		flights.get("C").put("D", 100);
+		flights.get("E").put("F", 100);
+		flights.get("F").put("C", 200);
+		flights.get("D").put("G", 100);
+		
+		MinCostFlightsWithKConnections x = new MinCostFlightsWithKConnections();
+		System.out.println(x.getPath("A", "D", 5, flights));
 		
 	}
 }

@@ -79,7 +79,7 @@ public class CIDR {
 	}
 	
 	
-	// impl 2, same idea
+	// impl 2, same idea, cleaner
 	public List<String> getCIDR(String startIp, int range) {
 		int counter = range;
 		long start = stringToIp(startIp);
@@ -132,7 +132,7 @@ public class CIDR {
 		System.out.println(ci.getCIDRGroups("2.255.255.255", 10));	
 		System.out.println(ci.getCIDRGroups("128.0.0.4", 4));
 		System.out.println(ci.getCIDRGroups("255.0.0.7", 10));
-		
+		System.out.println();
 		System.out.println(ci.getCIDR("2.255.255.255", 10));	
 		System.out.println(ci.getCIDR("128.0.0.4", 4));
 		System.out.println(ci.getCIDR("255.0.0.7", 10));

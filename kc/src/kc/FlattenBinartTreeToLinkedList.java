@@ -112,6 +112,54 @@ public class FlattenBinartTreeToLinkedList {
 
 	}
     
+
+	//TreeNode head = null;
+	TreeNode tail = null;
+	public TreeNode find3(TreeNode root) {
+		tail = helper(root, null);
+		head.prev = tail;
+		tail.next = head;
+		return head;
+	}
+
+	private TreeNode helper(TreeNode root, TreeNode prev) {
+		if(root == null) return null;
+		if(root.left == null && root.right == null) {
+			if(head == null) {
+				head = root;
+				prev = root;
+				return root;
+			}
+			prev.next = root;
+			root.prev = prev;
+			prev = root;
+			return prev;
+		}
+
+		if(root.left == null) {
+			if(head == null) {
+				head = root;
+				prev = root;
+				return helper(root.right, root);
+			}
+			prev.next = root;
+			root.prev = prev;
+			return helper(root.right, root);
+		} else if(root.right == null) {
+			TreeNode left = helper(root.right, prev);
+			left.next = root;
+			root.prev = left;
+			return root;
+		} else {
+			TreeNode left = helper(root.right, prev);
+			left.next = root;
+			root.prev = left;
+			return helper(root.right, root);
+		}
+	}
+	
+	
+	
     public static void main(String[] args) {
 		TreeNode a = new TreeNode(1);
 		TreeNode b = new TreeNode(2);
@@ -121,12 +169,12 @@ public class FlattenBinartTreeToLinkedList {
 		TreeNode f = new TreeNode(6);
 
 		a.right=e;b.left = c;b.right=d;e.right=f;
-		
+		//a.right=e;b.prev = c;b.next = d; e.prev = f;
 		FlattenBinartTreeToLinkedList x = new FlattenBinartTreeToLinkedList();
-		TreeNode root = x.find2(a);
+		TreeNode root = x.find3(a);
 		while(root != null) {
 			System.out.print(root.val);
-			root = root.left;
+			root = root.next;
 		}
 	}
     
