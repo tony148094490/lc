@@ -20,7 +20,7 @@ import java.util.TreeSet;
 //  #2 You have a plain with lots of rectangles on it, find out how many of them intersect.
 public class RecIntersect {
 
-	// well, double comparison should not be done like this but ...
+
 	// below impl is counting overlapped intercestions separately
 	// there is anohter impl based on " if A intersects B and A intersects C and B intersects C, then one of the overlaps is overlapped..
 	// time is N*lgN + N * (lgN? otherwise it's no use) where N is 2 * number of recs, worst case could be N^2 though
