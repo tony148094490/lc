@@ -29,6 +29,7 @@ public class TwoDVector implements Iterator<Integer>{
 	@Override
 	public boolean hasNext() {
 		// TODO Auto-generated method stub
+		if(row == list.size()) return false;
 		if(list.get(row).size() > col) return true;
 		row++;
 		col = 0;
