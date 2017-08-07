@@ -40,40 +40,7 @@ public class AmazingNumber {
 		return index;
 		
 	}
-	
-	public int amaz(int[] arr) {
-		int[] shifts = new int[arr.length];
-		for(int i = 0 ; i < arr.length; i++) {
-			if(arr[i] <= 0 || arr[i] >= arr.length) continue;
-			if(arr[i] <= i) {
-				shifts[0]++;
-				shifts[i+1-arr[i]]--;
-				
-				if(i+1<arr.length)
-				shifts[i+1]++;
-				
-				
-			} else {
-				shifts[i+1]++;
-				if(i+1+arr.length-arr[i] < arr.length) {
-					shifts[i+1+arr.length - arr[i]]--;
-				}
-			}
-		}
-		int max = 0;
-		int res = 0;
-		int index = 0;
-		for(int i = 0 ; i < shifts.length;i++) {
-			int x = shifts[i];
-			res += x;
-			if(res > max) {
-				max = res;
-				index = i;
-			}
-		}
-		return index;
-	}
-	
+
 	
 	
 	

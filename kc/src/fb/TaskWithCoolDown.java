@@ -1,4 +1,4 @@
-package kc;
+package fb;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -64,24 +64,6 @@ public class TaskWithCoolDown {
 		return sb.toString();
 	}
 	
-	public int reorderJustTime(int[] arr, int cooldown) {
-		Map<Integer,Integer> map = new HashMap<>();
-		for(int x : arr) map.put(x, map.getOrDefault(x, 0) + 1);
-		int maxFreq = 0;
-		int nrMaxs = 0;
-		for(int x : map.values()) {
-			if(maxFreq < x) {
-				maxFreq = x;
-				nrMaxs = 1;
-			} else if(maxFreq == x) {
-				nrMaxs += 1;
-			}
-		}
-		
-		int interleaving = (maxFreq - 1) * (cooldown + 1) + nrMaxs;
-		return Math.max(interleaving, arr.length);
-	}
-	
 	public String reorderWithString(int[] arr, int cooldown) {
 		Map<Integer,Integer> map = new HashMap<>();
 		for(int x : arr) map.put(x, map.getOrDefault(x, 0) + 1);
@@ -112,6 +94,60 @@ public class TaskWithCoolDown {
 		}
 		return sb.toString();
 	}
+	
+	
+    public int leastInterval(char[] tasks, int n) {
+        Comparator<Task> comp = (a, b) -> {
+            return a.frequency == b.frequency ? b.label - a.label : b.frequency - a.frequency;
+        };
+        Map<Character, Task> map = new HashMap<>();
+        PriorityQueue<Task> pq = new PriorityQueue<Task>(comp);
+        
+        for(char c : tasks) {
+            if(map.containsKey(c)) {
+                map.get(c).frequency += 1;
+                pq.remove(map.get(c));
+                pq.add(map.get(c));
+            } else {
+                Task task = new Task(c, 1);
+                map.put(c, task);
+                pq.add(task);
+            }
+        }
+
+        
+        int res = 0;
+        while(!pq.isEmpty()) {
+            int counter = 0;
+            List<Task> tempList = new ArrayList<>();
+            while(counter <= n && !pq.isEmpty()) {
+                res++;
+                Task task = pq.poll();
+                if(task.frequency > 1) {
+                    task.frequency -= 1;
+                    tempList.add(task);
+                }
+                counter++;
+            }
+            
+            if(counter <= n && !tempList.isEmpty()) {
+                res += (n - counter + 1);
+            }
+            
+            pq.addAll(tempList);
+        }
+        
+        return res;
+    }
+    
+    public class Task {
+        char label;
+        int frequency;
+        public Task(char l, int f) {
+            label = l;
+            frequency = f;
+        }
+    }
 	
 	public static void main(String[] args) {
 		TaskWithCoolDown x = new TaskWithCoolDown();

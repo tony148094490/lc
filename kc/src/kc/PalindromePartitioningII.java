@@ -16,9 +16,5 @@ public class PalindromePartitioningII {
         }
         return res[s.length()-1];
     }
-    
-    private boolean[][] getMap(String s) {
-    	boolean[][] map = new boolean[s.length()][s.length()];
-    	return map;
-    }
+
 }

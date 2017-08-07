@@ -5,13 +5,13 @@ import java.util.List;
 
 public class TreeNode {
 
-	int val;
-	TreeNode left;
-	TreeNode right;
-	TreeNode prev;
-	TreeNode next;
-	List<TreeNode> children;
-	TreeNode(int x) {
+	public int val;
+	public TreeNode left;
+	public TreeNode right;
+	public TreeNode prev;
+	public TreeNode next;
+	public List<TreeNode> children;
+	public TreeNode(int x) {
 		val = x;
 	}
 	
