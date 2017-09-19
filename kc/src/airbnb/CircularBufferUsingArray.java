@@ -39,7 +39,7 @@ public class CircularBufferUsingArray<T> {
 		if(curSize == 0) throw new Exception();
 		
 		if(tail == null) {
-			tail = 1;
+			tail = (tail + 1) % buffer.length;
 			curSize--;
 			return buffer[0];
 		} else {

@@ -13,4 +13,30 @@ public class Stock {
         }
         return sell[2][prices.length-1];
     }
+    
+    public int maxProfitWithCharge(int[] prices, int charge) {
+        int profit = 0;
+        int localProfit = 0;
+        boolean yesterdaySold = false;
+        for (int i = 1; i < prices.length; i++) {
+            if (prices[i] > prices[i - 1]) {
+                localProfit += prices[i] - prices[i - 1];
+                if (!yesterdaySold) {
+                    localProfit -= charge;
+                }
+                yesterdaySold = true;
+            }
+            else if (yesterdaySold) {
+                profit += localProfit > 0 ? localProfit : 0;
+                localProfit = 0;
+                yesterdaySold = false;
+            }
+            
+            if (localProfit > 0) {
+                profit += localProfit;
+            }
+        }
+
+        return profit;
+    }
 }

@@ -44,7 +44,7 @@ public class GuessPswd {
 	}
 
 	private int getAnswer(int nr, int port, String hostId) throws IOException {
-		Socket socket = new Socket();
+		Socket socket = new Socket(hostId, port);
 		DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 		output.writeInt(nr);
 		DataInputStream input = new DataInputStream(socket.getInputStream());

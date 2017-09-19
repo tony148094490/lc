@@ -58,84 +58,84 @@ import java.util.Map;
  */
 public class FileSystem {
 	// needs to communicate and see if trie should be used 
-	Dir rootDir = new Dir(null);
+	Dir root = new Dir(null);
 
 	public void create(String path, String val) throws Exception {
-		if(path == null || path.isEmpty()) throw new Exception();
-		String[] tokens = path.split("/");
-		List<String> actualTokens = new ArrayList<>();
-		for(String str : tokens) {
-			if(str.isEmpty()) continue;
-			actualTokens.add(str);
-		}
-		Dir cur = rootDir;
-		for(int i = 0 ; i < actualTokens.size() - 1; i++) {
-			if(!cur.subdirs.containsKey((actualTokens.get(i)))) throw new Exception();
-			cur = cur.subdirs.get(actualTokens.get(i));
-		}
-		if(cur.subdirs.containsKey(actualTokens.get(actualTokens.size()-1))) throw new Exception();
-		cur.subdirs.put(actualTokens.get(actualTokens.size()-1), new Dir(val));
+	    if(path==null||path.isEmpty()) throw new Exception();
+	    List<String> dirs = getDirs(path);
+
+	    Dir cur = root;
+	    for(int i = 0 ; i < dirs.size()-1; i++) {
+	        String next = dirs.get(i);
+	        if(!cur.subdirs.containsKey(next)) throw new Exception();
+	        cur = cur.subdirs.get(next);
+	    }
+
+	    String last = dirs.get(dirs.size()-1);
+	    if(cur.subdirs.containsKey(last)) throw new Exception();
+	    Dir newDir = new Dir(val);
+	    cur.subdirs.put(last, newDir);
 	}
 
 	public void setValue(String path, String val) throws Exception {
-		if(path == null || path.isEmpty()) throw new Exception();
-		String[] tokens = path.split("/");
-		List<String> actualTokens = new ArrayList<>();
-		for(String str : tokens) {
-			if(str.isEmpty()) continue;
-			actualTokens.add(str);
-		}
-		Dir cur = rootDir;
-		for(int i = 0 ; i < actualTokens.size(); i++) {
-			if(cur.callback != null) cur.callback.fireRules();
-			if(!cur.subdirs.containsKey(actualTokens.get(i))) throw new Exception();
-			cur = cur.subdirs.get(actualTokens.get(i));
-		}
-		if(cur.callback != null) cur.callback.fireRules();
-		cur.val = val;
+	    if(path==null||path.isEmpty()) throw new Exception();
+	    List<String> dirs = getDirs(path);
+	    Dir cur = root;
+	    for(int i = 0 ; i < dirs.size(); i++) {
+	        String str = dirs.get(i);
+	        if(cur.callback != null) cur.callback.fireRules();
+	        if(!cur.subdirs.containsKey(str)) throw new Exception();
+	        cur = cur.subdirs.get(str);
+	    }
+	    if(cur.callback != null) cur.callback.fireRules();    
+	    cur.label = val;
 	}
 
 	public String getValue(String path) throws Exception {
-		if(path == null || path.isEmpty()) throw new Exception();
-		String[] tokens = path.split("/");
-		List<String> actualTokens = new ArrayList<>();
-		for(String str : tokens) {
-			if(str.isEmpty()) continue;
-			actualTokens.add(str);
-		}
-		Dir cur = rootDir;
-		for(int i = 0 ; i < actualTokens.size(); i++) {
-			if(!cur.subdirs.containsKey(actualTokens.get(i))) throw new Exception();
-			cur = cur.subdirs.get(actualTokens.get(i));
-		}
-
-		return cur.val;
+	    if(path==null||path.isEmpty()) throw new Exception();
+	    List<String> dirs = getDirs(path);
+	    Dir cur = root;
+	    for(int i = 0 ; i < dirs.size(); i++) {
+	        String str = dirs.get(i);
+	        if(!cur.subdirs.containsKey(str)) throw new Exception();
+	        cur = cur.subdirs.get(str);
+	    }
+	    return cur.label;
 	}
 
 	public void watch(String path, Callback callback) throws Exception {
-		if(path == null || path.isEmpty()) throw new Exception();
-		String[] tokens = path.split("/");
-		List<String> actualTokens = new ArrayList<>();
-		for(String str : tokens) {
-			if(str.isEmpty()) continue;
-			actualTokens.add(str);
-		}
-		Dir cur = rootDir;
-		for(int i = 0 ; i < actualTokens.size(); i++) {
-			if(!cur.subdirs.containsKey(actualTokens.get(i))) throw new Exception();
-			cur = cur.subdirs.get(actualTokens.get(i));
-		}
-		cur.callback = callback;
+	    if(path==null||path.isEmpty()) throw new Exception();
+	    List<String> dirs = getDirs(path);
+	    Dir cur = root;
+	    for(int i = 0 ; i < dirs.size(); i++) {
+	        String str = dirs.get(i);
+	        if(!cur.subdirs.containsKey(str)) throw new Exception();
+	        cur = cur.subdirs.get(str);
+	    }
+	    cur.callback = callback;
+	}
+
+	private List<String> getDirs(String path) throws Exception {
+	    if (path== null || path.isEmpty()) {
+	        throw new Exception("Invalid input");
+	    }
+
+	    List<String> res = new ArrayList<>();
+	    String[] tokens = path.split("/");
+	    for(String str : tokens) {
+	        if(!str.isEmpty()) res.add(str);
+	    }
+	    return res;
 	}
 
 	public class Dir {
-		Map<String, Dir> subdirs;
-		String val;
-		Callback callback;
-		public Dir(String v) {
-			val = v;
-			subdirs = new HashMap<>();
-		}
+	    String label;
+	    Map<String, Dir> subdirs;
+	    Callback callback;
+	    public Dir(String l) {
+	        label = l;
+	        subdirs = new HashMap<>();
+	    }
 	}
 
 	

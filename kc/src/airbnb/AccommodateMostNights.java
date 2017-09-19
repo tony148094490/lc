@@ -27,7 +27,7 @@ public class AccommodateMostNights {
 		}
 		return dp[dp.length-1];
 	}
-	
+
 	public static void main(String[] args) {
 		AccommodateMostNights sol = new AccommodateMostNights();
 		int[] testA = {1,2,3};
@@ -42,7 +42,12 @@ public class AccommodateMostNights {
 		System.out.println(sol.getMost(testD)); // 10
 		System.out.println(sol.getMost(testE)); // 10
 		System.out.println(sol.getMost(testF)); // 15
-		
-		System.out.println("abc".startsWith(""));
+		System.out.println();
+//		System.out.println(sol.getMost2(testA)); // expect 4
+//		System.out.println(sol.getMost2(testB)); // 11
+//		System.out.println(sol.getMost2(testC)); // 27
+//		System.out.println(sol.getMost2(testD)); // 10
+//		System.out.println(sol.getMost2(testE)); // 10
+//		System.out.println(sol.getMost2(testF)); // 15
 	}
 }

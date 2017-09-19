@@ -21,48 +21,46 @@ public class SlidingPuzzle {
 	// a lot code, i know but they are all trivial 
 	// not all combination can yield a solution though
 	public String solve(Puzzle puzzle) throws Exception {
-		Comparator<Puzzle> comp = new Comparator<Puzzle>() {
-			@Override
-			// cost function
-			public int compare(Puzzle a, Puzzle b) {
-				return a.getHeu() - b.getHeu();
-			}
-		};
-		
-		Set<Direction> directionSet = new HashSet<>();
-		directionSet.add(Direction.left);directionSet.add(Direction.right);directionSet.add(Direction.up);directionSet.add(Direction.down);
-		
-		PriorityQueue<Puzzle> pq = new PriorityQueue<Puzzle>(comp);
-		Map<String, Puzzle> map = new HashMap<>();// used to update heuristic values in pq
-		pq.add(puzzle);
-		while(!pq.isEmpty()) {
-			Puzzle parent = pq.poll();
-			if(parent.isSolved()) {
-				System.out.println(parent.pathTowardFinish.split(",").length);
-				System.out.println(parent.toState());
-				return parent.pathTowardFinish;
-			} else {
-				for(Direction dir : directionSet) {
-					if(parent.canMove(dir)) {
-						Puzzle newPuzzle = parent.move(dir);
-						String state = newPuzzle.toState();
-						if(map.containsKey(state)) {
-							if(map.get(state).getHeu() > newPuzzle.getHeu()) {
-								pq.remove(map.get(state));
-								pq.add(newPuzzle);
-								map.put(state, newPuzzle);
-							}
-						} else {
-							map.put(state, newPuzzle);
-							pq.add(newPuzzle);
-						}
-						System.out.println(state);
-					}
-				}
-			}
-		}
+	    Comparator<Puzzle> comp = new Comparator<Puzzle>() {
+	        @Override
+	        public int compare(Puzzle a, Puzzle b) {
+	            return a.getHeu() - b.getHeu();
+	        }
+	    };
 
-		return "";
+	    Set<Direction> directions = new HashSet<>();
+	    directions.add(Direction.left);
+	    directions.add(Direction.right);
+	    directions.add(Direction.up);
+	    directions.add(Direction.down);
+	    PriorityQueue<Puzzle> pq = new PriorityQueue<>(comp);
+	    Map<String, Puzzle> map = new HashMap<>();
+	    pq.add(puzzle);
+	    while(!pq.isEmpty()) {
+	        Puzzle pz = pq.poll();
+	        if(pz.isSolved()) {
+	            return pz.pathTowardFinish;
+	        } else {
+	            for(Direction dir : directions) {
+	                if(pz.canMove(dir)) {
+	                    Puzzle child = pz.move(dir);
+	                    String state = child.toState();
+	                    if(map.containsKey(state)) {
+	                        if(map.get(state).getHeu() > child.getHeu()) {
+	                            pq.remove(map.get(state));
+	                            pq.add(child);
+	                            map.put(state, child);
+	                        }
+	                    } else {
+	                        map.put(state, child);
+	                        pq.add(child);
+	                    }
+	                }
+	            }
+	        }
+	    } 
+
+	    return "";
 	}
 	
 	public class Puzzle {

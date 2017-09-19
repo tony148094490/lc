@@ -101,7 +101,10 @@ public class AlienDictionary {
     			  "wrf",
     			  "er",
     			  "ett",
-    			  "rftt"};
+    			  "rftt"};    	
+    	String[] another = {"za", "zb", "ca", "cb"};
     	System.out.println(x.alienOrder(arr));
+    	System.out.println(x.alienOrder(another));
+    	
 	}
 }

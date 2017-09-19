@@ -21,28 +21,34 @@ import java.util.List;
  *  
  */
 public class Menu {
-	double e = 0.0000001;
+	private static final double e = 0.000001;
 	public List<List<Double>> getCombo(double[] menu, double target) {
 		Arrays.sort(menu);
 		List<List<Double>> res = new ArrayList<>();
-		dfs(menu, target, 0, new ArrayList<>(), 0, res);
+		dfs(menu, 0, 0, target, new ArrayList<>(), res);
 		return res;
 	}
-	
-	private void dfs(double[] menu, double target, int index, List<Double> path, double curSum, List<List<Double>> res) {
-		if(Math.abs(curSum - target) <= e) {
+
+	private void dfs(double[] menu, int index, double cur, double target, List<Double> path, List<List<Double>> res) {
+		if(eq(target, cur)) {
 			res.add(new ArrayList<>(path));
 			return;
 		}
-		
-		if(curSum > target) return;
-		
-		for(int i = index; i < menu.length && target - menu[i] > e; i++) {
-			if(i > index && Math.abs(menu[i] - menu[i-1]) <= e) continue;
+
+		if(target < cur) return;
+
+		for(int i = index; i < menu.length; i++) {
+			if(i > index && eq(menu[i], menu[i-1])) continue;
 			path.add(menu[i]);
-			dfs(menu, target, i+1, path, curSum + menu[i], res);
+			dfs(menu, i + 1, menu[i] + cur, target, path, res);
 			path.remove(path.size()-1);
 		}
+
+	}
+
+	private boolean eq(double a, double b) {
+		if(Math.abs(a - b) < e) return true;
+		return false;
 	}
 	
 	

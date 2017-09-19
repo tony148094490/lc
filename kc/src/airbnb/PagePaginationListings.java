@@ -117,61 +117,56 @@ Page 4
  *
  */
 public class PagePaginationListings {
-	public List<List<String>> getPage(List<String> input, int PAGE_COUNT) {
-		// this question has different solutions
-		// my first try is very simple: iterate through until max page limit, use a temp list to store the listing from same hosts for future iteration
-		// use doubly-linked list to extract a given indexed element
-		// this may not be the right answer but should be fairly close.
-		// a follow up or possible variant is that the hosts should be evenly distributed, i.e when page is not full and we need to put duplicates in the same page
-		// we should evenly distribute the ids. This can be very tricky though, but i don't think this is the actual question.	
-		List<List<String>> res = new ArrayList<>();
-		List<String> cur = new ArrayList<>();
-		int overallIndex = 0;
-		LinkedList<String> temp = new LinkedList<>();
-		int tempIndex = 0;
+	public List<List<String>> getPage(List<String> input, int limit) {
+		List<String> temp = new LinkedList<>();
+		List<List<String>> pages = new ArrayList<>();
 		Set<String> visited = new HashSet<>();
+		int tempIndex = 0;
+		int overallIndex = 0;
+		List<String> page = new ArrayList<>();
 		while(overallIndex < input.size()) {
-			while(tempIndex < temp.size() && cur.size() < PAGE_COUNT) {
-				String tempListing = temp.get(tempIndex);
-				String[] split = tempListing.split(",");
-				if(!visited.contains(split[0])) {
-					cur.add(tempListing);
-					visited.add(split[0]);
-					temp.remove(tempIndex);
-				} else {
+			while(tempIndex < temp.size() && page.size() < limit) {
+				String newListing = temp.get(tempIndex);
+				String host = newListing.split(",")[0];
+				if(visited.contains(host)) {
 					tempIndex++;
-				}
-			}
-			if(cur.size() == PAGE_COUNT) {
-				tempIndex = 0;
-				visited = new HashSet<>();
-				res.add(new ArrayList<>(cur));
-				cur = new ArrayList<>();
-			} else {
-				// if or while both are okay
-				while(cur.size() < PAGE_COUNT && overallIndex < input.size()) {
-					String listing = input.get(overallIndex);
-					String[] split = listing.split(",");
-					if(visited.contains(split[0])) {
-						temp.add(listing);
-					} else {
-						visited.add(split[0]);
-						cur.add(listing);
+				} else {
+					visited.add(host);
+					page.add(newListing);
+					temp.remove(tempIndex);
+					if(page.size() == limit) {
+						break;
 					}
-					overallIndex++;
 				}
 			}
+
+			if(page.size() == limit) {
+				pages.add(page);
+				page = new ArrayList<>();
+				visited = new HashSet<>();
+				tempIndex = 0;
+			} else {
+				String newListing = input.get(overallIndex);
+				String host = newListing.split(",")[0];
+				if(visited.contains(host)) {
+					temp.add(newListing);
+				} else {
+					visited.add(host);
+					page.add(newListing);
+				}
+				overallIndex++;
+			}
+		}	
+
+		if(page.size() > 0) {
+			pages.add(page);
 		}
 
-		while(temp.size() > 0 && cur.size() < PAGE_COUNT) {
-			cur.add(temp.poll());
-		}
-
-		res.add(new ArrayList<>(cur));
 		if(temp.size() > 0) {
-			res.addAll(getPage(temp, PAGE_COUNT));
+			pages.addAll(getPage(temp, limit));
 		}
-		return res;
+		
+		return pages;
 	}
 	public static void main(String[] args) {
 
@@ -225,9 +220,11 @@ public class PagePaginationListings {
 	    
 	    PagePaginationListings x = new PagePaginationListings();
 	    List<List<String>> res = x.getPage(input, 12);
-	    for(List<String> list : res) {
+	    for(int i = 0 ; i < res.size(); i++) {
+	    	List<String> list = res.get(i);
+	    	System.out.println("Page " + (i+1) + " :" );
 	    	for(String a : list) {
-	    		System.out.print(a.split(",")[0] + ",");
+	    		System.out.println(a);
 	    	}
 	    	System.out.println();
 	    }

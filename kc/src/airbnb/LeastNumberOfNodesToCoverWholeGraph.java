@@ -24,128 +24,122 @@ https://www.youtube.com/watch?v=RpgcYiky7uw (tushar :D)
 public class LeastNumberOfNodesToCoverWholeGraph {
 	// steps: 1) find sccs 2) connect sccs 3) topo sccs 4) get one of each from scc
 
-	public List<Integer> minCoverWithSCC(Map<Integer, Set<Integer>> graph) {
-		
-		// construct sccs
+	public List<Integer> minCoverWithSCC(Map<Integer,Set<Integer>> graph) {
 		List<SCC> sccs = findSCCs(graph);
-																	//	  <- 
-		// we cannot just get one from each scc because we may have 1 -> 2 ->3 where 2 and 3 forms one scc and 1 itself is scc, and the result should be just 1, instead of 1 and 2(or3)
-
-		// connect sccs, very naive...
-		Map<SCC, Set<SCC>> sccMap = new HashMap<>();
-		for(int i = 0 ; i < sccs.size(); i++) {
-			sccMap.put(sccs.get(i), new HashSet<>());
-			for(int j = 0 ; j < sccs.size(); j++) {
-				if(i == j) continue;
-				if(isNext(sccs.get(i), sccs.get(j), graph)) {
-					sccMap.get(sccs.get(i)).add(sccs.get(j));
-				}
-			}
-		}
-		
-		
-		// toplo sort sccMap
-		Stack<SCC> stack = new Stack<SCC>();
+		System.out.println(sccs);
+		Map<SCC, Set<SCC>> map = connect(sccs, graph);
+		Stack<SCC> stack = new Stack<>();
 		Set<SCC> visited = new HashSet<>();
-		for(SCC scc : sccMap.keySet()) {
-			getSCCOrder(sccMap, stack, visited, scc);
+		for(SCC scc : map.keySet()) {
+			dfs(map, scc, visited, stack);
 		}
 
-		List<Integer> finalResult = new ArrayList<>();
+		List<Integer> res = new ArrayList<>();
 		while(!stack.isEmpty()) {
-			SCC scc = stack.pop();
-			if(!visited.contains(scc)) continue;
-			
-			// get one scc into result
-			int nr = scc.nodes.iterator().next();
-			finalResult.add(nr);
-			removeNextSCCs(sccMap, scc, visited);
-		}
-		
-		// so tedious...
-		return finalResult;
-	}
-	
-	private void removeNextSCCs(Map<SCC, Set<SCC>> sccMap, SCC scc, Set<SCC> visited) {
-		if(!visited.contains(scc)) return;
-		visited.remove(scc);
-		for(SCC s : sccMap.get(scc)) {
-			removeNextSCCs(sccMap, s, visited);
-		}
-	}
-	
-	private void getSCCOrder(Map<SCC, Set<SCC>> map, Stack<SCC> stack, Set<SCC> visited, SCC cur) {
-		if(visited.contains(cur)) return;
-		visited.add(cur);
-		for(SCC next : map.get(cur)) getSCCOrder(map, stack, visited, next);
-		stack.push(cur);
-	}
-	
-	private boolean isNext(SCC a, SCC b, Map<Integer, Set<Integer>> graph) {
-		for(Integer x : a.nodes) {
-			for(Integer graphNext : graph.get(x)) {
-				if(b.nodes.contains(graphNext)) return true;
-			}
-		}
-		return false;
-	}
-	
-	private List<SCC> findSCCs(Map<Integer, Set<Integer>> graph) {
-		Set<Integer> visited = new HashSet<>();
-		Stack<Integer> stack = new Stack<>();
-		
-		for(Integer k : graph.keySet()) {
-			if(!visited.contains(k))
-			dfs(graph, visited, stack, k);	
-		}
-		
-		List<SCC> res = new ArrayList<>();
-		
-		Map<Integer, Set<Integer>> reversedGraph = reverseGraph(graph);
-		visited = new HashSet<>();
-		while(!stack.isEmpty()) {
-			int newVert = stack.pop();
-			if(!visited.contains(newVert)) {
-				SCC scc = new SCC(newVert);
-				getSCC(newVert, visited, reversedGraph, scc);
-				res.add(scc);
-			}
+			SCC cur = stack.pop();
+			if(!visited.contains(cur)) continue;
+			res.add(cur.members.iterator().next());
+			explore(map, visited, cur);
 		}
 		return res;
 	}
-	
-	private void dfs(Map<Integer, Set<Integer>> graph, Set<Integer> visited, Stack<Integer> stack, int k) {
-		if(visited.contains(k)) return;
-		visited.add(k);
-		for(Integer next : graph.get(k)) dfs(graph, visited, stack, next);
-		stack.push(k);
+
+	private void explore(Map<SCC, Set<SCC>> map, Set<SCC> visited, SCC cur) {
+		if(!visited.contains(cur)) return;
+		visited.remove(cur);
+		for(SCC scc : map.get(cur)) explore(map, visited, scc);
 	}
-	
-	private void getSCC(int start, Set<Integer> visited, Map<Integer, Set<Integer>> reversedGraph, SCC scc) {
-			if(visited.contains(start)) return;
-			visited.add(start);
-			scc.nodes.add(start);
-			for(Integer next : reversedGraph.get(start)) getSCC(next, visited, reversedGraph, scc);
+
+	private void dfs(Map<SCC, Set<SCC>> map, SCC cur, Set<SCC> visited, Stack<SCC> stack) {
+		if(visited.contains(cur)) return ;
+		visited.add(cur);
+		for(SCC scc : map.get(cur)) {
+			dfs(map, scc, visited, stack);
+		}
+		stack.push(cur);
 	}
-	
-	
-	private Map<Integer, Set<Integer>> reverseGraph(Map<Integer, Set<Integer>> graph) {
+
+	private Map<SCC, Set<SCC>> connect(List<SCC> list, Map<Integer, Set<Integer>> graph) {
+		Map<SCC, Set<SCC>> map = new HashMap<>();
+		for(int i = 0 ; i < list.size(); i++) {
+			map.putIfAbsent(list.get(i), new HashSet<>());
+			for(int j = 0 ; j < list.size(); j++) {
+				map.putIfAbsent(list.get(j), new HashSet<>());
+				if(i == j) continue;
+				SCC a = list.get(i);
+				SCC b = list.get(j);
+				for(int x : a.members) {
+					for(int y : b.members) {
+						if(graph.containsKey(x) && graph.get(x).contains(y)) {
+							map.get(a).add(b);
+						}
+					}
+				}
+			}
+		}
+		return map;
+	}
+
+	private List<SCC> findSCCs(Map<Integer, Set<Integer>> graph) {
+		Stack<Integer> stack = new Stack<>();
+		Set<Integer> visited = new HashSet<>();
+		for(int x : graph.keySet()) {
+			dfs(graph, x, visited, stack);
+		}
+		Map<Integer, Set<Integer>> reversed = reverse(graph);
+		List<SCC> res = new ArrayList<>();
+		visited = new HashSet<>();
+		while(!stack.isEmpty()) {
+			int cur = stack.pop();
+			if(visited.contains(cur)) continue;
+			SCC scc = new SCC(cur);
+			explore(reversed, cur, visited, scc);
+			res.add(scc);
+		}
+		return res;
+	}
+
+	private void explore(Map<Integer, Set<Integer>> map, int cur, Set<Integer> visited, SCC scc) {
+		if(visited.contains(cur)) return;
+		visited.add(cur);
+		for(int x : map.get(cur)) {
+			explore(map, x, visited, scc);
+		}
+		scc.members.add(cur);
+	}
+
+	private void dfs(Map<Integer, Set<Integer>> map, int cur, Set<Integer> visited, Stack<Integer> stack) {
+		if(visited.contains(cur)) return;
+		visited.add(cur);
+		for(int x : map.get(cur)) {
+			dfs(map, x, visited, stack);
+		}
+		stack.push(cur);
+	}
+
+	private Map<Integer, Set<Integer>> reverse(Map<Integer, Set<Integer>> map) {
 		Map<Integer, Set<Integer>> res = new HashMap<>();
-		for(Integer x : graph.keySet()) {
+		for(int x : map.keySet()) {
 			res.putIfAbsent(x, new HashSet<>());
-			for(Integer y : graph.get(x)) {
+			for(int y : map.get(x)) {
 				res.putIfAbsent(y, new HashSet<>());
 				res.get(y).add(x);
 			}
 		}
 		return res;
 	}
-	
+
 	public class SCC {
-		Set<Integer> nodes;
-		public SCC(int value) {
-			nodes = new HashSet<>();
-			nodes.add(value);
+		Set<Integer> members;
+		public SCC(int initial) {
+			members = new HashSet<>();
+			members.add(initial);
+		}
+		
+		public String toString() {
+			String res = "";
+			for(int x : members) res += x + ",";
+			return res;
 		}
 	}
 	
@@ -161,7 +155,7 @@ public class LeastNumberOfNodesToCoverWholeGraph {
 		graph.get(1).add(2);
 		graph.get(2).add(3);
 		graph.get(3).add(1);
-		//graph.get(3).add(4);
+		graph.get(3).add(4);
 		graph.get(4).add(3);
 		graph.get(4).add(5);
 		graph.get(5).add(6);

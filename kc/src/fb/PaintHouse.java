@@ -2,6 +2,7 @@ package fb;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +41,7 @@ public class PaintHouse {
 		int totalCost = 0;
 		int index = 0;
 		Arrays.sort(cost);
+		Collections.sort(groups, comp);
 		for (Set<Integer> set : groups) {
 			totalCost += set.size() * cost[index];
 			index++;

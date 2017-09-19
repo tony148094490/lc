@@ -36,8 +36,8 @@ public class CommonCities {
 		Comparator<Buddy> comp = new Comparator<Buddy>(){
 			@Override
 			public int compare(Buddy a, Buddy b) {
-				if(a.matchedScore > b.matchedScore) return -1;
-				return 1;
+				if(a.matchedScore > b.matchedScore) return 1;
+				return -1;
 			}
 		};
 		PriorityQueue<Buddy> pq = new PriorityQueue<>(comp);

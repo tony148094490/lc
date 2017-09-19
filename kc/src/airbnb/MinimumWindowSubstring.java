@@ -1,38 +1,35 @@
 package airbnb;
 
 public class MinimumWindowSubstring {
-    public String minWindow(String s, String t) {
-        if(s.isEmpty() || t.isEmpty()) return "";
-        int[] ref = new int[256];
-        for(char c : t.toCharArray()) {
-            ref[c]++;
-        }
-        int from = 0;
-        int totalLen = t.length();
-        int validLen = 0;
-        int min = Integer.MAX_VALUE;
-        int res = 0;
-        for(int i = 0 ; i < s.length(); i++) {
-            char c = s.charAt(i);
-            ref[c]--;
-            if(ref[c] >= 0) {
-                validLen++;
-                while(validLen == totalLen && from <= i) {
-                    if(i - from + 1 < min) {
-                        min = i - from + 1;
-                        res = from;
-                    }
-                    char cur = s.charAt(from);
-                    ref[cur]++;
-                    if(ref[cur] > 0) {
-                        validLen--;
-                    }
-                    from++;
-                }
-            }
-        }
-        return min == Integer.MAX_VALUE ? "" : s.substring(res, res + min);
-    }
+	public String minWindow(String s, String t) {
+		if(s.isEmpty() || t.isEmpty()) return "";
+		int[] ref = new int[256];
+		for(char c : t.toCharArray()) ref[c]++;
+		int from = 0;
+		int res = 0;
+		int min = Integer.MAX_VALUE;
+		int counter = t.length();
+		for(int i = 0 ; i < s.length(); i++) {
+			char c = s.charAt(i);
+			ref[c]--;
+			if(ref[c] >= 0) counter--;
+			while(counter == 0) {
+				if(i - from + 1 < min) {
+					min = i - from + 1;
+					res = from;
+				}
+
+				ref[s.charAt(from)]++;
+				if(ref[s.charAt(from)] > 0) counter++;
+				
+				from++;
+
+			}
+		}
+
+		if(min == Integer.MAX_VALUE) return "";
+		return s.substring(res, res + min);
+	}
     
     public static void main(String[] args) {
     	MinimumWindowSubstring x = new MinimumWindowSubstring();

@@ -61,6 +61,8 @@ public class MeetingScheduling {
             System.out.println(i.start + ", " + i.end + " ");
         }
         
+        System.out.println();
+        
         List<Interval> res = sol.get(busyTimes);
         for(Interval i : res) {
         	System.out.println(i.start + ", " + i.end + " ");

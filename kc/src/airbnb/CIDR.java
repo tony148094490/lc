@@ -99,8 +99,8 @@ public class CIDR {
 	private String ipToString(Long ip) {
 			String sb = "";
 			for(int i = 1; i <= 4; i++) {
-				sb = String.valueOf(ip & 255) + "." + sb;
-				ip >>= 8;
+				sb = String.valueOf(ip % 256) + "." + sb;
+				ip /= 256;
 			}
 			return sb.substring(0, sb.length()-1);
 	}
